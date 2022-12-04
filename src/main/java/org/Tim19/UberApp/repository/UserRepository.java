@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<Users, Integer> {
 
     public Page<Users> findAll(Pageable pageable);
 
-    public List<Users> findByFirstNameAndLastNameAllIgnoringCase(String name, String lastname);
+    public List<Users> findByFirstnameAndLastnameAllIgnoringCase(String firstname, String lastname);
 
 
 }

@@ -27,7 +27,7 @@ public class UserService {
 
     public Users findByEmail(String email){return userRepository.findOneByEmail(email);}
 
-    public List<Users> findByFirstNameAndLastName(String name, String lastname){
-        return userRepository.findByFirstNameAndLastNameAllIgnoringCase(name, lastname);
+    public List<Users> findByFirstNameAndLastName(String firstname, String lastname){
+        return userRepository.findByFirstnameAndLastnameAllIgnoringCase(firstname, lastname);
     }
 }

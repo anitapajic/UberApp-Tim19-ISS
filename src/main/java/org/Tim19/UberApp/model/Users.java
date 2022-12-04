@@ -18,10 +18,10 @@ public class Users {
     @Column(name="lastname", nullable = false)
     private String lastname;
 
-    @Column(name="profilePicture", nullable = false)
+    @Column(name="profilepicture", nullable = false)
     private String profilePicture;
 
-    @Column(name="telephoneNuber", nullable = false)
+    @Column(name="telephonenumber", nullable = false)
     private String telephoneNumber;
 
     @Column(name="address", nullable = false)
