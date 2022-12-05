@@ -1,9 +1,7 @@
 package org.Tim19.UberApp.controller;
 
 import org.Tim19.UberApp.dto.RideDTO;
-import org.Tim19.UberApp.dto.UserDTO;
 import org.Tim19.UberApp.model.Ride;
-import org.Tim19.UberApp.model.Users;
 import org.Tim19.UberApp.service.RideService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +23,7 @@ public class RideController {
 
         List<Ride> rides = rideService.findAll();
 
-        // convert users to DTOs
+        // convert rides to DTOs
         List<RideDTO> rideDto = new ArrayList<>();
         for (Ride u : rides) {
             rideDto.add(new RideDTO(u));
@@ -50,6 +48,7 @@ public class RideController {
     public ResponseEntity<RideDTO> saveRide(@RequestBody RideDTO rideDTO) {
 
         Ride ride = new Ride();
+
         ride.setBabyTransport(rideDTO.isBabyTransport());
         ride.setEndTime(rideDTO.getEndTime());
         ride.setStatus(rideDTO.getStatus());
@@ -64,7 +63,7 @@ public class RideController {
     }
 
     @PutMapping(consumes = "application/json")
-    public ResponseEntity<RideDTO> updateUser(@RequestBody RideDTO rideDTO) {
+    public ResponseEntity<RideDTO> updateRide(@RequestBody RideDTO rideDTO) {
 
         // a ride must exist
         Ride ride = rideService.findOne(rideDTO.getId());
@@ -87,7 +86,7 @@ public class RideController {
         return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
     }
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteRide(@PathVariable Integer id) {
 
         Ride ride = rideService.findOne(id);
 

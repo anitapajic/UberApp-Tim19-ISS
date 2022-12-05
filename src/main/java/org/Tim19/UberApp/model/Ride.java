@@ -21,7 +21,7 @@ public class Ride {
     private Float totalCost;
 
     ///TODO:Dodati objekat vozaca, putnika i lokacija
-    
+
     //private Driver driver;
 
 //    @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
