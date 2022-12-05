@@ -3,7 +3,10 @@ package org.Tim19.UberApp.model;
 import javax.persistence.*;
 import java.util.Objects;
 
+import static javax.persistence.InheritanceType.JOINED;
+
 @Entity
+@Inheritance(strategy=JOINED)
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

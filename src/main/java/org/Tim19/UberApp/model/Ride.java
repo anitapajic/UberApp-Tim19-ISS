@@ -1,7 +1,9 @@
 package org.Tim19.UberApp.model;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 
 @Entity
@@ -20,12 +22,15 @@ public class Ride {
     @Column(name="totalCost", nullable = false)
     private Float totalCost;
 
-    ///TODO:Dodati objekat vozaca, putnika i lokacija
+    ///TODO:Dodati objekat lokacija
 
-    //private Driver driver;
+    @ManyToOne(cascade = {CascadeType.ALL},
+                fetch = FetchType.EAGER)
+    private Driver driver;
 
-//    @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private Set<User> users = new HashSet<User>();
+    @ManyToMany(cascade = {CascadeType.ALL},
+            fetch = FetchType.EAGER)
+    private Set<Passenger> passenger = new HashSet<Passenger>();
 
     @Column(name="estimatedTimeInMinutes", nullable = false)
     private Integer estimatedTimeInMinutes;
@@ -46,7 +51,7 @@ public class Ride {
 
     public Ride(){super();}
 
-    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Float totalCost, Integer estimatedTimeInMinutes, String vehicleType, boolean babyTransport, boolean petTransport, String status) {
+    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Float totalCost, Integer estimatedTimeInMinutes, String vehicleType, boolean babyTransport, boolean petTransport, String status, Driver driver) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -56,6 +61,7 @@ public class Ride {
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
         this.status = status;
+        this.driver = driver;
     }
 
     public Integer getId() {

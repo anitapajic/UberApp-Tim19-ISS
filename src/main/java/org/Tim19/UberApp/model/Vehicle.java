@@ -29,12 +29,9 @@ public class Vehicle {
     @Column(name = "petTransport", nullable = false)
     private boolean petTransport;
 
-    public Vehicle() {
-        super();
-    }
+
 
     public Vehicle(Integer id, String vehicleType, String carModel, String licenseNumber, Integer passengerSeats, boolean babyTransport, boolean petTransport) {
-        super();
         this.id = id;
         this.vehicleType = vehicleType;
         this.carModel = carModel;
@@ -43,6 +40,7 @@ public class Vehicle {
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
     }
+    public Vehicle(){}
 
     public Integer getId() {
         return id;
@@ -100,38 +98,6 @@ public class Vehicle {
         this.petTransport = petTransport;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Vehicle v = (Vehicle) o;
-        if (v.licenseNumber == null || licenseNumber == null) {
-            return false;
-        }
-        return Objects.equals(licenseNumber, v.licenseNumber);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(licenseNumber);
-    }
-
-    @Override
-    public String toString() {
-        return "Vehicle{" +
-                "id=" + id +
-                ", vehicleType='" + vehicleType + '\'' +
-                ", carModel='" + carModel + '\'' +
-                ", licenseNumber='" + licenseNumber + '\'' +
-                ", passengerSeats=" + passengerSeats +
-                ", babyTransport=" + babyTransport +
-                ", petTransport=" + petTransport +
-                '}';
-    }
 }
 
 
