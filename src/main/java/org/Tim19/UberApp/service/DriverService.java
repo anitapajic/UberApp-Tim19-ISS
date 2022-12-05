@@ -26,7 +26,6 @@ public class DriverService {
     public void remove(Integer id){
         driverRepository.deleteById(id);}
 
-    public Driver findByEmail(String email){return driverRepository.findOneByEmail(email);}
 
     public List<Driver> findByFirstNameAndLastName(String firstname, String lastname){
         return driverRepository.findByFirstnameAndLastnameAllIgnoringCase(firstname, lastname);

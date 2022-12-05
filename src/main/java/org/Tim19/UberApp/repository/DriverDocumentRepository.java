@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface DriverDocumentRepository extends JpaRepository<DriverDocument, Integer> {
 
-    public DriverDocument findOneById(String driverId);
+    public DriverDocument findOneByDriverId(String driverId);
 
     public Page<DriverDocument> findAll(Pageable pageable);
 

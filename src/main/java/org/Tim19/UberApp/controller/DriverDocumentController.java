@@ -17,13 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/driver/{id}/document")
+@RequestMapping(value = "/api/driver")
 public class DriverDocumentController {
 
     private DriverDocumentService driverDocumentService;
 
-    @GetMapping
-    public ResponseEntity<DriverDocumentDTO> getUser(@PathVariable Integer id) {
+    @GetMapping(value = "/{id}/document")
+    public ResponseEntity<DriverDocumentDTO> getDriverDocument(@PathVariable Integer id) {
 
         DriverDocument driverDocument = driverDocumentService.findOne(id);
 
@@ -38,7 +38,7 @@ public class DriverDocumentController {
     public ResponseEntity<DriverDocumentDTO> saveDriverDocument(@RequestBody DriverDocumentDTO driverDocumentDTO) {
 
         DriverDocument driverDocument = new DriverDocument();
-        driverDocument.setName(driverDocumentDTO.getName());
+        driverDocument.setDocName(driverDocumentDTO.getDocName());
         driverDocument.setDocumentImage(driverDocumentDTO.getDocumentImage());
         driverDocument.setDriverId(driverDocumentDTO.getDriverId());
 

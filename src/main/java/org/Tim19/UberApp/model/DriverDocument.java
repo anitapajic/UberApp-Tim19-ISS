@@ -9,8 +9,8 @@ public class DriverDocument {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name="name",unique = true, nullable = false)
-    private String name;
+    @Column(name="docName",unique = true, nullable = false)
+    private String docName;
 
     @Column(name = "documentImage", nullable = false)
     private String documentImage;
@@ -21,20 +21,20 @@ public class DriverDocument {
 
     public DriverDocument(){super();}
 
-    public DriverDocument(String name, String documentImage, Integer driverId) {
+    public DriverDocument(String docName, String documentImage, Integer driverId) {
         super();
-        this.name = name;
+        this.docName = docName;
         this.documentImage = documentImage;
         this.driverId = driverId;
     }
 
 
-    public String getName() {
-        return name;
+    public String getDocName() {
+        return docName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDocName(String docName) {
+        this.docName = docName;
     }
 
     public String getDocumentImage() {
@@ -77,7 +77,7 @@ public class DriverDocument {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", name='" + docName + '\'' +
                 ", lastname='" + documentImage + '\'' +
                 ", profilePicture='" + driverId + '\'' +
                 '}';
