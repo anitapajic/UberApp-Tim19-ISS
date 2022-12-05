@@ -5,12 +5,17 @@ import org.Tim19.UberApp.dto.UserDTO;
 import org.Tim19.UberApp.model.Users;
 import org.Tim19.UberApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/passenger")
@@ -19,18 +24,18 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
+    @GetMapping()
+    public ResponseEntity<Map<String, Object>> getAllUsers(@RequestParam(defaultValue = "0") Integer page,
+                                                           @RequestParam(defaultValue = "4") Integer size) {
 
-        List<Users> users = userService.findAll();
+        Pageable paging = PageRequest.of(page, size);
+        Page<Users> pagedResult = userService.findAll(paging);
 
-        // convert users to DTOs
-        List<UserDTO> usersDTO = new ArrayList<>();
-        for (Users u : users) {
-            usersDTO.add(new UserDTO(u));
-        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalcounts", pagedResult.getTotalElements());
+        response.put("results", pagedResult.getContent());
 
-        return new ResponseEntity<>(usersDTO, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}")
