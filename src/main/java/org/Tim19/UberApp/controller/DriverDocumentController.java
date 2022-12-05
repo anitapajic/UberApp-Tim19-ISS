@@ -1,20 +1,12 @@
 package org.Tim19.UberApp.controller;
 
 
-import org.Tim19.UberApp.dto.DriverDTO;
 import org.Tim19.UberApp.dto.DriverDocumentDTO;
-import org.Tim19.UberApp.dto.UserDTO;
-import org.Tim19.UberApp.model.Driver;
 import org.Tim19.UberApp.model.DriverDocument;
-import org.Tim19.UberApp.model.Users;
 import org.Tim19.UberApp.service.DriverDocumentService;
-import org.Tim19.UberApp.service.DriverService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/driver/{id}/document")

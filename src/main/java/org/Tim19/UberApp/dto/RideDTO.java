@@ -1,10 +1,8 @@
 package org.Tim19.UberApp.dto;
 
 import org.Tim19.UberApp.model.Ride;
-import org.Tim19.UberApp.model.Users;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 public class RideDTO {
     private Integer id;

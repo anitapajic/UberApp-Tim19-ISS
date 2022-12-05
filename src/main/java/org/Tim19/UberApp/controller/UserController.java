@@ -1,8 +1,7 @@
 package org.Tim19.UberApp.controller;
 
 
-import org.Tim19.UberApp.dto.UserDTO;
-import org.Tim19.UberApp.model.Users;
+import org.Tim19.UberApp.model.User;
 import org.Tim19.UberApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,13 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/api/passenger")
+@RequestMapping(value = "/api/user")
 public class UserController {
 
     @Autowired
@@ -29,7 +26,7 @@ public class UserController {
                                                            @RequestParam(defaultValue = "4") Integer size) {
 
         Pageable paging = PageRequest.of(page, size);
-        Page<Users> pagedResult = userService.findAll(paging);
+        Page<User> pagedResult = userService.findAll(paging);
 
         Map<String, Object> response = new HashMap<>();
         response.put("totalcounts", pagedResult.getTotalElements());
@@ -38,62 +35,58 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable Integer id) {
+//    @GetMapping(value = "/{id}")
+//    public ResponseEntity<UserDTO> getUser(@PathVariable Integer id) {
+//
+//        User users = userService.findOne(id);
+//
+//        // user must exist
+//        if (users == null) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//
+//        return new ResponseEntity<>(new UserDTO(users), HttpStatus.OK);
+//    }
 
-        Users users = userService.findOne(id);
 
-        // user must exist
-        if (users == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(new UserDTO(users), HttpStatus.OK);
-    }
-
-    @PostMapping(consumes = "application/json")
-    public ResponseEntity<UserDTO> saveUser(@RequestBody UserDTO userDTO) {
-
-        Users users = new Users();
-        users.setProfilePicture(userDTO.getProfilePicture());
-        users.setTelephoneNumber(userDTO.getTelephoneNumber());
-        users.setAddress(userDTO.getAddress());
-        users.setEmail(userDTO.getEmail());
-        users.setFirstname(userDTO.getFirstname());
-        users.setLastname(userDTO.getLastname());
-        users.setPassword(userDTO.getPassword());
-
-        users = userService.save(users);
-        return new ResponseEntity<>(new UserDTO(users), HttpStatus.CREATED);
-    }
-
-    @PutMapping(consumes = "application/json")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO) {
+    @PutMapping(value =  "/{id}/block")
+    public ResponseEntity<Void> updateUser(@PathVariable Integer id) {
 
         // a user must exist
-        Users users = userService.findOne(userDTO.getId());
+        User user = userService.findOne(id);
 
-        if (users == null) {
+        if (user == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        users.setProfilePicture(userDTO.getProfilePicture());
-        users.setTelephoneNumber(userDTO.getTelephoneNumber());
-        users.setAddress(userDTO.getAddress());
-        users.setEmail(userDTO.getEmail());
-        users.setFirstname(userDTO.getFirstname());
-        users.setLastname(userDTO.getLastname());
-        users.setPassword(userDTO.getPassword());
+        user.setBlocked(true);
 
-        users = userService.save(users);
-        return new ResponseEntity<>(new UserDTO(users), HttpStatus.OK);
+        userService.save(user);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PutMapping(value = "/{id}/unblock")
+    public ResponseEntity<Void> unblockUser(@PathVariable Integer id) {
+
+        // a user must exist
+        User user = userService.findOne(id);
+
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        user.setBlocked(false);
+
+        userService.save(user);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
 
-        Users users = userService.findOne(id);
+        User user = userService.findOne(id);
 
-        if (users != null) {
+        if (user != null) {
             userService.remove(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {

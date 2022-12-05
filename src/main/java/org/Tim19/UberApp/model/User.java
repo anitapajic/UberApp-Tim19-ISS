@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-public class Users {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -30,9 +30,16 @@ public class Users {
     @Column(name="password", nullable = false)
     private String password;
 
-    public Users(){super();}
+    @Column(name="active", nullable = false)
+    private Boolean active;
 
-    public Users(Integer id, String firstname, String lastname, String profilePicture, String telephoneNumber, String email, String address, String password) {
+    @Column(name="blocked", nullable = false)
+    private Boolean blocked;
+
+
+    public User(){super();}
+
+    public User(Integer id, String firstname, String lastname, String profilePicture, String telephoneNumber, String email, String address, String password, Boolean active, Boolean blocked) {
         super();
         this.id = id;
         this.firstname = firstname;
@@ -42,6 +49,8 @@ public class Users {
         this.email = email;
         this.address = address;
         this.password = password;
+        this.active = active;
+        this.blocked = blocked;
     }
 
     public Integer getId() {
@@ -108,6 +117,13 @@ public class Users {
         this.password = password;
     }
 
+    public Boolean getActive() { return active; }
+
+    public void setActive(Boolean active) { this.active = active; }
+
+    public Boolean getBlocked() { return blocked; }
+
+    public void setBlocked(Boolean blocked) { this.blocked = blocked; }
 
     @Override
     public boolean equals(Object o) {
@@ -117,7 +133,7 @@ public class Users {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Users s = (Users) o;
+        User s = (User) o;
         if (s.email == null || email == null) {
             return false;
         }
@@ -133,13 +149,15 @@ public class Users {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", name='" + firstname + '\'' +
+                ", email='" + email + '\'' +
+                ", firstname='" + firstname + '\'' +
                 ", lastname='" + lastname + '\'' +
                 ", profilePicture='" + profilePicture + '\'' +
                 ", telephoneNumber='" + telephoneNumber + '\'' +
-                ", email='" + email + '\'' +
                 ", address='" + address + '\'' +
                 ", password='" + password + '\'' +
+                ", active=" + active +
+                ", blocked=" + blocked +
                 '}';
     }
 }
