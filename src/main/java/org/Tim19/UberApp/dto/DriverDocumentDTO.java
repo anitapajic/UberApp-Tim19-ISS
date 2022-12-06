@@ -20,7 +20,7 @@ public class DriverDocumentDTO {
 
     }
     public DriverDocumentDTO(DriverDocument driverDocument) {
-        this(driverDocument.getName(), driverDocument.getDocumentImage(), driverDocument.getDriverId());
+//        this(driverDocument.getId(), driverDocument.getName(), driverDocument.getDocumentImage(), driverDocument.getDriver());
     }
     public String getName() {
         return name;

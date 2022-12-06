@@ -21,10 +21,19 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping()
+    //RIDES OF THE USER  /api/user/{id}/ride
+    @GetMapping(value = "/{id}/ride")
+    public ResponseEntity<Void> getUserRides(){
+
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //GETTING USER DETAILS  /api/user
+    @GetMapping
     public ResponseEntity<Map<String, Object>> getAllUsers(@RequestParam(defaultValue = "0") Integer page,
                                                            @RequestParam(defaultValue = "4") Integer size) {
-
         Pageable paging = PageRequest.of(page, size);
         Page<User> pagedResult = userService.findAll(paging);
 
@@ -35,20 +44,25 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//    @GetMapping(value = "/{id}")
-//    public ResponseEntity<UserDTO> getUser(@PathVariable Integer id) {
-//
-//        User users = userService.findOne(id);
-//
-//        // user must exist
-//        if (users == null) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//
-//        return new ResponseEntity<>(new UserDTO(users), HttpStatus.OK);
-//    }
+    //USER MESSAGES  /api/user/{id}/message
+    @GetMapping(value = "/{id}/message")
+    public ResponseEntity<Void> getUserMessage(){
 
 
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //SEND A MESSAGE TO THE USER  /api/user/{id}/message
+    @PostMapping(value = "/{id}/message")
+    public ResponseEntity<Void> postUserMessage(){
+
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //BLOCKING OF THE USER  /api/user/{id}/block
     @PutMapping(value =  "/{id}/block")
     public ResponseEntity<Void> updateUser(@PathVariable Integer id) {
 
@@ -65,6 +79,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    //UNBLOCKING USER  /api/user/{id}/unblock
     @PutMapping(value = "/{id}/unblock")
     public ResponseEntity<Void> unblockUser(@PathVariable Integer id) {
 
@@ -81,16 +96,21 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
+    //NOTE CREATING  /api/user/{id}/note
+    @GetMapping(value = "/{id}/note")
+    public ResponseEntity<Void> getUserNote(){
 
-        User user = userService.findOne(id);
 
-        if (user != null) {
-            userService.remove(id);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //GETTING NOTES FOR THE USER  /api/user/{id}/note
+    @PostMapping(value = "/{id}/note")
+    public ResponseEntity<Void> postUserNote(){
+
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -32,7 +32,8 @@ public class DriverDocumentController {
         DriverDocument driverDocument = new DriverDocument();
         driverDocument.setName(driverDocumentDTO.getName());
         driverDocument.setDocumentImage(driverDocumentDTO.getDocumentImage());
-        driverDocument.setDriverId(driverDocumentDTO.getDriverId());
+
+        //driverDocument.setDriver(driverDocumentDTO.getDriver());
 
         driverDocument = driverDocumentService.save(driverDocument);
         return new ResponseEntity<>(new DriverDocumentDTO(driverDocument), HttpStatus.CREATED);
