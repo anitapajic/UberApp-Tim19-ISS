@@ -1,16 +1,20 @@
 package org.Tim19.UberApp.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.Tim19.UberApp.model.Driver;
 import org.Tim19.UberApp.model.DriverDocument;
 import org.Tim19.UberApp.model.Ride;
 import org.Tim19.UberApp.model.Vehicle;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class DriverDTO extends UserDTO{
 
-    private Set<Ride> rides;
-    private Set<DriverDocument> documents;
+    @JsonIgnore
+    private Set<Ride> rides = new HashSet<Ride>();
+    @JsonIgnore
+    private Set<DriverDocument> documents = new HashSet<>();
     private Vehicle vehicle;
 
     public DriverDTO(Integer id, String firstname, String lastname, String profilePicture, String telephoneNumber, String email, String address, String password, Boolean active, Boolean blocked,Set<Ride> rides, Set<DriverDocument> documents, Vehicle vehicle) {

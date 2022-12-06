@@ -44,6 +44,7 @@ public class Vehicle {
     @Column(name = "petTransport", nullable = false)
     private boolean petTransport;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Message> reviews = new HashSet<>();
 

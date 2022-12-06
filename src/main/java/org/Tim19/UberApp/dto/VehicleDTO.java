@@ -2,6 +2,7 @@ package org.Tim19.UberApp.dto;
 
 import org.Tim19.UberApp.model.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class VehicleDTO {
@@ -14,7 +15,7 @@ public class VehicleDTO {
     private Integer passengerSeats;
     private boolean babyTransport;
     private boolean petTransport;
-    private Set<Message> reviews;
+    private Set<Message> reviews = new HashSet<>();
 
 
     public VehicleDTO(Integer id, Driver driver, String carModel, VehicleType vehicleType, String licenseNumber, Integer passengerSeats, boolean babyTransport, boolean petTransport, Set<Message> reviews) {

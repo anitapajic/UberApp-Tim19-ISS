@@ -1,9 +1,11 @@
 package org.Tim19.UberApp.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.Tim19.UberApp.model.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 public class RideDTO {
@@ -14,7 +16,8 @@ public class RideDTO {
 
     private Driver driver;
 
-    private Set<Passenger> passengersDTO;
+    @JsonIgnore
+    private Set<Passenger> passengersDTO = new HashSet<>();
     private Integer estimatedTimeInMinutes;
 
     private Set<Message> reviews;
