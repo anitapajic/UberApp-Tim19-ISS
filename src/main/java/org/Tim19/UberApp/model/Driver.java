@@ -1,145 +1,48 @@
 package org.Tim19.UberApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
-public class Driver {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+@Data
+@NoArgsConstructor
+@DiscriminatorValue("Driver")
+public class Driver extends User{
 
-    @Column(name="email",unique = true, nullable = false)
-    private String email;
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<DriverDocument> documents = new HashSet<>();
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Ride> rides = new HashSet<>();
+    @JsonIgnore
+    @OneToOne
+    @JoinColumn(name = "vehicle_id")
+    private Vehicle vehicle;
 
-    @Column(name = "firstname", nullable = false)
-    private String firstname;
-
-    @Column(name="lastname", nullable = false)
-    private String lastname;
-
-    @Column(name="profilepicture", nullable = false)
-    private String profilePicture;
-
-    @Column(name="telephonenumber", nullable = false)
-    private String telephoneNumber;
-
-    @Column(name="address", nullable = false)
-    private String address;
-
-    @Column(name="password", nullable = false)
-    private String password;
-
-    public Driver(){super();}
-
-    public Driver(Integer id, String firstname, String lastname, String profilePicture, String telephoneNumber, String email, String address, String password) {
-        super();
-        this.id = id;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.profilePicture = profilePicture;
-        this.telephoneNumber = telephoneNumber;
-        this.email = email;
-        this.address = address;
-        this.password = password;
+    public Driver(Integer id, String firstname, String lastname, String profilePicture, String telephoneNumber, String email, String address, String password, Boolean active, Boolean blocked, Set<DriverDocument> documents, Set<Ride> rides, Vehicle vehicle) {
+        super(id, firstname, lastname, profilePicture, telephoneNumber, email, address, password, active, blocked);
+        this.documents = documents;
+        this.rides = rides;
+        this.vehicle = vehicle;
     }
 
-    public Integer getId() {
-        return id;
+    public void addDocument(DriverDocument document){
+        this.documents.add(document);
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public  void removeDocument(DriverDocument document){
+        this.documents.remove(document);
+    }
+    public void addRide(Ride ride){
+        this.rides.add(ride);
     }
 
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
-    }
-
-    public String getTelephoneNumber() {
-        return telephoneNumber;
-    }
-
-    public void setTelephoneNumber(String telephoneNumber) {
-        this.telephoneNumber = telephoneNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Driver d = (Driver) o;
-        if (d.email == null || email == null) {
-            return false;
-        }
-        return Objects.equals(email, d.email);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(email);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + firstname + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", profilePicture='" + profilePicture + '\'' +
-                ", telephoneNumber='" + telephoneNumber + '\'' +
-                ", email='" + email + '\'' +
-                ", address='" + address + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+    public  void removeRide(Ride ride){
+        this.rides.remove(ride);
     }
 }

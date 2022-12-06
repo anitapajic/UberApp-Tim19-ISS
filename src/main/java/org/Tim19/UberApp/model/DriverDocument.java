@@ -1,85 +1,35 @@
 package org.Tim19.UberApp.model;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Data
+@NoArgsConstructor
 public class DriverDocument {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name="docName",unique = true, nullable = false)
-    private String docName;
+    @Column(name="name", nullable = false)
+    private String name;
 
     @Column(name = "documentImage", nullable = false)
     private String documentImage;
 
-    @Column(name="driverId", nullable = false)
-    private Integer driverId;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "driver_id")
+    private Driver driver;
 
 
-    public DriverDocument(){super();}
-
-    public DriverDocument(String docName, String documentImage, Integer driverId) {
+    public DriverDocument(String name, String documentImage, Driver driver) {
         super();
-        this.docName = docName;
+        this.name = name;
         this.documentImage = documentImage;
-        this.driverId = driverId;
+        this.driver = driver;
     }
 
-
-    public String getDocName() {
-        return docName;
-    }
-
-    public void setDocName(String docName) {
-        this.docName = docName;
-    }
-
-    public String getDocumentImage() {
-        return documentImage;
-    }
-
-    public void setDocumentImage(String documentImage) {
-        this.documentImage = documentImage;
-    }
-
-    public Integer getDriverId() {
-        return driverId;
-    }
-
-    public void setDriverId(Integer driverId) {
-        this.driverId = driverId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        DriverDocument d = (DriverDocument) o;
-        if (d.driverId == null || driverId == null) {
-            return false;
-        }
-        return Objects.equals(driverId, d.driverId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(driverId);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + docName + '\'' +
-                ", lastname='" + documentImage + '\'' +
-                ", profilePicture='" + driverId + '\'' +
-                '}';
-    }
 }

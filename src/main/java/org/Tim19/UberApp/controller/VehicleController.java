@@ -1,10 +1,6 @@
 package org.Tim19.UberApp.controller;
 
-import org.Tim19.UberApp.dto.DriverDocumentDTO;
-import org.Tim19.UberApp.dto.UserDTO;
 import org.Tim19.UberApp.dto.VehicleDTO;
-import org.Tim19.UberApp.model.DriverDocument;
-import org.Tim19.UberApp.model.Users;
 import org.Tim19.UberApp.model.Vehicle;
 import org.Tim19.UberApp.service.VehicleService;
 import org.springframework.http.HttpStatus;
@@ -35,7 +31,7 @@ public class VehicleController {
     public ResponseEntity<VehicleDTO> saveVehicle(@RequestBody VehicleDTO vehicleDTO) {
 
         Vehicle vehicle = new Vehicle();
-        vehicle.setVehicleType(vehicleDTO.getVehicleType());
+      //  vehicle.setVehicleType(vehicleDTO.getVehicleType());
         vehicle.setCarModel(vehicleDTO.getCarModel());
         vehicle.setLicenseNumber(vehicleDTO.getLicenseNumber());
         vehicle.setPassengerSeats(vehicleDTO.getPassengerSeats());
@@ -56,7 +52,7 @@ public class VehicleController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        vehicle.setVehicleType(vehicleDTO.getVehicleType());
+        //vehicle.setVehicleType(vehicleDTO.getVehicleType());
         vehicle.setCarModel(vehicleDTO.getCarModel());
         vehicle.setLicenseNumber(vehicleDTO.getLicenseNumber());
         vehicle.setPassengerSeats(vehicleDTO.getPassengerSeats());

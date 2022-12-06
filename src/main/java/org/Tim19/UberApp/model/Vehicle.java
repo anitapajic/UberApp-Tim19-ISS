@@ -1,21 +1,30 @@
 package org.Tim19.UberApp.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
+@Data
+@NoArgsConstructor
 public class Vehicle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "vehicleType", unique = true, nullable = false)
-    private String vehicleType;
-
+    @JsonIgnore
+    @OneToOne
+    @JoinColumn(name = "driver_id")
+    private Driver driver;
     @Column(name = "carModel", nullable = false)
     private String carModel;
+    @Column(name = "vehicleType", nullable = false)
+    private VehicleType vehicleType;
 
     @Column(name = "licenseNumber", nullable = false)
     private String licenseNumber;
@@ -23,114 +32,37 @@ public class Vehicle {
     @Column(name = "passengerSeats", nullable = false)
     private Integer passengerSeats;
 
+    //private String location;
+
     @Column(name = "babyTransport", nullable = false)
     private boolean babyTransport;
 
     @Column(name = "petTransport", nullable = false)
     private boolean petTransport;
 
-    public Vehicle() {
-        super();
-    }
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Message> reviews = new HashSet<>();
 
-    public Vehicle(Integer id, String vehicleType, String carModel, String licenseNumber, Integer passengerSeats, boolean babyTransport, boolean petTransport) {
-        super();
+
+    public Vehicle(Integer id, Driver driver, String carModel, VehicleType vehicleType, String licenseNumber, Integer passengerSeats, boolean babyTransport, boolean petTransport, Set<Message> reviews) {
         this.id = id;
-        this.vehicleType = vehicleType;
+        this.driver = driver;
         this.carModel = carModel;
+        this.vehicleType = vehicleType;
         this.licenseNumber = licenseNumber;
         this.passengerSeats = passengerSeats;
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
+        this.reviews = reviews;
     }
 
-    public Integer getId() {
-        return id;
+    public void addReview(Message message){
+        this.reviews.add(message);
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getVehicleType() {
-        return vehicleType;
-    }
-
-    public void setVehicleType(String vehicleType) {
-        this.vehicleType = vehicleType;
-    }
-
-    public String getCarModel() {
-        return carModel;
-    }
-
-    public void setCarModel(String carModel) {
-        this.carModel = carModel;
-    }
-
-    public String getLicenseNumber() {
-        return licenseNumber;
-    }
-
-    public void setLicenseNumber(String licenseNumber) {
-        this.licenseNumber = licenseNumber;
-    }
-
-    public Integer getPassengerSeats() {
-        return passengerSeats;
-    }
-
-    public void setPassengerSeats(Integer passengerSeats) {
-        this.passengerSeats = passengerSeats;
-    }
-
-    public boolean isBabyTransport() {
-        return babyTransport;
-    }
-
-    public void setBabyTransport(boolean babyTransport) {
-        this.babyTransport = babyTransport;
-    }
-
-    public boolean isPetTransport() {
-        return petTransport;
-    }
-
-    public void setPetTransport(boolean petTransport) {
-        this.petTransport = petTransport;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Vehicle v = (Vehicle) o;
-        if (v.licenseNumber == null || licenseNumber == null) {
-            return false;
-        }
-        return Objects.equals(licenseNumber, v.licenseNumber);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(licenseNumber);
-    }
-
-    @Override
-    public String toString() {
-        return "Vehicle{" +
-                "id=" + id +
-                ", vehicleType='" + vehicleType + '\'' +
-                ", carModel='" + carModel + '\'' +
-                ", licenseNumber='" + licenseNumber + '\'' +
-                ", passengerSeats=" + passengerSeats +
-                ", babyTransport=" + babyTransport +
-                ", petTransport=" + petTransport +
-                '}';
+    public  void removeReview(Message message){
+        this.reviews.remove(message);
     }
 }
 
