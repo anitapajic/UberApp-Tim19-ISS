@@ -1,5 +1,6 @@
 package org.Tim19.UberApp.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.Tim19.UberApp.model.Driver;
 import org.Tim19.UberApp.model.DriverDocument;
 
@@ -8,6 +9,7 @@ public class DriverDocumentDTO {
     private Integer id;
     private String name;
     private String documentImage;
+    @JsonIgnore
     private Driver  driver;
 
     public DriverDocumentDTO(){}

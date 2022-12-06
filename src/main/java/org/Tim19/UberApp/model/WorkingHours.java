@@ -1,52 +1,48 @@
 package org.Tim19.UberApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
-@Entity(name = "working_hours")
+@Entity
+@Data
+@NoArgsConstructor
 public class WorkingHours {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "start", nullable = false)
-    private String start;
+    private LocalDateTime startD;
+    private LocalDateTime  endD;
 
-    @Column(name = "endd", nullable = false)
-    private String endd;
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "driver_id")
+    private Driver driver;
 
-    public WorkingHours() {
-        super();
-    }
-
-    public WorkingHours(Integer id, String start, String end) {
-        super();
+    public WorkingHours(Integer id, LocalDateTime  startD, LocalDateTime  endD, Driver driver) {
         this.id = id;
-        this.start = start;
-        this.endd = end;
+        this.startD = startD;
+        this.endD = endD;
+        this.driver = driver;
     }
 
     public Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public LocalDateTime getStartD() {
+        return startD;
     }
 
-    public String getStart() {
-        return start;
+    public LocalDateTime getEndD() {
+        return endD;
     }
 
-    public void setStart(String start) {
-        this.start = start;
-    }
-
-    public String getEnd() {
-        return endd;
-    }
-
-    public void setEnd(String end) {
-        this.endd = end;
+    public Driver getDriver() {
+        return driver;
     }
 }

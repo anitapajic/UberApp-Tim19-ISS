@@ -1,4 +1,5 @@
 package org.Tim19.UberApp.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,10 +25,12 @@ public class Ride {
     @Column(name="totalCost", nullable = false)
     private Float totalCost;
 
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id")
     private Driver driver;
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
             name = "passenger_ride",

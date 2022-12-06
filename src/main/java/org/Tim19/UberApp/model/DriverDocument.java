@@ -1,5 +1,6 @@
 package org.Tim19.UberApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,6 +21,7 @@ public class DriverDocument {
     @Column(name = "documentImage", nullable = false)
     private String documentImage;
 
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "driver_id")
     private Driver driver;

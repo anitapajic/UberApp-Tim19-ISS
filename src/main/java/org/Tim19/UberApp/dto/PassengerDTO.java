@@ -1,14 +1,17 @@
 package org.Tim19.UberApp.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.Tim19.UberApp.model.Passenger;
 import org.Tim19.UberApp.model.Ride;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 public class PassengerDTO extends UserDTO{
 
-    private Set<Ride> rides;
+    @JsonIgnore
+    private Set<Ride> rides = new HashSet<>();
 
     public PassengerDTO(){}
 
