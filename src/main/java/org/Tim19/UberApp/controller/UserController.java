@@ -12,22 +12,30 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/api/passenger")
+@RequestMapping(value = "/api/user")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @GetMapping()
+    //RIDES OF THE USER  /api/user/{id}/ride
+    @GetMapping(value = "/{id}/ride")
+    public ResponseEntity<Void> getUserRides(){
+
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //GETTING USER DETAILS  /api/user
+    @GetMapping
     public ResponseEntity<Map<String, Object>> getAllUsers(@RequestParam(defaultValue = "0") Integer page,
                                                            @RequestParam(defaultValue = "4") Integer size) {
-
         Pageable paging = PageRequest.of(page, size);
         Page<Users> pagedResult = userService.findAll(paging);
 
@@ -38,66 +46,73 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable Integer id) {
+    //USER MESSAGES  /api/user/{id}/message
+    @GetMapping(value = "/{id}/message")
+    public ResponseEntity<Void> getUserMessage(){
 
-        Users users = userService.findOne(id);
 
-        // user must exist
-        if (users == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
 
-        return new ResponseEntity<>(new UserDTO(users), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping(consumes = "application/json")
-    public ResponseEntity<UserDTO> saveUser(@RequestBody UserDTO userDTO) {
+    //SEND A MESSAGE TO THE USER  /api/user/{id}/message
+    @PostMapping(value = "/{id}/message")
+    public ResponseEntity<Void> postUserMessage(){
 
-        Users users = new Users();
-        users.setProfilePicture(userDTO.getProfilePicture());
-        users.setTelephoneNumber(userDTO.getTelephoneNumber());
-        users.setAddress(userDTO.getAddress());
-        users.setEmail(userDTO.getEmail());
-        users.setFirstname(userDTO.getFirstname());
-        users.setLastname(userDTO.getLastname());
-        users.setPassword(userDTO.getPassword());
 
-        users = userService.save(users);
-        return new ResponseEntity<>(new UserDTO(users), HttpStatus.CREATED);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping(consumes = "application/json")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO) {
+    //BLOCKING OF THE USER  /api/user/{id}/block
+    @PutMapping(value =  "/{id}/block")
+    public ResponseEntity<Void> updateUser(@PathVariable Integer id) {
 
         // a user must exist
-        Users users = userService.findOne(userDTO.getId());
+        Users user = userService.findOne(id);
 
-        if (users == null) {
+        if (user == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        users.setProfilePicture(userDTO.getProfilePicture());
-        users.setTelephoneNumber(userDTO.getTelephoneNumber());
-        users.setAddress(userDTO.getAddress());
-        users.setEmail(userDTO.getEmail());
-        users.setFirstname(userDTO.getFirstname());
-        users.setLastname(userDTO.getLastname());
-        users.setPassword(userDTO.getPassword());
+        user.setBlocked(true);
 
-        users = userService.save(users);
-        return new ResponseEntity<>(new UserDTO(users), HttpStatus.OK);
+        userService.save(user);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
 
-        Users users = userService.findOne(id);
+    //UNBLOCKING USER  /api/user/{id}/unblock
+    @PutMapping(value = "/{id}/unblock")
+    public ResponseEntity<Void> unblockUser(@PathVariable Integer id) {
 
-        if (users != null) {
-            userService.remove(id);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        // a user must exist
+        Users user = userService.findOne(id);
+
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        user.setBlocked(false);
+
+        userService.save(user);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //NOTE CREATING  /api/user/{id}/note
+    @GetMapping(value = "/{id}/note")
+    public ResponseEntity<Void> getUserNote(){
+
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //GETTING NOTES FOR THE USER  /api/user/{id}/note
+    @PostMapping(value = "/{id}/note")
+    public ResponseEntity<Void> postUserNote(){
+
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
