@@ -29,7 +29,7 @@ public class UserDTO {
 
     public UserDTO() {}
 
-    public UserDTO(Users users){
+    public UserDTO(User users){
         this(users.getId(), users.getEmail(), users.getFirstname(), users.getLastname(), users.getProfilePicture(), users.getTelephoneNumber(), users.getAddress(), users.getPassword(), users.getActive(), users.getBlocked());
     }
 

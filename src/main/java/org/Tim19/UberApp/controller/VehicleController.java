@@ -31,7 +31,7 @@ public class VehicleController {
     public ResponseEntity<VehicleDTO> saveVehicle(@RequestBody VehicleDTO vehicleDTO) {
 
         Vehicle vehicle = new Vehicle();
-        vehicle.setVehicleType(vehicleDTO.getVehicleType());
+      //  vehicle.setVehicleType(vehicleDTO.getVehicleType());
         vehicle.setCarModel(vehicleDTO.getCarModel());
         vehicle.setLicenseNumber(vehicleDTO.getLicenseNumber());
         vehicle.setPassengerSeats(vehicleDTO.getPassengerSeats());
@@ -52,7 +52,7 @@ public class VehicleController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        vehicle.setVehicleType(vehicleDTO.getVehicleType());
+        //vehicle.setVehicleType(vehicleDTO.getVehicleType());
         vehicle.setCarModel(vehicleDTO.getCarModel());
         vehicle.setLicenseNumber(vehicleDTO.getLicenseNumber());
         vehicle.setPassengerSeats(vehicleDTO.getPassengerSeats());

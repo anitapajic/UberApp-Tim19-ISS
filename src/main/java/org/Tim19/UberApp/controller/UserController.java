@@ -67,7 +67,7 @@ public class UserController {
     public ResponseEntity<Void> updateUser(@PathVariable Integer id) {
 
         // a user must exist
-        Users user = userService.findOne(id);
+        User user = userService.findOne(id);
 
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -84,7 +84,7 @@ public class UserController {
     public ResponseEntity<Void> unblockUser(@PathVariable Integer id) {
 
         // a user must exist
-        Users user = userService.findOne(id);
+        User user = userService.findOne(id);
 
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
