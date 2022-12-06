@@ -1,6 +1,6 @@
 package org.Tim19.UberApp.dto;
 
-import org.Tim19.UberApp.model.Users;
+import org.Tim19.UberApp.model.User;
 
 public class UserDTO {
     private Integer id;
@@ -11,8 +11,10 @@ public class UserDTO {
     private String email;
     private String address;
     private String password;
+    private Boolean active;
+    private Boolean blocked;
 
-    public UserDTO(Integer id, String firstname, String lastname, String profilePicture, String telephoneNumber, String email, String address, String password) {
+    public UserDTO(Integer id, String firstname, String lastname, String profilePicture, String telephoneNumber, String email, String address, String password, Boolean active, Boolean blocked) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -21,12 +23,14 @@ public class UserDTO {
         this.email = email;
         this.address = address;
         this.password = password;
+        this.active = active;
+        this.blocked = blocked;
     }
 
     public UserDTO() {}
 
-    public UserDTO(Users users) {
-        this(users.getId(), users.getFirstname(), users.getLastname(), users.getProfilePicture(), users.getTelephoneNumber(), users.getEmail(), users.getAddress(), users.getPassword());
+    public UserDTO(User user) {
+        this(user.getId(), user.getFirstname(), user.getLastname(), user.getProfilePicture(), user.getTelephoneNumber(), user.getEmail(), user.getAddress(), user.getPassword(), user.getActive(), user.getBlocked());
     }
 
     public Integer getId() {
@@ -39,11 +43,9 @@ public class UserDTO {
     }
 
 
-
     public String getLastname() {
         return lastname;
     }
-
 
 
     public String getProfilePicture() {
@@ -51,17 +53,14 @@ public class UserDTO {
     }
 
 
-
     public String getTelephoneNumber() {
         return telephoneNumber;
     }
 
 
-
     public String getEmail() {
         return email;
     }
-
 
 
     public String getAddress() {
@@ -73,6 +72,8 @@ public class UserDTO {
         return password;
     }
 
+    public Boolean getActive() { return active; }
 
+    public Boolean getBlocked() { return blocked; }
 
 }
