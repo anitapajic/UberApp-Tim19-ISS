@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Data
@@ -21,8 +23,10 @@ public class Vehicle {
     @OneToOne
     @JoinColumn(name = "driver_id")
     private Driver driver;
+
     @Column(name = "carModel", nullable = false)
     private String carModel;
+
     @Column(name = "vehicleType", nullable = false)
     private VehicleType vehicleType;
 
@@ -40,7 +44,6 @@ public class Vehicle {
     @Column(name = "petTransport", nullable = false)
     private boolean petTransport;
 
-    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Message> reviews = new HashSet<>();
 
@@ -64,6 +67,7 @@ public class Vehicle {
     public  void removeReview(Message message){
         this.reviews.remove(message);
     }
+
 }
 
 

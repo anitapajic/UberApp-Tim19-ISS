@@ -21,9 +21,7 @@ public class DriverDocumentService {
 
     public DriverDocument save(DriverDocument driverDocument){return driverRepository.save(driverDocument);}
 
-    public void remove(Integer id){
-        driverRepository.deleteById(id);}
+    public void remove(Integer id){driverRepository.deleteById(id);}
 
-    public DriverDocument findByEmail(String driverId){return driverRepository.findOneById(driverId);}
 
 }

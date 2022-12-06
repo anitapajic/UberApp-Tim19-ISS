@@ -3,21 +3,21 @@ package org.Tim19.UberApp.dto;
 import org.Tim19.UberApp.model.MSGType;
 import org.Tim19.UberApp.model.Message;
 import org.Tim19.UberApp.model.Ride;
-import org.Tim19.UberApp.model.Users;
+import org.Tim19.UberApp.model.User;
 
 import java.time.LocalDateTime;
 
 public class MessageDTO {
 
     private Integer id;
-    private Users sender;
-    private Users receiver;
+    private User sender;
+    private User receiver;
     private String text;
     private LocalDateTime time;
     private MSGType type;
     private Ride ride;
 
-    public MessageDTO(Integer id, Users sender, Users receiver, String text, LocalDateTime time, MSGType type, Ride ride) {
+    public MessageDTO(Integer id, User sender, User receiver, String text, LocalDateTime time, MSGType type, Ride ride) {
         this.id = id;
         this.sender = sender;
         this.receiver = receiver;
@@ -37,11 +37,11 @@ public class MessageDTO {
         return id;
     }
 
-    public Users getSender() {
+    public User getSender() {
         return sender;
     }
 
-    public Users getReceiver() {
+    public User getReceiver() {
         return receiver;
     }
 
