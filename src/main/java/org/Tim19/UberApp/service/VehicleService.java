@@ -1,6 +1,5 @@
 package org.Tim19.UberApp.service;
 
-import org.Tim19.UberApp.model.DriverDocument;
 import org.Tim19.UberApp.model.Vehicle;
 import org.Tim19.UberApp.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +21,7 @@ public class VehicleService {
 
     public Vehicle save(Vehicle driverDocument){return vehicleRepository.save(driverDocument);}
 
-    public void remove(Integer id){
-        vehicleRepository.deleteById(id);}
+    public void remove(Integer id){vehicleRepository.deleteById(id);}
 
-    public Vehicle findByEmail(String driverId){return vehicleRepository.findOneById(driverId);}
 }
+

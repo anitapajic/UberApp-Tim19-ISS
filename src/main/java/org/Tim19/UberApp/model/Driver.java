@@ -5,7 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Data
@@ -14,20 +16,24 @@ import java.util.*;
 public class Driver extends User{
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<DriverDocument> documents = new HashSet<>();
+    @OneToMany(cascade ={CascadeType.ALL},
+            fetch = FetchType.LAZY)
+    private Set<Ride> rides = new HashSet<Ride>();
+
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Ride> rides = new HashSet<>();
+    @OneToMany(cascade ={CascadeType.ALL},
+            fetch = FetchType.LAZY)
+    private Set<DriverDocument> documents = new HashSet<DriverDocument>();
+
     @JsonIgnore
     @OneToOne
-    @JoinColumn(name = "vehicle_id")
+    @JoinColumn(name="vehicle_id")
     private Vehicle vehicle;
 
-    public Driver(Integer id, String firstname, String lastname, String profilePicture, String telephoneNumber, String email, String address, String password, Boolean active, Boolean blocked, Set<DriverDocument> documents, Set<Ride> rides, Vehicle vehicle) {
-        super(id, firstname, lastname, profilePicture, telephoneNumber, email, address, password, active, blocked);
-        this.documents = documents;
+    public Driver(Integer id, String email, String firstname, String lastname, String profilePicture, String telephoneNumber, String address, String password, Boolean active, Boolean blocked, Set<Ride> rides, Set<DriverDocument> documents, Vehicle vehicle) {
+        super(id, email, firstname, lastname, profilePicture, telephoneNumber, address, password, active, blocked);
         this.rides = rides;
+        this.documents = documents;
         this.vehicle = vehicle;
     }
 
@@ -45,4 +51,5 @@ public class Driver extends User{
     public  void removeRide(Ride ride){
         this.rides.remove(ride);
     }
+
 }

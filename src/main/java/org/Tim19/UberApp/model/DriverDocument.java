@@ -24,9 +24,9 @@ public class DriverDocument {
     @JoinColumn(name = "driver_id")
     private Driver driver;
 
-
-    public DriverDocument(String name, String documentImage, Driver driver) {
+    public DriverDocument(Integer id, String name, String documentImage, Driver driver) {
         super();
+        this.id = id;
         this.name = name;
         this.documentImage = documentImage;
         this.driver = driver;

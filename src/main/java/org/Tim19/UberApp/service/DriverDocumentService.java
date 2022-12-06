@@ -11,18 +11,17 @@ import java.util.List;
 public class DriverDocumentService {
 
     @Autowired
-    private DriverDocumentRepository driverDocumentRepository;
+    private DriverDocumentRepository driverRepository;
 
-    public DriverDocument findOne(Integer id){return driverDocumentRepository.findOneByDriverId(String.valueOf(id));}
+    public DriverDocument findOne(Integer id){return driverRepository.findById(id).orElseGet(null);}
 
-    public List<DriverDocument> findAll(){return driverDocumentRepository.findAll();}
+    public List<DriverDocument> findAll(){return driverRepository.findAll();}
 
-    public Page<DriverDocument> findAll(Pageable page){return driverDocumentRepository.findAll(page);}
+    public Page<DriverDocument> findAll(Pageable page){return driverRepository.findAll(page);}
 
-    public DriverDocument save(DriverDocument driverDocument){return driverDocumentRepository.save(driverDocument);}
+    public DriverDocument save(DriverDocument driverDocument){return driverRepository.save(driverDocument);}
 
-    public void remove(Integer id){
-        driverDocumentRepository.deleteById(id);}
+    public void remove(Integer id){driverRepository.deleteById(id);}
 
 
 }

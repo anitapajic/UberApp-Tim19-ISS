@@ -5,31 +5,37 @@ import org.Tim19.UberApp.model.DriverDocument;
 
 public class DriverDocumentDTO {
 
-    private String docName;
+    private Integer id;
+    private String name;
     private String documentImage;
-    private Integer  driverId;
+    private Driver  driver;
 
-    public DriverDocumentDTO() {}
+    public DriverDocumentDTO(){}
 
-    public DriverDocumentDTO(String docName, String documentImage, Integer driverId) {
-        this.docName = docName;
+    public DriverDocumentDTO(Integer id, String name, String documentImage, Driver driver) {
+        this.id = id;
+        this.name = name;
         this.documentImage = documentImage;
-        this.driverId = driverId;
+        this.driver = driver;
     }
 
-    public DriverDocumentDTO(DriverDocument driverDocument) {
-        this(driverDocument.getDocName(), driverDocument.getDocumentImage(), driverDocument.getDriverId());
+    public DriverDocumentDTO(DriverDocument driverDocument){
+        this(driverDocument.getId(), driverDocument.getName(), driverDocument.getDocumentImage(), driverDocument.getDriver());
     }
-    public String getDocName() {
-        return docName;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getDocumentImage() {
         return documentImage;
     }
 
-    public Integer getDriverId() {
-        return driverId;
+    public Driver getDriver() {
+        return driver;
     }
-
 }
