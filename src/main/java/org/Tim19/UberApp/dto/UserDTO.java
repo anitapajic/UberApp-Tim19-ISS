@@ -1,6 +1,6 @@
 package org.Tim19.UberApp.dto;
 
-import org.Tim19.UberApp.model.Users;
+import org.Tim19.UberApp.model.User;
 
 public class UserDTO {
     private Integer id;
@@ -34,14 +34,6 @@ public class UserDTO {
     }
 
 
-    public Boolean getActive() {
-        return active;
-    }
-
-    public Boolean getBlocked() {
-        return blocked;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -52,11 +44,9 @@ public class UserDTO {
     }
 
 
-
     public String getLastname() {
         return lastname;
     }
-
 
 
     public String getProfilePicture() {
@@ -64,17 +54,14 @@ public class UserDTO {
     }
 
 
-
     public String getTelephoneNumber() {
         return telephoneNumber;
     }
 
 
-
     public String getEmail() {
         return email;
     }
-
 
 
     public String getAddress() {
@@ -86,6 +73,8 @@ public class UserDTO {
         return password;
     }
 
+    public Boolean getActive() { return active; }
 
+    public Boolean getBlocked() { return blocked; }
 
 }

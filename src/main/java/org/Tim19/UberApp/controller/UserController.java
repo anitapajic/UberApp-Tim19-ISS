@@ -1,8 +1,7 @@
 package org.Tim19.UberApp.controller;
 
 
-import org.Tim19.UberApp.dto.UserDTO;
-import org.Tim19.UberApp.model.Users;
+import org.Tim19.UberApp.model.User;
 import org.Tim19.UberApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-
 import java.util.Map;
 
 @RestController
@@ -37,7 +35,7 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> getAllUsers(@RequestParam(defaultValue = "0") Integer page,
                                                            @RequestParam(defaultValue = "4") Integer size) {
         Pageable paging = PageRequest.of(page, size);
-        Page<Users> pagedResult = userService.findAll(paging);
+        Page<User> pagedResult = userService.findAll(paging);
 
         Map<String, Object> response = new HashMap<>();
         response.put("totalcounts", pagedResult.getTotalElements());

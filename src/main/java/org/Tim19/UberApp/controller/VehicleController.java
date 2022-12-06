@@ -1,10 +1,6 @@
 package org.Tim19.UberApp.controller;
 
-import org.Tim19.UberApp.dto.DriverDocumentDTO;
-import org.Tim19.UberApp.dto.UserDTO;
 import org.Tim19.UberApp.dto.VehicleDTO;
-import org.Tim19.UberApp.model.DriverDocument;
-import org.Tim19.UberApp.model.Users;
 import org.Tim19.UberApp.model.Vehicle;
 import org.Tim19.UberApp.service.VehicleService;
 import org.springframework.http.HttpStatus;

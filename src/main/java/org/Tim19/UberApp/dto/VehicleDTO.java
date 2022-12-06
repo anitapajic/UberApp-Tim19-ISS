@@ -1,6 +1,5 @@
 package org.Tim19.UberApp.dto;
 
-import org.Tim19.UberApp.model.Users;
 import org.Tim19.UberApp.model.Vehicle;
 
 public class VehicleDTO {

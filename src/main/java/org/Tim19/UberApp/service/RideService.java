@@ -1,9 +1,7 @@
 package org.Tim19.UberApp.service;
 
 import org.Tim19.UberApp.model.Ride;
-import org.Tim19.UberApp.model.Users;
 import org.Tim19.UberApp.repository.RideRepository;
-import org.Tim19.UberApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

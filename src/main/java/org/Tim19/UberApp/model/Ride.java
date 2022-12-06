@@ -1,14 +1,16 @@
 package org.Tim19.UberApp.model;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 
 @Entity
+@Data
+@NoArgsConstructor
 public class Ride {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -22,150 +24,72 @@ public class Ride {
     @Column(name="totalCost", nullable = false)
     private Float totalCost;
 
-    ///TODO:Dodati objekat lokacija
-
-    @ManyToOne(cascade = {CascadeType.ALL},
-                fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "driver_id")
     private Driver driver;
 
-    @ManyToMany(cascade = {CascadeType.ALL},
-            fetch = FetchType.EAGER)
-    private Set<Passenger> passenger = new HashSet<Passenger>();
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "passenger_ride",
+            joinColumns = @JoinColumn(name = "ride_id"),
+            inverseJoinColumns = @JoinColumn(name = "passenger_id")
+    )
+    private Set<Passenger> passengers = new HashSet<>();
+
+    //lista putanji
 
     @Column(name="estimatedTimeInMinutes", nullable = false)
     private Integer estimatedTimeInMinutes;
 
-    @Column(name="vehicleType", nullable = false)
-    private String vehicleType;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Message> reviews = new HashSet<>();
 
+    @Column(name="status", nullable = false)
+    private String status;
+
+    //odbijenica
+
+    @Column(name="panic", nullable = false)
+    private boolean panic;
     @Column(name="babyTransport", nullable = false)
     private boolean babyTransport;
 
     @Column(name="petTransport", nullable = false)
     private boolean petTransport;
+    @Column(name="vehicleType", nullable = false)
+    private VehicleType vehicleType;
 
-    //private ArrayList<Location> locations;
 
-    @Column(name="status", nullable = false)
-    private String status;
-
-    public Ride(){super();}
-
-    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Float totalCost, Integer estimatedTimeInMinutes, String vehicleType, boolean babyTransport, boolean petTransport, String status, Driver driver) {
+    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Float totalCost, Driver driver, Set<Passenger> passengers, Integer estimatedTimeInMinutes, Set<Message> reviews, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
         this.totalCost = totalCost;
-        this.estimatedTimeInMinutes = estimatedTimeInMinutes;
-        this.vehicleType = vehicleType;
-        this.babyTransport = babyTransport;
-        this.petTransport = petTransport;
-        this.status = status;
         this.driver = driver;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public Float getTotalCost() {
-        return totalCost;
-    }
-
-    public void setTotalCost(Float totalCost) {
-        this.totalCost = totalCost;
-    }
-
-    public Integer getEstimatedTimeInMinutes() {
-        return estimatedTimeInMinutes;
-    }
-
-    public void setEstimatedTimeInMinutes(Integer estimatedTimeInMinutes) {
+        this.passengers = passengers;
         this.estimatedTimeInMinutes = estimatedTimeInMinutes;
-    }
-
-    public String getVehicleType() {
-        return vehicleType;
-    }
-
-    public void setVehicleType(String vehicleType) {
+        this.reviews = reviews;
+        this.status = status;
+        this.panic = panic;
+        this.babyTransport = babyTransport;
+        this.petTransport = petTransport;
         this.vehicleType = vehicleType;
     }
 
-    public boolean isBabyTransport() {
-        return babyTransport;
+    public void addPassenger(Passenger passenger){
+        this.passengers.add(passenger);
     }
 
-    public void setBabyTransport(boolean babyTransport) {
-        this.babyTransport = babyTransport;
+    public  void removePassenger(Passenger passenger){
+        this.passengers.remove(passenger);
     }
 
-    public boolean isPetTransport() {
-        return petTransport;
+    public void addReview(Message message){
+        this.reviews.add(message);
     }
 
-    public void setPetTransport(boolean petTransport) {
-        this.petTransport = petTransport;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Ride s = (Ride) o;
-        if (s.id == null || id == null) {
-            return false;
-        }
-        return Objects.equals(id, s.id);
-    }
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Ride{" +
-                "id=" + id +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                ", totalCost=" + totalCost +
-                ", estimatedTimeInMinutes=" + estimatedTimeInMinutes +
-                ", vehicleType='" + vehicleType + '\'' +
-                ", babyTransport=" + babyTransport +
-                ", petTransport=" + petTransport +
-                ", status='" + status + '\'' +
-                '}';
+    public  void removeReview(Message message){
+        this.reviews.remove(message);
     }
 }
+
