@@ -24,7 +24,7 @@ public class DriverController {
     @Autowired
     private DriverService driverService;
 
-    //CREATE DRIVER  /api/driver
+    //CREATE DRIVER  /api/driver    
     @PostMapping(consumes = "application/json")
     public ResponseEntity<DriverDTO> createDriver(@RequestBody DriverDTO driverDTO) {
 
@@ -69,8 +69,8 @@ public class DriverController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(new DriverDTO(users), HttpStatus.OK);
-    }
+            return new ResponseEntity<>(new DriverDTO(users), HttpStatus.OK);
+        }
 
     //UPDATE EXISTING DRIVER  /api/driver/{id}
     @PutMapping(consumes = "application/json")

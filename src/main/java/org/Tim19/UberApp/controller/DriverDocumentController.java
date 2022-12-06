@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/driver/{id}/documents")
-public class DriverDocumentController {
+public class    DriverDocumentController {
 
     private DriverDocumentService driverDocumentService;
 
