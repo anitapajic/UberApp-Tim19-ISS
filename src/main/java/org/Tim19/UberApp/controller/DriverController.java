@@ -73,7 +73,7 @@ public class DriverController {
     }
 
     //UPDATE EXISTING DRIVER  /api/driver/{id}
-    @PutMapping(consumes = "application/json")
+    @PutMapping(value= "/{id}" ,consumes = "application/json")
     public ResponseEntity<DriverDTO> updateDriver(@RequestBody DriverDTO driverDTO) {
 
         // a driver must exist
