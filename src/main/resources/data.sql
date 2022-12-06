@@ -51,7 +51,7 @@
 
 insert into vehicle (driver_id, car_model, vehicle_type, license_number, passenger_seats, baby_transport, pet_transport) values (null, 'audi', '0', 'NS 010 WQ', '4', 'true', 'false');
 
-insert into user (dtype, firstname, lastname, email, profile_picture, telephone_number, address, password, active, blocked, vehicle_id) values ('Driver','tamara', 'dzambic', 'tdz@gmail.com','pic1', '22232', 'NS 12', '123', 'true', 'false', '1');
-insert into user (dtype, firstname, lastname, email, profile_picture, telephone_number, address, password, active, blocked) values ('Passenger','tamara', 'dzambic', 'tdz2@gmail.com','pic2', '22232', 'NS 12', '123', 'true', 'false');
-insert into user (dtype, firstname, lastname, email, profile_picture, telephone_number, address, password, active, blocked)  values ('Passenger','tamara', 'dzambic', 'tdz3@gmail.com','pic3', '22232', 'NS 12', '123', 'true', 'false');
+insert into user (dtype, email, firstname, lastname, profile_picture, telephone_number, address, password, active, blocked, vehicle_id) values ('Driver', 'tdz@gmail.com','tamara', 'dzambic','pic1', '22232', 'NS 12', '123', 'true', 'false', '1');
+insert into user (dtype, email, firstname, lastname, profile_picture, telephone_number, address, password, active, blocked) values ('Passenger', 'tdz2@gmail.com','tamara', 'dzambic','pic2', '22232', 'NS 12', '123', 'true', 'false');
+insert into user (dtype, email, firstname, lastname, profile_picture, telephone_number, address, password, active, blocked)  values ('Passenger', 'tdz3@gmail.com','tamara', 'dzambic','pic3', '22232', 'NS 12', '123', 'true', 'false');
 
