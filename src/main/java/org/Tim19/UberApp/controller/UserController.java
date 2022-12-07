@@ -1,6 +1,10 @@
 package org.Tim19.UberApp.controller;
 
 
+import org.Tim19.UberApp.dto.LoginDTO;
+import org.Tim19.UberApp.dto.MessageDTO;
+import org.Tim19.UberApp.dto.NoteDTO;
+import org.Tim19.UberApp.model.MSGType;
 import org.Tim19.UberApp.model.User;
 import org.Tim19.UberApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value = "/api/user")
@@ -44,22 +51,51 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    //USER MESSAGES  /api/user/login
+    @PostMapping(value = "/login",consumes = "application/json")
+    public ResponseEntity<Map<String, Object>> loginUser(@RequestBody LoginDTO loginDTO) {
+
+        User user = userService.findOneLogin(loginDTO.getEmail(), loginDTO.getPassword());
+
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("accessToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
+        response.put("refreshToken","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" );
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
     //USER MESSAGES  /api/user/{id}/message
     @GetMapping(value = "/{id}/message")
-    public ResponseEntity<Void> getUserMessage(){
+    public ResponseEntity<Map<String, Object>> getUserMessage(@PathVariable Integer id){
 
 
+        MessageDTO message1 = new MessageDTO(1,id, 123, "Message text", LocalDateTime.now(), MSGType.SUPPOR,465 );
+        MessageDTO message2 = new MessageDTO(2,id, 256, "Message text2", LocalDateTime.now(), MSGType.SUPPOR,111 );
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        Set<MessageDTO> messageDTOS = new HashSet<>();
+        messageDTOS.add(message1);
+        messageDTOS.add(message2);
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalCount", messageDTOS.size());
+        response.put("results", messageDTOS);
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     //SEND A MESSAGE TO THE USER  /api/user/{id}/message
-    @PostMapping(value = "/{id}/message")
-    public ResponseEntity<Void> postUserMessage(){
+    @PostMapping(value = "/{id}/message", consumes = "application/json")
+    public ResponseEntity<MessageDTO> postUserMessage(@PathVariable Integer id, @RequestBody MessageDTO messageDTO){
+        MessageDTO message = messageDTO;
+        message.setId(666);
+        message.setTime(LocalDateTime.now());
+        message.setSender(id);
 
 
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
     //BLOCKING OF THE USER  /api/user/{id}/block
@@ -98,19 +134,28 @@ public class UserController {
 
     //NOTE CREATING  /api/user/{id}/note
     @GetMapping(value = "/{id}/note")
-    public ResponseEntity<Void> getUserNote(){
+    public ResponseEntity<Map<String, Object>> getUserNotes(@PathVariable Integer id){
 
+        NoteDTO note1 = new NoteDTO(1, LocalDateTime.now(), "Note text");
+        NoteDTO note2 = new NoteDTO(2, LocalDateTime.now(), "Note text");
+        Set<NoteDTO> noteDTOS = new HashSet<>();
+        noteDTOS.add(note1);
+        noteDTOS.add(note2);
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalCount", noteDTOS.size());
+        response.put("results", noteDTOS);
 
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     //GETTING NOTES FOR THE USER  /api/user/{id}/note
     @PostMapping(value = "/{id}/note")
-    public ResponseEntity<Void> postUserNote(){
+    public ResponseEntity<NoteDTO> postUserNote(@PathVariable Integer id, @RequestBody NoteDTO noteDTO){
+        NoteDTO note = noteDTO;
+        note.setId(666);
+        note.setDate(LocalDateTime.now());
 
-
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(note, HttpStatus.OK);
     }
+
 }
