@@ -2,7 +2,6 @@ package org.Tim19.UberApp.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.Tim19.UberApp.dto.RejectionDTO;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
