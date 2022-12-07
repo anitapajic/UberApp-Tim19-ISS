@@ -115,26 +115,26 @@ public class PassengerController {
     }
 
     //PASSENGER RIDES  /api/passenger/{id}/ride
-//    @GetMapping(value="/{id}/ride")
-//    public ResponseEntity<Map<String, Object>> getAllRides(@PathVariable Integer id,
-//                                                           @RequestParam(defaultValue = "0") Integer page,
-//                                                           @RequestParam(defaultValue = "4") Integer size) {
-//
-//        Passenger passenger = passengerService.findOne(id);
-//
-//        if (passenger == null) {
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        }
-//
-//
-//        Pageable paging = PageRequest.of(page, size);
-//        Page<Ride> pagedResult = passengerService.findAllRidesFromPassenger(paging);
-//
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("totalcounts", pagedResult.getTotalElements());
-//        response.put("results", pagedResult.getContent());
-//
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
+    @GetMapping(value="/{id}/ride")
+    public ResponseEntity<Map<String, Object>> getAllRides(@PathVariable Integer id,
+                                                           @RequestParam(defaultValue = "0") Integer page,
+                                                           @RequestParam(defaultValue = "4") Integer size) {
+
+        Passenger passenger = passengerService.findOne(id);
+
+        if (passenger == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+
+        Pageable paging = PageRequest.of(page, size);
+        Page<Integer> pagedResult = passengerService.findAllRidesFromPassenger(paging, id);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalcounts", pagedResult.getTotalElements());
+        response.put("results", pagedResult.getContent());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 }

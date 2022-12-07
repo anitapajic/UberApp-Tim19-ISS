@@ -18,7 +18,12 @@ import java.util.Set;
 public class Passenger extends User{
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @JoinTable(
+            name = "passenger_ride",
+            joinColumns = @JoinColumn(name = "ride_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id")
+    )
     private Set<Ride> rides = new HashSet<>();
 
     //private List<> favourite = new ArrayList<>();
