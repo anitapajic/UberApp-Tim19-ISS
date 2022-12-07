@@ -2,10 +2,12 @@ package org.Tim19.UberApp.controller;
 
 
 import org.Tim19.UberApp.dto.PassengerDTO;
+import org.Tim19.UberApp.dto.RideDTO;
+import org.Tim19.UberApp.model.Driver;
 import org.Tim19.UberApp.model.Passenger;
 import org.Tim19.UberApp.model.Ride;
+import org.Tim19.UberApp.model.Vehicle;
 import org.Tim19.UberApp.service.PassengerService;
-import org.Tim19.UberApp.service.RideService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -115,26 +119,16 @@ public class PassengerController {
     }
 
     //PASSENGER RIDES  /api/passenger/{id}/ride
-//    @GetMapping(value="/{id}/ride")
-//    public ResponseEntity<Map<String, Object>> getAllRides(@PathVariable Integer id,
-//                                                           @RequestParam(defaultValue = "0") Integer page,
-//                                                           @RequestParam(defaultValue = "4") Integer size) {
-//
-//        Passenger passenger = passengerService.findOne(id);
-//
-//        if (passenger == null) {
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        }
-//
-//
-//        Pageable paging = PageRequest.of(page, size);
-//        Page<Ride> pagedResult = passengerService.findAllRidesFromPassenger(paging);
-//
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("totalcounts", pagedResult.getTotalElements());
-//        response.put("results", pagedResult.getContent());
-//
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
+    @GetMapping(value="/{id}/ride")
+    public ResponseEntity<Map<String, Object>> getAllRides(@PathVariable Integer id, Pageable page,
+                                                           @RequestParam(required = false) Date from,
+                                                           @RequestParam(required = false) Date to){
+        RideDTO rideDTO1 = new RideDTO();
+
+
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
+
+    }
 
 }
