@@ -1,6 +1,5 @@
 package org.Tim19.UberApp.service;
 
-import org.Tim19.UberApp.model.Driver;
 import org.Tim19.UberApp.model.WorkingHours;
 import org.Tim19.UberApp.repository.WorkingHoursRepository;
 import org.springframework.beans.factory.annotation.Autowired;

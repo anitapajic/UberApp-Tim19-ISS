@@ -1,22 +1,17 @@
 package org.Tim19.UberApp.dto;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
-
+@Data
+@NoArgsConstructor
 public class UserPaginatedDTO {
-    private Integer totalcounts;
-    private ArrayList<UserDTO> passengers;
+    private Integer id;
+    private String email;
 
-    public UserPaginatedDTO(Integer totalcounts, ArrayList<UserDTO> passengers) {
-        this.totalcounts = totalcounts;
-        this.passengers = passengers;
-    }
-    public UserPaginatedDTO(){}
-
-    public Integer getTotalcounts() {
-        return totalcounts;
-    }
-
-    public ArrayList<UserDTO> getPassengers() {
-        return passengers;
+    public UserPaginatedDTO(Integer id, String email) {
+        this.id = id;
+        this.email = email;
     }
 }

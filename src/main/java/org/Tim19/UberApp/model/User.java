@@ -2,17 +2,13 @@ package org.Tim19.UberApp.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DiscriminatorFormula;
-
 import javax.persistence.*;
-import java.util.Objects;
 
 
 @Data
 @NoArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-//@DiscriminatorFormula("case when user is not null then Driver else Passenger end")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
