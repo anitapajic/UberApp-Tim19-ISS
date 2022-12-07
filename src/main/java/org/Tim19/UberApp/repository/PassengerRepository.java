@@ -15,11 +15,9 @@ public interface PassengerRepository extends JpaRepository<Passenger, Integer> {
 
     public Page<Passenger> findAll(Pageable pageable);
 
-    @Query(value = "select * from ride r where r.id in (select ride_id from USER p join passenger_ride pr where passenger_id=?1)", nativeQuery = true)
-    public Page<Integer> findAllRidesFromPassenger(Pageable pageable, Integer passengerId);
+//    @Query(value = "select p.id, p.email, r.*, l1.*, l2.* from USER p, passenger_ride pr, ride r, ride_paths rp, path path, location l1, location l2 where P.ID = ?1 and p.id = pr.passenger_id and r.id = pr.ride_id and rp.ride_id= r.id and rp.paths_id=path.id and path.departure_id = l1.id and path.destination_id = l2.id")
+//    public Page<Integer> findAllRidesFromPassenger(Pageable pageable, Integer passengerId);
 
-//    @Query("select p from Passenger p join fetch p.rides e where p.id =?1")
-//    public Passenger findAllRidesFromPassenger(Integer id);
     public List<Passenger> findByFirstnameAndLastnameAllIgnoringCase(String firstname, String lastname);
 
 }

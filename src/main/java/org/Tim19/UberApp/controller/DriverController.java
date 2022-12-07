@@ -2,7 +2,6 @@ package org.Tim19.UberApp.controller;
 
 import org.Tim19.UberApp.dto.DriverDTO;
 import org.Tim19.UberApp.model.Driver;
-import org.Tim19.UberApp.model.Passenger;
 import org.Tim19.UberApp.service.DriverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,9 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController

@@ -2,6 +2,7 @@ package org.Tim19.UberApp.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.Tim19.UberApp.dto.RejectionDTO;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -39,7 +40,10 @@ public class Ride {
     )
     private Set<Passenger> passengers = new HashSet<>();
 
-    //lista putanji
+    @JsonIgnore
+    @OneToMany(cascade ={CascadeType.ALL},
+            fetch = FetchType.LAZY)
+    private Set<Path> paths = new HashSet<>();
 
     @Column(name="estimatedTimeInMinutes", nullable = false)
     private Integer estimatedTimeInMinutes;
@@ -50,7 +54,8 @@ public class Ride {
     @Column(name="status", nullable = false)
     private String status;
 
-    //odbijenica
+    @OneToMany
+    private Set<Rejection> rejections;
 
     @Column(name="panic", nullable = false)
     private boolean panic;
@@ -63,16 +68,18 @@ public class Ride {
     private VehicleType vehicleType;
 
 
-    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Float totalCost, Driver driver, Set<Passenger> passengers, Integer estimatedTimeInMinutes, Set<Message> reviews, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType) {
+    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Float totalCost, Driver driver, Set<Passenger> passengers, Set<Path> paths, Integer estimatedTimeInMinutes, Set<Message> reviews, String status, Set<Rejection> rejections, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
         this.totalCost = totalCost;
         this.driver = driver;
         this.passengers = passengers;
+        this.paths = paths;
         this.estimatedTimeInMinutes = estimatedTimeInMinutes;
         this.reviews = reviews;
         this.status = status;
+        this.rejections = rejections;
         this.panic = panic;
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;

@@ -1,6 +1,5 @@
 package org.Tim19.UberApp.repository;
 
-import org.Tim19.UberApp.model.Vehicle;
 import org.Tim19.UberApp.model.WorkingHours;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

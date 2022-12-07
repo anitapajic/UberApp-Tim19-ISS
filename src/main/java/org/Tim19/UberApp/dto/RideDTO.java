@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.Tim19.UberApp.model.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,7 +27,11 @@ public class RideDTO {
     private boolean petTransport;
     private String status;
 
-    ///TODO: Lista putanji i odbijenica
+    @JsonIgnore
+    private Set<Path> paths;
+
+    @JsonIgnore
+    private Set<Rejection> rejectons;
 
 
     public RideDTO(Integer id, LocalDateTime startTime, LocalDateTime endTime, Float totalCost, Driver driver, Set<Passenger> passengersDTO, Integer estimatedTimeInMinutes, Set<Message> reviews, VehicleType vehicleType, Boolean panic, boolean babyTransport, boolean petTransport, String status) {

@@ -1,7 +1,6 @@
 package org.Tim19.UberApp.controller;
 
 import org.Tim19.UberApp.dto.LoginDTO;
-import org.Tim19.UberApp.dto.UserDTO;
 import org.Tim19.UberApp.model.User;
 import org.Tim19.UberApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
