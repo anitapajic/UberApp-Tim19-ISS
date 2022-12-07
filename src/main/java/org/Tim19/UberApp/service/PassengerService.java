@@ -21,7 +21,13 @@ public class PassengerService {
     public List<Passenger> findAll(){return passengerRepository.findAll();}
 
     public Page<Passenger> findAll(Pageable page){return passengerRepository.findAll(page);}
-    //public Page<Ride> findAllRidesFromPassenger(Pageable page){return passengerRepository.findAllRidesFromPassenger(page);}
+
+    public Page<Integer> findAllRidesFromPassenger(Pageable page, Integer passengerId) {
+        return passengerRepository.findAllRidesFromPassenger(page, passengerId);
+    }
+//    public Passenger findAllRidesFromPassenger(Integer passengerId) {
+//        return passengerRepository.findAllRidesFromPassenger(passengerId);
+//    }
 
     public Passenger save(Passenger passenger){return passengerRepository.save(passenger);}
 
