@@ -55,3 +55,11 @@ insert into user (dtype, email, firstname, lastname, profile_picture, telephone_
 insert into user (dtype, email, firstname, lastname, profile_picture, telephone_number, address, password, active, blocked) values ('Passenger', 'tdz2@gmail.com','tamara', 'dzambic','pic2', '22232', 'NS 12', '123', 'true', 'false');
 insert into user (dtype, email, firstname, lastname, profile_picture, telephone_number, address, password, active, blocked)  values ('Passenger', 'tdz3@gmail.com','tamara', 'dzambic','pic3', '22232', 'NS 12', '123', 'true', 'false');
 
+insert into ride (start_time, end_time, total_cost, driver_id, estimated_time_in_minutes, status, panic, baby_transport, pet_transport, vehicle_type) values ('2017-07-21T17:32:28Z', '2017-07-21T17:32:28Z', '250', 1, '7', 'pending', 'false', 'false', 'false', '0');
+insert into ride (start_time, end_time, total_cost, driver_id, estimated_time_in_minutes, status, panic, baby_transport, pet_transport, vehicle_type) values ('2017-07-21T17:32:28Z', '2017-07-21T17:32:28Z', '250', 1, '7', 'pending', 'false', 'false', 'false', '0');
+insert into ride (start_time, end_time, total_cost, driver_id, estimated_time_in_minutes, status, panic, baby_transport, pet_transport, vehicle_type) values ('2017-07-21T17:32:28Z', '2017-07-21T17:32:28Z', '250', 1, '7', 'pending', 'false', 'false', 'false', '0');
+
+
+insert into passenger_ride (ride_id, passenger_id) values(1, 2);
+insert into passenger_ride (ride_id, passenger_id) values(2, 2);
+insert into passenger_ride (ride_id, passenger_id) values(3, 3);
