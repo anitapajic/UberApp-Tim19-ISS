@@ -1,6 +1,5 @@
 package org.Tim19.UberApp.dto;
 
-import org.Tim19.UberApp.model.Vehicle;
 import org.Tim19.UberApp.model.WorkingHours;
 
 import java.time.LocalDateTime;
