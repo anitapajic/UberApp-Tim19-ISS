@@ -54,7 +54,7 @@ public class UserController {
     //GETTING USER DETAILS  /api/user
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllUsers(@RequestParam(defaultValue = "0") Integer page,
-                                                           @RequestParam(defaultValue = "4") Integer size) {
+                                                           @RequestParam(defaultValue = "2") Integer size) {
         Pageable paging = PageRequest.of(page, size);
         Page<User> pagedResult = userService.findAll(paging);
 

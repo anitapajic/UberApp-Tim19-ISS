@@ -3,7 +3,6 @@ package org.Tim19.UberApp.controller;
 
 import org.Tim19.UberApp.dto.PaginatedData.*;
 import org.Tim19.UberApp.dto.PassengerDTO;
-import org.Tim19.UberApp.dto.RideDTO;
 import org.Tim19.UberApp.model.*;
 import org.Tim19.UberApp.service.PassengerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,15 +63,15 @@ public class PassengerController {
     @GetMapping(value = "/activate/{activationId}")
     public ResponseEntity<Void> activatePassengerAccount(@PathVariable Integer activationId) {
 
-//        Passenger passenger = passengerService.findOne(activationId);
-//
-//
-//        // passenger must exist
-//        if (passenger == null) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//        passenger.setActive(true);
-//        System.out.println(passenger);
+        Passenger passenger = passengerService.findOne(activationId);
+
+
+        // passenger must exist
+        if (passenger == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        passenger.setActive(true);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -111,7 +110,7 @@ public class PassengerController {
         passenger.setLastname(passengerDTO.getLastname());
         passenger.setPassword(passengerDTO.getPassword());
 
-//         passengerService.save(passenger);
+        //passengerService.save(passenger);
         return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
     }
 
