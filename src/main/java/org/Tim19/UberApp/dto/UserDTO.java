@@ -11,8 +11,6 @@ public class UserDTO {
     private String telephoneNumber;
     private String address;
     private String password;
-    private Boolean active;
-    private Boolean blocked;
 
     public UserDTO(Integer id, String email, String firstname, String lastname, String profilePicture, String telephoneNumber, String address, String password, Boolean active, Boolean blocked) {
         this.id = id;
@@ -23,8 +21,7 @@ public class UserDTO {
         this.telephoneNumber = telephoneNumber;
         this.address = address;
         this.password = password;
-        this.active = active;
-        this.blocked = blocked;
+
     }
 
     public UserDTO() {}
@@ -73,8 +70,5 @@ public class UserDTO {
         return password;
     }
 
-    public Boolean getActive() { return active; }
-
-    public Boolean getBlocked() { return blocked; }
 
 }

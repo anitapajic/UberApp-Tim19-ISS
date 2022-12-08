@@ -4,8 +4,10 @@ package org.Tim19.UberApp.controller;
 import org.Tim19.UberApp.dto.LoginDTO;
 import org.Tim19.UberApp.dto.MessageDTO;
 import org.Tim19.UberApp.dto.NoteDTO;
+import org.Tim19.UberApp.dto.PaginatedData.*;
 import org.Tim19.UberApp.model.MSGType;
 import org.Tim19.UberApp.model.User;
+import org.Tim19.UberApp.model.VehicleType;
 import org.Tim19.UberApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,10 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/user")
@@ -30,11 +29,26 @@ public class UserController {
 
     //RIDES OF THE USER  /api/user/{id}/ride
     @GetMapping(value = "/{id}/ride")
-    public ResponseEntity<Void> getUserRides(){
+    public ResponseEntity<Map<String, Object>> getAllRides(@PathVariable Integer id,
+                                                           @RequestParam(defaultValue = "0") Integer page,
+                                                           @RequestParam(defaultValue = "4") Integer size,
+                                                           @RequestParam(required = false) Date from,
+                                                           @RequestParam(required = false) Date to){
+        List<UserPaginatedDTO> passengers = new ArrayList<>();
+        passengers.add(new UserPaginatedDTO(id, "user@example.com"));
+        List<PathPaginatedDTO> locations = new ArrayList<>();
+        LocationPaginatedDTO departure = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
+        LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
+        locations.add(new PathPaginatedDTO(departure, destination));
+        RidePaginatedDTO ride = new RidePaginatedDTO(123, LocalDateTime.of(2022,12,7,20,15,26), LocalDateTime.of(2022,12,7,20,30,15),
+                1235.00, new UserPaginatedDTO(12, "user@example.com"), passengers, 5, VehicleType.STANDARD, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "PENDING");
 
 
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalcounts", 243);
+        response.put("results", ride);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     //GETTING USER DETAILS  /api/user
