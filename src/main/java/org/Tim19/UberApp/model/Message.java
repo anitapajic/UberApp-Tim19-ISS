@@ -28,7 +28,7 @@ public class Message {
     @Column(name = "type")
     private MSGType type;
 
-    @JsonIgnore
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ride_id")
     private Ride ride;

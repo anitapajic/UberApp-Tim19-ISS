@@ -1,9 +1,11 @@
 package org.Tim19.UberApp.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.Tim19.UberApp.model.User;
 
 public class UserDTO {
     private Integer id;
+
     private String email;
     private String firstname;
     private String lastname;
