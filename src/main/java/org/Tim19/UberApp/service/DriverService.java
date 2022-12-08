@@ -21,7 +21,7 @@ public class DriverService {
 
     public Page<Driver> findAll(Pageable page){return driverRepository.findAll(page);}
 
-    public Driver save(Driver users){return driverRepository.save(users);}
+    public Driver save(Driver driver){return driverRepository.save(driver);}
 
     public void remove(Integer id){
         driverRepository.deleteById(id);}

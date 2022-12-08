@@ -62,17 +62,18 @@ public class PassengerController {
 
     //ACTIVATE PASSENGER ACCOUNT  /api/passenger/activate/activationId
     @GetMapping(value = "/activate/{activationId}")
-    public ResponseEntity<PassengerDTO> activatePassengerAccount(@PathVariable Integer id) {
+    public ResponseEntity<Void> activatePassengerAccount(@PathVariable Integer activationId) {
 
-        Passenger passenger = passengerService.findOne(id);
-
-        // passenger must exist
-        if (passenger == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        passenger.setActive(true);
-
-        return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
+//        Passenger passenger = passengerService.findOne(activationId);
+//
+//
+//        // passenger must exist
+//        if (passenger == null) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//        passenger.setActive(true);
+//        System.out.println(passenger);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     //PASSENGER DETAILS  /api/passenger/{id}
@@ -90,17 +91,17 @@ public class PassengerController {
     }
 
     //UPDATE EXISTING PASSENGER /api/passenger/{id}
-    @PutMapping(consumes = "application/json")
-    public ResponseEntity<PassengerDTO> updatePassenger(@RequestBody PassengerDTO passengerDTO) {
+    @PutMapping(value = "/{id}", consumes = "application/json")
+    public ResponseEntity<PassengerDTO> updatePassenger(@PathVariable Integer id, @RequestBody PassengerDTO passengerDTO) {
 
         // a passenger must exist
-        Passenger passenger = passengerService.findOne(passengerDTO.getId());
+        Passenger passenger = passengerService.findOne(id);
 
         if (passenger == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        passenger.setActive(false);
+        passenger.setActive(true);
         passenger.setBlocked(false);
         passenger.setProfilePicture(passengerDTO.getProfilePicture());
         passenger.setTelephoneNumber(passengerDTO.getTelephoneNumber());
@@ -110,7 +111,7 @@ public class PassengerController {
         passenger.setLastname(passengerDTO.getLastname());
         passenger.setPassword(passengerDTO.getPassword());
 
-        passenger = passengerService.save(passenger);
+//         passengerService.save(passenger);
         return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
     }
 
@@ -121,14 +122,14 @@ public class PassengerController {
                                                            @RequestParam(defaultValue = "4") Integer size,
                                                            @RequestParam(required = false) Date from,
                                                            @RequestParam(required = false) Date to){
-        List<PassengerPaginatedDTO> passengers = new ArrayList<>();
-        passengers.add(new PassengerPaginatedDTO(123, "user@example.com"));
+        List<UserPaginatedDTO> passengers = new ArrayList<>();
+        passengers.add(new UserPaginatedDTO(id, "user@example.com"));
         List<PathPaginatedDTO> locations = new ArrayList<>();
         LocationPaginatedDTO departure = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));
         RidePaginatedDTO ride = new RidePaginatedDTO(123, LocalDateTime.of(2022,12,7,20,15,26), LocalDateTime.of(2022,12,7,20,30,15),
-                1235.00, new DriverPaginatedDTO(123, "user@example.com"), passengers, 5, VehicleType.STANDARD, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "PENDING");
+                1235.00, new UserPaginatedDTO(12, "user@example.com"), passengers, 5, VehicleType.STANDARD, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "PENDING");
 
 
         Map<String, Object> response = new HashMap<>();
