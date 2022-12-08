@@ -3,6 +3,7 @@ package org.Tim19.UberApp.controller;
 import org.Tim19.UberApp.dto.DriverDocumentDTO;
 import org.Tim19.UberApp.model.DriverDocument;
 import org.Tim19.UberApp.service.DriverDocumentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/api/driver/{id}/documents")
 public class DriverDocumentController {
 
+    @Autowired
     private DriverDocumentService driverDocumentService;
 
     ///TODO: Treba trazenje preko driverId

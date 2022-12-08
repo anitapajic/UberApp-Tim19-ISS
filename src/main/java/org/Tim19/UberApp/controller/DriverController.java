@@ -93,7 +93,7 @@ public class DriverController {
         driver.setLastname(driverDTO.getLastname());
         driver.setPassword(driverDTO.getPassword());
 
-        driver = driverService.save(driver);
+//        driver = driverService.save(driver);
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 

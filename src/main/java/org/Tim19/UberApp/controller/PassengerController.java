@@ -110,7 +110,7 @@ public class PassengerController {
         passenger.setLastname(passengerDTO.getLastname());
         passenger.setPassword(passengerDTO.getPassword());
 
-         passengerService.save(passenger);
+        //passengerService.save(passenger);
         return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
     }
 
