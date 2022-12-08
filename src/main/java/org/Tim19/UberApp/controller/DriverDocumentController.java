@@ -35,7 +35,7 @@ public class    DriverDocumentController {
         DriverDocument driverDocument = driverDocumentService.findOne(id);
 
         if (driverDocument != null) {
-            driverDocumentService.remove(id);
+            //driverDocumentService.remove(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

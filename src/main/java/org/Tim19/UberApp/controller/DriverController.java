@@ -1,9 +1,11 @@
 package org.Tim19.UberApp.controller;
 
 import org.Tim19.UberApp.dto.*;
+import org.Tim19.UberApp.dto.PaginatedData.*;
 import org.Tim19.UberApp.model.Driver;
 import org.Tim19.UberApp.model.Passenger;
 import org.Tim19.UberApp.model.Vehicle;
+import org.Tim19.UberApp.model.VehicleType;
 import org.Tim19.UberApp.service.DriverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -128,29 +130,27 @@ public class DriverController {
         @GetMapping(value = "/{id}/ride")
         public ResponseEntity<Map<String, Object>> getAllRidesFromDriver(){
 
+            UserPaginatedDTO driver = new UserPaginatedDTO(1,"aleks@gmail.com");
+            List<UserPaginatedDTO> passengers = new ArrayList<>();
+            passengers.add(new UserPaginatedDTO(1, "tamara@example.com"));
+            VehiclePaginatedDTO vehicle = new VehiclePaginatedDTO(5,"Standardno",true,false);
+            LocationPaginatedDTO departure = new LocationPaginatedDTO("Mise Dimitrijevica 42",45.267136,19.345633);
+            LocationPaginatedDTO destination = new LocationPaginatedDTO("Mise Dimitrijevica 42",45.267136,19.345633);
+            RejectionPaginatedDTO rejection = new RejectionPaginatedDTO("Ride is canceled due to previous problem with the passenger",LocalDateTime.now());
 
-            Driver2DTO driver2DTO = new Driver2DTO(1,"aleks@gmail.com");
-            Passenger2DTO passenger2DTO = new Passenger2DTO(1,"tamara@gmail.com");
-            Vehicle2DTO vehicle2DTO =new Vehicle2DTO(5,"Standardno",true,false);
-
-            Map<String, Object> locations = new HashMap<>();
-
-            String lokacija1 = "fnkjaef";
-            String alokacija1 = "fnkjaef";
-
-            locations.put("departure", lokacija1);
-            locations.put("destination", alokacija1);
-
-
-            Map<String, Object> results2 = new HashMap<>();
-            results2.put("passenger",passenger2DTO);
-            results2.put("driver", driver2DTO);
-            results2.put("vehicle", vehicle2DTO);
-
+            List<PathPaginatedDTO> locations = new ArrayList<>();
+            locations.add(new PathPaginatedDTO(departure, destination));
+            
+            Map<String, Object> results = new HashMap<>();
+            results.put("passenger",passengers);
+            results.put("driver", driver);
+            results.put("vehicle", vehicle);
+            results.put("rejection", rejection);
+            results.put("locations", locations);
 
             Map<String, Object> response = new HashMap<>();
             response.put("totalcounts",2);
-            response.put("results",results2);
+            response.put("results",results);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
 
