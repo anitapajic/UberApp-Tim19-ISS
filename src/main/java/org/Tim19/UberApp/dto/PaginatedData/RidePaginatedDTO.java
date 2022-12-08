@@ -2,7 +2,6 @@ package org.Tim19.UberApp.dto.PaginatedData;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.Tim19.UberApp.model.Vehicle;
 import org.Tim19.UberApp.model.VehicleType;
 
 import java.time.LocalDateTime;
