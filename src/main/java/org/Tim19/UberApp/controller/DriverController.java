@@ -71,10 +71,10 @@ public class DriverController {
 
     //UPDATE EXISTING DRIVER  /api/driver/{id}
     @PutMapping(value= "/{id}" ,consumes = "application/json")
-    public ResponseEntity<DriverDTO> updateDriver(@RequestBody DriverDTO driverDTO) {
+    public ResponseEntity<DriverDTO> updateDriver(@PathVariable Integer id, @RequestBody DriverDTO driverDTO) {
 
         // a driver must exist
-        Driver driver = driverService.findOne(driverDTO.getId());
+        Driver driver = driverService.findOne(id);
 
         if (driver == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -93,7 +93,7 @@ public class DriverController {
         driver.setLastname(driverDTO.getLastname());
         driver.setPassword(driverDTO.getPassword());
 
-        driver = driverService.save(driver);
+//        driver = driverService.save(driver);
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 
