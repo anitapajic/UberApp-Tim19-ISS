@@ -77,7 +77,7 @@ public class VehicleController {
 
 
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
 

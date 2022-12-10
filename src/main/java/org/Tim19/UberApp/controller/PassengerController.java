@@ -41,19 +41,19 @@ public class PassengerController {
         passenger.setPassword(passengerDTO.getPassword());
 
         passenger = passengerService.save(passenger);
-        return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.CREATED);
+        return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
     }
 
     //GETTING PASSENGERS /api/passenger
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllPassengers(@RequestParam(defaultValue = "0") Integer page,
-                                                           @RequestParam(defaultValue = "4") Integer size) {
+                                                                @RequestParam(defaultValue = "4") Integer size) {
 
         Pageable paging = PageRequest.of(page, size);
         Page<Passenger> pagedResult = passengerService.findAll(paging);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("totalcounts", pagedResult.getTotalElements());
+        response.put("totalCount", pagedResult.getTotalElements());
         response.put("results", pagedResult.getContent());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -119,8 +119,8 @@ public class PassengerController {
     public ResponseEntity<Map<String, Object>> getAllRides(@PathVariable Integer id,
                                                            @RequestParam(defaultValue = "0") Integer page,
                                                            @RequestParam(defaultValue = "4") Integer size,
-                                                           @RequestParam(required = false) Date from,
-                                                           @RequestParam(required = false) Date to){
+                                                           @RequestParam(required = false) String from,
+                                                           @RequestParam(required = false) String to){
         List<UserPaginatedDTO> passengers = new ArrayList<>();
         passengers.add(new UserPaginatedDTO(id, "user@example.com"));
         List<PathPaginatedDTO> locations = new ArrayList<>();
@@ -132,7 +132,7 @@ public class PassengerController {
 
 
         Map<String, Object> response = new HashMap<>();
-        response.put("totalcounts", 243);
+        response.put("totalCount", 243);
         response.put("results", ride);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
