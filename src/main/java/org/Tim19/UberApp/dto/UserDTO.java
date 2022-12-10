@@ -1,11 +1,13 @@
 package org.Tim19.UberApp.dto;
 
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.Tim19.UberApp.model.User;
 
 @Data
 public class UserDTO {
     private Integer id;
+
     private String email;
     private String name;
     private String surname;

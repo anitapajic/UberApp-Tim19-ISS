@@ -23,15 +23,14 @@ public class Ride {
     private LocalDateTime endTime;
 
     @Column(name="totalCost", nullable = false)
-    private Float totalCost;
+    private Double totalCost;
 
-    @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "driver_id")
     private Driver driver;
 
     @JsonIgnore
-    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "passenger_ride",
             joinColumns = @JoinColumn(name = "ride_id", referencedColumnName = "id"),
@@ -47,13 +46,15 @@ public class Ride {
     @Column(name="estimatedTimeInMinutes", nullable = false)
     private Integer estimatedTimeInMinutes;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Message> reviews = new HashSet<>();
 
     @Column(name="status", nullable = false)
     private String status;
 
-    @OneToMany
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Rejection> rejections;
 
     @Column(name="panic", nullable = false)
@@ -67,7 +68,7 @@ public class Ride {
     private VehicleType vehicleType;
 
 
-    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Float totalCost, Driver driver, Set<Passenger> passengers, Set<Path> paths, Integer estimatedTimeInMinutes, Set<Message> reviews, String status, Set<Rejection> rejections, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType) {
+    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengers, Set<Path> paths, Integer estimatedTimeInMinutes, Set<Message> reviews, String status, Set<Rejection> rejections, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;

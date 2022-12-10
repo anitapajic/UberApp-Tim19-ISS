@@ -1,23 +1,28 @@
 package org.Tim19.UberApp.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.Tim19.UberApp.model.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+@Data
+@NoArgsConstructor
 public class RideDTO {
     private Integer id;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private Float totalCost;
+    private Double totalCost;
 
     private Driver driver;
 
-    @JsonIgnore
+
     private Set<Passenger> passengersDTO = new HashSet<>();
     private Integer estimatedTimeInMinutes;
+
 
     private Set<Message> reviews;
     private VehicleType vehicleType;
@@ -26,15 +31,13 @@ public class RideDTO {
     private boolean babyTransport;
     private boolean petTransport;
     private String status;
-
     @JsonIgnore
     private Set<Path> paths;
 
-    @JsonIgnore
     private Set<Rejection> rejectons;
 
 
-    public RideDTO(Integer id, LocalDateTime startTime, LocalDateTime endTime, Float totalCost, Driver driver, Set<Passenger> passengersDTO, Integer estimatedTimeInMinutes, Set<Message> reviews, VehicleType vehicleType, Boolean panic, boolean babyTransport, boolean petTransport, String status) {
+    public RideDTO(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengersDTO, Integer estimatedTimeInMinutes, Set<Message> reviews, VehicleType vehicleType, Boolean panic, boolean babyTransport, boolean petTransport, String status, Set<Path> paths, Set<Rejection> rejectons) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -48,63 +51,14 @@ public class RideDTO {
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
         this.status = status;
+        this.paths = paths;
+        this.rejectons = rejectons;
     }
 
-    public RideDTO(){}
 
     public RideDTO(Ride ride) {
-        this(ride.getId(), ride.getStartTime(), ride.getEndTime(), ride.getTotalCost(), ride.getDriver(), ride.getPassengers(), ride.getEstimatedTimeInMinutes(), ride.getReviews(), ride.getVehicleType(), ride.isPanic(), ride.isBabyTransport(), ride.isPetTransport(), ride.getStatus());
+        this(ride.getId(), ride.getStartTime(), ride.getEndTime(), ride.getTotalCost(), ride.getDriver(), ride.getPassengers(), ride.getEstimatedTimeInMinutes(), ride.getReviews(), ride.getVehicleType(), ride.isPanic(), ride.isBabyTransport(), ride.isPetTransport(), ride.getStatus(), ride.getPaths(), ride.getRejections());
     }
 
-    public Integer getId() {
-        return id;
-    }
 
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
-    public Float getTotalCost() {
-        return totalCost;
-    }
-
-    public Driver getDriver() {
-        return driver;
-    }
-
-    public Set<Passenger> getPassengersDTO() {
-        return passengersDTO;
-    }
-
-    public Integer getEstimatedTimeInMinutes() {
-        return estimatedTimeInMinutes;
-    }
-
-    public Set<Message> getReviews() {
-        return reviews;
-    }
-
-    public VehicleType getVehicleType() {
-        return vehicleType;
-    }
-
-    public Boolean getPanic() {
-        return panic;
-    }
-
-    public boolean isBabyTransport() {
-        return babyTransport;
-    }
-
-    public boolean isPetTransport() {
-        return petTransport;
-    }
-
-    public String getStatus() {
-        return status;
-    }
 }

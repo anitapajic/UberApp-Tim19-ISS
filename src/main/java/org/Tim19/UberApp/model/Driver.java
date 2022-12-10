@@ -16,7 +16,7 @@ public class Driver extends User{
 
     @JsonIgnore
     @OneToMany(cascade ={CascadeType.ALL},
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     private Set<Ride> rides = new HashSet<Ride>();
 
     @JsonIgnore
