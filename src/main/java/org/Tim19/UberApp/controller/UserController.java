@@ -32,8 +32,9 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> getAllRides(@PathVariable Integer id,
                                                            @RequestParam(defaultValue = "0") Integer page,
                                                            @RequestParam(defaultValue = "4") Integer size,
-                                                           @RequestParam(required = false) Date from,
-                                                           @RequestParam(required = false) Date to){
+                                                           @RequestParam(required = false) String sort,
+                                                           @RequestParam(required = false) String  from,
+                                                           @RequestParam(required = false) String  to){
         List<UserPaginatedDTO> passengers = new ArrayList<>();
         passengers.add(new UserPaginatedDTO(id, "user@example.com"));
         List<PathPaginatedDTO> locations = new ArrayList<>();
@@ -41,12 +42,13 @@ public class UserController {
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));
         RidePaginatedDTO ride = new RidePaginatedDTO(123, LocalDateTime.of(2022,12,7,20,15,26), LocalDateTime.of(2022,12,7,20,30,15),
-                1235.00, new UserPaginatedDTO(12, "user@example.com"), passengers, 5, VehicleType.STANDARD, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "PENDING");
+                1235.00, new UserPaginatedDTO(12, "user@example.com"), passengers, 5, VehicleType.STANDARDNO, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations);
 
-
+        List<RidePaginatedDTO> rides = new ArrayList<>();
+        rides.add(ride);
         Map<String, Object> response = new HashMap<>();
-        response.put("totalcounts", 243);
-        response.put("results", ride);
+        response.put("totalCount", 243);
+        response.put("results", rides);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -59,7 +61,7 @@ public class UserController {
         Page<User> pagedResult = userService.findAll(paging);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("totalcounts", pagedResult.getTotalElements());
+        response.put("totalCount", pagedResult.getTotalElements());
         response.put("results", pagedResult.getContent());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -69,17 +71,17 @@ public class UserController {
     @PostMapping(value = "/login",consumes = "application/json")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody LoginDTO loginDTO) {
 
-        User user = userService.findOneLogin(loginDTO.getEmail(), loginDTO.getPassword());
-
-        if (user == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+//        User user = userService.findOneLogin(loginDTO.getEmail(), loginDTO.getPassword());
+//
+//        if (user == null) {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
 
         Map<String, Object> response = new HashMap<>();
         response.put("accessToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
         response.put("refreshToken","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" );
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     //USER MESSAGES  /api/user/{id}/message
@@ -90,11 +92,13 @@ public class UserController {
         MessageDTO message1 = new MessageDTO(1,id, 123, "Message text", LocalDateTime.now(), MSGType.SUPPOR,465 );
         MessageDTO message2 = new MessageDTO(2,id, 256, "Message text2", LocalDateTime.now(), MSGType.SUPPOR,111 );
 
-        Set<MessageDTO> messageDTOS = new HashSet<>();
+        Set<Object> messageDTOS = new HashSet<>();
         messageDTOS.add(message1);
         messageDTOS.add(message2);
+
+
         Map<String, Object> response = new HashMap<>();
-        response.put("totalCount", messageDTOS.size());
+        response.put("totalCount",243);
         response.put("results", messageDTOS);
 
         return new ResponseEntity<>(response,HttpStatus.OK);
@@ -105,8 +109,8 @@ public class UserController {
     public ResponseEntity<MessageDTO> postUserMessage(@PathVariable Integer id, @RequestBody MessageDTO messageDTO){
         MessageDTO message = messageDTO;
         message.setId(666);
-        message.setTime(LocalDateTime.now());
-        message.setSender(id);
+        message.setTimeOfSending(LocalDateTime.now());
+        message.setSenderId(id);
 
 
         return new ResponseEntity<>(message, HttpStatus.OK);
@@ -126,7 +130,7 @@ public class UserController {
         user.setBlocked(true);
 
         userService.save(user);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     //UNBLOCKING USER  /api/user/{id}/unblock
@@ -143,7 +147,7 @@ public class UserController {
         user.setBlocked(false);
 
         userService.save(user);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     //NOTE CREATING  /api/user/{id}/note
