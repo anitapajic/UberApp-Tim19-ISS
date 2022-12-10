@@ -47,7 +47,7 @@ public class RideController {
         ride.setEstimatedTimeInMinutes(rideDTO.getEstimatedTimeInMinutes());
         ride.setDriver(driver);
         ride.setLocations(rideDTO.getLocations());
-        return new ResponseEntity<>(ride, HttpStatus.CREATED);
+        return new ResponseEntity<>(ride, HttpStatus.OK);
     }
 
     //ACTIVE RIDE FOR DRIVER  /api/ride/driver/{driverId}/active
@@ -61,7 +61,7 @@ public class RideController {
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));
         RidePaginatedDTO ride = new RidePaginatedDTO(123, LocalDateTime.of(2022,12,7,20,15,26), LocalDateTime.of(2022,12,7,20,30,15),
-                1235.00, new UserPaginatedDTO(driverId, "user@example.com"), passengers, 5, VehicleType.STANDARD, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "PENDING");
+                1235.00, new UserPaginatedDTO(driverId, "user@example.com"), passengers, 5, VehicleType.STANDARDNO, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "PENDING");
 
 
         return new ResponseEntity<>(ride, HttpStatus.OK);
@@ -79,7 +79,7 @@ public class RideController {
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));
         RidePaginatedDTO ride = new RidePaginatedDTO(123, LocalDateTime.of(2022,12,7,20,15,26), LocalDateTime.of(2022,12,7,20,30,15),
-                1235.00, new UserPaginatedDTO(123, "user@example.com"), passengers, 5, VehicleType.STANDARD, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "PENDING");
+                1235.00, new UserPaginatedDTO(123, "user@example.com"), passengers, 5, VehicleType.STANDARDNO, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "PENDING");
 
 
         return new ResponseEntity<>(ride, HttpStatus.OK);
@@ -102,7 +102,7 @@ public class RideController {
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));
         RidePaginatedDTO ride = new RidePaginatedDTO(id, LocalDateTime.of(2022,12,7,20,15,26), LocalDateTime.of(2022,12,7,20,30,15),
-                1235.00, new UserPaginatedDTO(12, "user@example.com"), passengers, 5, VehicleType.STANDARD, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "PENDING");
+                1235.00, new UserPaginatedDTO(12, "user@example.com"), passengers, 5, VehicleType.STANDARDNO, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "PENDING");
 
 
         return new ResponseEntity<>(ride, HttpStatus.OK);
@@ -119,7 +119,7 @@ public class RideController {
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));
         RidePaginatedDTO ride = new RidePaginatedDTO(id, LocalDateTime.of(2022,12,7,20,15,26), LocalDateTime.of(2022,12,7,20,30,15),
-                1235.00, new UserPaginatedDTO(123, "user@example.com"), passengers, 5, VehicleType.STANDARD, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "CANCELED");
+                1235.00, new UserPaginatedDTO(123, "user@example.com"), passengers, 5, VehicleType.STANDARDNO, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "CANCELED");
 
         return new ResponseEntity<>(ride, HttpStatus.OK);
     }
@@ -138,7 +138,7 @@ public class RideController {
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));
         RidePaginatedDTO ride = new RidePaginatedDTO(id, LocalDateTime.of(2022,12,7,20,15,26), LocalDateTime.of(2022,12,7,20,30,15),
-                1235.00, new UserPaginatedDTO(123, "user@example.com"), passengers, 5, VehicleType.STANDARD, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "CANCELED");
+                1235.00, new UserPaginatedDTO(123, "user@example.com"), passengers, 5, VehicleType.STANDARDNO, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "CANCELED");
 
         PanicPaginatedDTO panic = new PanicPaginatedDTO(10, user, ride, "2022-12-10T14:37:03.353Z", reason);
 
@@ -158,7 +158,7 @@ public class RideController {
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));
         RidePaginatedDTO ride = new RidePaginatedDTO(id, LocalDateTime.of(2022,12,7,20,15,26), LocalDateTime.of(2022,12,7,20,30,15),
-                1235.00, new UserPaginatedDTO(123, "user@example.com"), passengers, 5, VehicleType.STANDARD, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "ACCEPTED");
+                1235.00, new UserPaginatedDTO(123, "user@example.com"), passengers, 5, VehicleType.STANDARDNO, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "ACCEPTED");
 
 
         return new ResponseEntity<>(ride, HttpStatus.OK);
@@ -175,7 +175,7 @@ public class RideController {
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));
         RidePaginatedDTO ride = new RidePaginatedDTO(id, LocalDateTime.of(2022,12,7,20,15,26), LocalDateTime.of(2022,12,7,20,30,15),
-                1235.00, new UserPaginatedDTO(123, "user@example.com"), passengers, 5, VehicleType.STANDARD, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "FINISHED");
+                1235.00, new UserPaginatedDTO(123, "user@example.com"), passengers, 5, VehicleType.STANDARDNO, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "FINISHED");
 
         return new ResponseEntity<>(ride, HttpStatus.OK);
     }
@@ -192,7 +192,7 @@ public class RideController {
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));
         RidePaginatedDTO ride = new RidePaginatedDTO(id, LocalDateTime.of(2022,12,7,20,15,26), LocalDateTime.of(2022,12,7,20,30,15),
-                1235.00, new UserPaginatedDTO(123, "user@example.com"), passengers, 5, VehicleType.STANDARD, true, true, new RejectionPaginatedDTO(explanation, LocalDateTime.of(2022,12,7,21,0,0)), locations, "REJECTED");
+                1235.00, new UserPaginatedDTO(123, "user@example.com"), passengers, 5, VehicleType.STANDARDNO, true, true, new RejectionPaginatedDTO(explanation, LocalDateTime.of(2022,12,7,21,0,0)), locations, "REJECTED");
 
         return new ResponseEntity<>(ride, HttpStatus.OK);
     }

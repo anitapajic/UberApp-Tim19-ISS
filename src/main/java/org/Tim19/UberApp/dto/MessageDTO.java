@@ -12,21 +12,21 @@ import java.time.LocalDateTime;
 public class MessageDTO {
 
     private Integer id;
-    private Integer sender;
-    private Integer receiver;
-    private String text;
-    private LocalDateTime time;
+    private Integer senderId;
+    private Integer receiverId;
+    private String message;
+    private LocalDateTime timeOfSending;
     private MSGType type;
-    private Integer ride;
+    private Integer rideId;
 
     public MessageDTO(Integer id, Integer sender, Integer receiver, String text, LocalDateTime time, MSGType type, Integer ride) {
         this.id = id;
-        this.sender = sender;
-        this.receiver = receiver;
-        this.text = text;
-        this.time = time;
+        this.senderId = sender;
+        this.receiverId = receiver;
+        this.message = text;
+        this.timeOfSending = time;
         this.type = type;
-        this.ride = ride;
+        this.rideId = ride;
     }
 
     public MessageDTO(){}

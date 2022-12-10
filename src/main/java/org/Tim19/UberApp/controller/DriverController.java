@@ -32,8 +32,8 @@ public class DriverController {
         driver.setTelephoneNumber(driverDTO.getTelephoneNumber());
         driver.setAddress(driverDTO.getAddress());
         driver.setEmail(driverDTO.getEmail());
-        driver.setFirstname(driverDTO.getFirstname());
-        driver.setLastname(driverDTO.getLastname());
+        driver.setFirstname(driverDTO.getName());
+        driver.setLastname(driverDTO.getSurname());
         driver.setPassword(driverDTO.getPassword());
 
         driver = driverService.save(driver);
@@ -49,7 +49,7 @@ public class DriverController {
         Page<Driver> pagedResult = driverService.findAll(paging);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("totalcounts", pagedResult.getTotalElements());
+        response.put("totalCount", pagedResult.getTotalElements());
         response.put("results", pagedResult.getContent());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -89,8 +89,8 @@ public class DriverController {
         driver.setTelephoneNumber(driverDTO.getTelephoneNumber());
         driver.setAddress(driverDTO.getAddress());
         driver.setEmail(driverDTO.getEmail());
-        driver.setFirstname(driverDTO.getFirstname());
-        driver.setLastname(driverDTO.getLastname());
+        driver.setFirstname(driverDTO.getName());
+        driver.setLastname(driverDTO.getSurname());
         driver.setPassword(driverDTO.getPassword());
 
 //        driver = driverService.save(driver);
