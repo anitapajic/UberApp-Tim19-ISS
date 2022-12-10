@@ -2,6 +2,7 @@ package org.Tim19.UberApp.controller;
 
 import org.Tim19.UberApp.dto.DriverDTO;
 import org.Tim19.UberApp.dto.PaginatedData.LocationPaginatedDTO;
+import org.Tim19.UberApp.dto.PaginatedData.Vehicle3PaginatedDTO;
 import org.Tim19.UberApp.dto.PaginatedData.VehiclePaginated2DTO;
 import org.Tim19.UberApp.dto.VehicleDTO;
 import org.Tim19.UberApp.model.Driver;
@@ -32,7 +33,7 @@ public class VehicleController {
     public ResponseEntity<VehiclePaginated2DTO> getVehicle(@PathVariable Integer id) {
 
         LocationPaginatedDTO location = new LocationPaginatedDTO("Bulevar oslobodjenja 46",45.267136,19.833549);
-        VehiclePaginated2DTO vehicle = new VehiclePaginated2DTO(1,id,"audi", VehicleType.STANDARD,"NS 123-AB",location,4,true,true);
+        VehiclePaginated2DTO vehicle = new VehiclePaginated2DTO(1,id,"audi",VehicleType.STANDARDNO ,"NS 123-AB",location,4,true,true);
 
         return new ResponseEntity<>(vehicle, HttpStatus.OK);
     }
@@ -59,26 +60,38 @@ public class VehicleController {
 
     ///TODO : Treba menjati vozilo preko driverId
     //CHANGE THE VEHICLE OF THE DRIVER  /api/driver/{id}/vehicle
-    @PutMapping(consumes = "application/json")
-    public ResponseEntity<VehicleDTO> updateVehicle(@RequestBody VehicleDTO vehicleDTO) {
+    @PutMapping(value="/driver/{id}/vehicle",consumes = "application/json")
+    public ResponseEntity<VehiclePaginated2DTO> updateVehicle(@PathVariable Integer id,@RequestBody VehiclePaginated2DTO update) {
 
-        // a driver must exist
-        Vehicle vehicle = vehicleService.findOne(vehicleDTO.getId());
+        update.setDriver_id(id);
+        update.setId(1);
 
-        if (vehicle == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(update, HttpStatus.OK);
 
-        vehicle.setVehicleType(vehicleDTO.getVehicleType());
-        vehicle.setCarModel(vehicleDTO.getCarModel());
-        vehicle.setLicenseNumber(vehicleDTO.getLicenseNumber());
-        vehicle.setPassengerSeats(vehicleDTO.getPassengerSeats());
-        vehicle.setBabyTransport(vehicleDTO.isBabyTransport());
-        vehicle.setPetTransport(vehicleDTO.isBabyTransport());
-        vehicle.setDriver(vehicleDTO.getDriver());
 
-        vehicle = vehicleService.save(vehicle);
-        return new ResponseEntity<>(new VehicleDTO(vehicle), HttpStatus.OK);
+
+
+//        LocationPaginatedDTO location = new LocationPaginatedDTO("Bulevar oslobodjenja 46",45.267136,19.833549);
+//        VehiclePaginated2DTO vehicle = new VehiclePaginated2DTO(1,id,"audi",VehicleType.STANDARDNO ,"NS 123-AB",location,4,true,true);
+
+//
+//        // a driver must exist
+//        Vehicle vehicle = vehicleService.findOne(vehicleDTO.getId());
+//
+//        if (vehicle == null) {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
+//
+//        vehicle.setVehicleType(vehicleDTO.getVehicleType());
+//        vehicle.setCarModel(vehicleDTO.getCarModel());
+//        vehicle.setLicenseNumber(vehicleDTO.getLicenseNumber());
+//        vehicle.setPassengerSeats(vehicleDTO.getPassengerSeats());
+//        vehicle.setBabyTransport(vehicleDTO.isBabyTransport());
+//        vehicle.setPetTransport(vehicleDTO.isBabyTransport());
+//        vehicle.setDriver(vehicleDTO.getDriver());
+//
+//        vehicle = vehicleService.save(vehicle);
+//        return new ResponseEntity<>(new VehicleDTO(vehicle), HttpStatus.OK);
     }
 
     //CHANGE LOCATION OF THE VEHICLE  /api/vehicle/{id}/location  (vehicleId)

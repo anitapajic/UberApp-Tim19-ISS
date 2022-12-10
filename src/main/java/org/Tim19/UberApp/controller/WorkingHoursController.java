@@ -60,7 +60,8 @@ public class WorkingHoursController {
 
     }
     @PutMapping(value = "/working-hours/{wh_id}")
-    public ResponseEntity<Void> chaneWHDetails(){
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<WorkingHoursPaginatedDTO> chaneWHDetails(@PathVariable Integer wh_id,@RequestBody WorkingHoursPaginatedDTO update){
+        return new ResponseEntity<>(update, HttpStatus.OK);
+
     }
 }
