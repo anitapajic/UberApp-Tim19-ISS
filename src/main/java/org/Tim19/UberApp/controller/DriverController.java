@@ -49,7 +49,7 @@ public class DriverController {
         Page<Driver> pagedResult = driverService.findAll(paging);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("totalcounts", pagedResult.getTotalElements());
+        response.put("totalCount", pagedResult.getTotalElements());
         response.put("results", pagedResult.getContent());
 
         return new ResponseEntity<>(response, HttpStatus.OK);

@@ -23,9 +23,9 @@ public class RidePaginatedDTO {
     private Boolean petTransport;
     private RejectionPaginatedDTO rejection;
     private List<PathPaginatedDTO> locations;
-//    private String status;
+    private String status;
 
-    public RidePaginatedDTO(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, UserPaginatedDTO driver, List<UserPaginatedDTO> passengers, Integer estimatedTimeInMinutes, VehicleType vehicleType, Boolean babyTransport, Boolean petTransport, RejectionPaginatedDTO rejection, List<PathPaginatedDTO> locations) {
+    public RidePaginatedDTO(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, UserPaginatedDTO driver, List<UserPaginatedDTO> passengers, Integer estimatedTimeInMinutes, VehicleType vehicleType, Boolean babyTransport, Boolean petTransport, RejectionPaginatedDTO rejection, List<PathPaginatedDTO> locations, String status) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -38,7 +38,7 @@ public class RidePaginatedDTO {
         this.petTransport = petTransport;
         this.rejection = rejection;
         this.locations = locations;
-//        this.status = status;
+        this.status = status;
     }
 
 }
