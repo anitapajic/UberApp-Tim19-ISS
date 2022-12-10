@@ -12,12 +12,12 @@ import java.util.Set;
 public class RejectionPaginatedDTO {
 
     private String reason;
-    private LocalDateTime time;
+    private LocalDateTime timeOfRejection;
 
 
     public RejectionPaginatedDTO(String reason, LocalDateTime time) {
         this.reason = reason;
-        this.time = time;
+        this.timeOfRejection = time;
     }
 
 }

@@ -40,4 +40,5 @@ public class RidePaginatedDTO {
         this.locations = locations;
         this.status = status;
     }
+
 }
