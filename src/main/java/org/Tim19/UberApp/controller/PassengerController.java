@@ -37,7 +37,7 @@ public class PassengerController {
         passenger.setAddress(passengerDTO.getAddress());
         passenger.setEmail(passengerDTO.getEmail());
         passenger.setFirstname(passengerDTO.getName());
-        passenger.setLastname(passengerDTO.getSurename());
+        passenger.setLastname(passengerDTO.getSurname());
         passenger.setPassword(passengerDTO.getPassword());
 
         passenger = passengerService.save(passenger);
@@ -107,7 +107,7 @@ public class PassengerController {
         passenger.setAddress(passengerDTO.getAddress());
         passenger.setEmail(passengerDTO.getEmail());
         passenger.setFirstname(passengerDTO.getName());
-        passenger.setLastname(passengerDTO.getSurename());
+        passenger.setLastname(passengerDTO.getSurname());
         passenger.setPassword(passengerDTO.getPassword());
 
         //passengerService.save(passenger);

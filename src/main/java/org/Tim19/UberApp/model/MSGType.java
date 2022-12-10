@@ -1,5 +1,5 @@
 package org.Tim19.UberApp.model;
 
 public enum MSGType {
-    SUPPOR, RIDE, PANIC
+    SUPPORT, RIDE, PANIC
 }

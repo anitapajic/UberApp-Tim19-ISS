@@ -33,7 +33,7 @@ public class DriverController {
         driver.setAddress(driverDTO.getAddress());
         driver.setEmail(driverDTO.getEmail());
         driver.setFirstname(driverDTO.getName());
-        driver.setLastname(driverDTO.getSurename());
+        driver.setLastname(driverDTO.getSurname());
         driver.setPassword(driverDTO.getPassword());
 
         driver = driverService.save(driver);
@@ -90,7 +90,7 @@ public class DriverController {
         driver.setAddress(driverDTO.getAddress());
         driver.setEmail(driverDTO.getEmail());
         driver.setFirstname(driverDTO.getName());
-        driver.setLastname(driverDTO.getSurename());
+        driver.setLastname(driverDTO.getSurname());
         driver.setPassword(driverDTO.getPassword());
 
 //        driver = driverService.save(driver);

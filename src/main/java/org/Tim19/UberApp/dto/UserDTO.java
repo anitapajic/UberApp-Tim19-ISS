@@ -8,7 +8,7 @@ public class UserDTO {
     private Integer id;
     private String email;
     private String name;
-    private String surename;
+    private String surname;
     private String profilePicture;
     private String telephoneNumber;
     private String address;
@@ -18,7 +18,7 @@ public class UserDTO {
         this.id = id;
         this.email = email;
         this.name = firstname;
-        this.surename = lastname;
+        this.surname = lastname;
         this.profilePicture = profilePicture;
         this.telephoneNumber = telephoneNumber;
         this.address = address;

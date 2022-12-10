@@ -89,8 +89,8 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> getUserMessage(@PathVariable Integer id){
 
 
-        MessageDTO message1 = new MessageDTO(1,id, 123, "Message text", LocalDateTime.now(), MSGType.SUPPOR,465 );
-        MessageDTO message2 = new MessageDTO(2,id, 256, "Message text2", LocalDateTime.now(), MSGType.SUPPOR,111 );
+        MessageDTO message1 = new MessageDTO(1,id, 123, "Message text", LocalDateTime.now(), MSGType.SUPPORT,465 );
+        MessageDTO message2 = new MessageDTO(2,id, 256, "Message text2", LocalDateTime.now(), MSGType.SUPPORT,111 );
 
         Set<Object> messageDTOS = new HashSet<>();
         messageDTOS.add(message1);
