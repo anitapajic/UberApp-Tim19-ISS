@@ -45,7 +45,7 @@ public class VehicleController {
         Driver driver = new Driver(100,"tamara@gmail.com","tamara","dzambic","ahhajhsjah","0645554454","Brace Ribnikar 17","tam123",true,false,new HashSet<>(),new HashSet<>(),null);
         Vehicle vehicle = new Vehicle();
         vehicle.setVehicleType(vehicleDTO.getVehicleType());
-        vehicle.setCarModel(vehicleDTO.getCarModel());
+        vehicle.setCarModel(vehicleDTO.getModel());
         vehicle.setLicenseNumber(vehicleDTO.getLicenseNumber());
         vehicle.setPassengerSeats(vehicleDTO.getPassengerSeats());
         vehicle.setBabyTransport(vehicleDTO.isBabyTransport());
@@ -54,8 +54,11 @@ public class VehicleController {
 
         driver.setVehicle(vehicle);
         vehicle = vehicleService.save(vehicle);
-        driver = driverService.save(driver);
-        return new ResponseEntity<>(new VehicleDTO(vehicle), HttpStatus.CREATED);
+        driverService.save(driver);
+        VehicleDTO response = new VehicleDTO(vehicle);
+        response.setCurrentLocation(vehicleDTO.getCurrentLocation());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     ///TODO : Treba menjati vozilo preko driverId
@@ -63,11 +66,11 @@ public class VehicleController {
     @PutMapping(value="/driver/{id}/vehicle",consumes = "application/json")
     public ResponseEntity<VehiclePaginated2DTO> updateVehicle(@PathVariable Integer id,@RequestBody VehiclePaginated2DTO update) {
 
-        update.setDriver_id(id);
+        update.setDriverId(id);
         update.setId(1);
 
         return new ResponseEntity<>(update, HttpStatus.OK);
-
+    }
 
 
 
@@ -92,13 +95,13 @@ public class VehicleController {
 //
 //        vehicle = vehicleService.save(vehicle);
 //        return new ResponseEntity<>(new VehicleDTO(vehicle), HttpStatus.OK);
-    }
+
 
     //CHANGE LOCATION OF THE VEHICLE  /api/vehicle/{id}/location  (vehicleId)
     @PutMapping(value = "/vehicle/{id}/location")
     public ResponseEntity<Void> changeVehicleLocation(){
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     //TODO: refactor dtos to following builder pattern

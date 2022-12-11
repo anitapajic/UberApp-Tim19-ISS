@@ -1,16 +1,18 @@
 package org.Tim19.UberApp.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 import org.Tim19.UberApp.model.Driver;
 import org.Tim19.UberApp.model.DriverDocument;
 
+@Data
 public class DriverDocumentDTO {
 
     private Integer id;
     private String name;
     private String documentImage;
-    @JsonIgnore
-    private Driver  driver;
+
+    private Integer  driverId;
 
     public DriverDocumentDTO(){}
 
@@ -18,26 +20,11 @@ public class DriverDocumentDTO {
         this.id = id;
         this.name = name;
         this.documentImage = documentImage;
-        this.driver = driver;
+        this.driverId = driver.getId();
     }
 
     public DriverDocumentDTO(DriverDocument driverDocument){
         this(driverDocument.getId(), driverDocument.getName(), driverDocument.getDocumentImage(), driverDocument.getDriver());
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDocumentImage() {
-        return documentImage;
-    }
-
-    public Driver getDriver() {
-        return driver;
-    }
 }
