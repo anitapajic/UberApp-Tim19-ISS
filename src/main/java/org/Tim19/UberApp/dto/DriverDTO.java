@@ -23,7 +23,6 @@ public class DriverDTO extends UserDTO{
         this.documents = documents;
         this.vehicle = vehicle;
     }
-
     public DriverDTO() {}
 
     public DriverDTO(Driver driver){

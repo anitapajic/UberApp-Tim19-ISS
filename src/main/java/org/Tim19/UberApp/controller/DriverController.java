@@ -1,7 +1,11 @@
 package org.Tim19.UberApp.controller;
 
-import org.Tim19.UberApp.dto.DriverDTO;
+import org.Tim19.UberApp.dto.*;
+import org.Tim19.UberApp.dto.PaginatedData.*;
 import org.Tim19.UberApp.model.Driver;
+import org.Tim19.UberApp.model.Passenger;
+import org.Tim19.UberApp.model.Vehicle;
+import org.Tim19.UberApp.model.VehicleType;
 import org.Tim19.UberApp.service.DriverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,8 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/driver")
@@ -22,6 +26,7 @@ public class DriverController {
     private DriverService driverService;
 
     //CREATE DRIVER  /api/driver
+    //DONE
     @PostMapping(consumes = "application/json")
     public ResponseEntity<DriverDTO> createDriver(@RequestBody DriverDTO driverDTO) {
 
@@ -41,6 +46,7 @@ public class DriverController {
     }
 
     //GETTING PAGINATED DRIVER DATA  /api/driver
+    //DONE
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllDrivers(@RequestParam(defaultValue = "0") Integer page,
                                                              @RequestParam(defaultValue = "4") Integer size) {
@@ -56,6 +62,7 @@ public class DriverController {
     }
 
     //DRIVER DETAILS  /api/driver/{id}
+    //DONE
     @GetMapping(value = "/{id}")
     public ResponseEntity<DriverDTO> getDriver(@PathVariable Integer id) {
 
@@ -66,10 +73,11 @@ public class DriverController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(new DriverDTO(users), HttpStatus.OK);
-    }
+            return new ResponseEntity<>(new DriverDTO(users), HttpStatus.OK);
+        }
 
     //UPDATE EXISTING DRIVER  /api/driver/{id}
+    //DONE
     @PutMapping(value= "/{id}" ,consumes = "application/json")
     public ResponseEntity<DriverDTO> updateDriver(@PathVariable Integer id, @RequestBody DriverDTO driverDTO) {
 
@@ -93,17 +101,36 @@ public class DriverController {
         driver.setLastname(driverDTO.getSurname());
         driver.setPassword(driverDTO.getPassword());
 
-//        driver = driverService.save(driver);
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 
-    //RIDES OF THE SPECIFIC DRIVER  /api/driver/{id}/ride
-    @GetMapping(value = "/{id}/ride")
-    public ResponseEntity<Void> getDriversRides(){
+        @GetMapping(value = "/{id}/ride")
+        public ResponseEntity<Map<String, Object>> getAllRidesFromDriver(){
+
+            UserPaginatedDTO driver = new UserPaginatedDTO(1,"aleks@gmail.com");
+            List<UserPaginatedDTO> passengers = new ArrayList<>();
+            passengers.add(new UserPaginatedDTO(1, "tamara@example.com"));
+            VehiclePaginatedDTO vehicle = new VehiclePaginatedDTO(5,"Standardno",true,false);
+            LocationPaginatedDTO departure = new LocationPaginatedDTO("Mise Dimitrijevica 42",45.267136,19.345633);
+            LocationPaginatedDTO destination = new LocationPaginatedDTO("Mise Dimitrijevica 42",45.267136,19.345633);
+            RejectionPaginatedDTO rejection = new RejectionPaginatedDTO("Ride is canceled due to previous problem with the passenger",LocalDateTime.now());
+
+            List<PathPaginatedDTO> locations = new ArrayList<>();
+            locations.add(new PathPaginatedDTO(departure, destination));
+            
+            Map<String, Object> results = new HashMap<>();
+            results.put("passenger",passengers);
+            results.put("driver", driver);
+            results.put("vehicle", vehicle);
+            results.put("rejection", rejection);
+            results.put("locations", locations);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("totalcounts",2);
+            response.put("results",results);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
 
 
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 }
 
