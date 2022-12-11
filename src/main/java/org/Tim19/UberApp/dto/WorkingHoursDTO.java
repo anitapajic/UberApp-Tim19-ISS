@@ -1,13 +1,15 @@
 package org.Tim19.UberApp.dto;
 
+import lombok.Data;
 import org.Tim19.UberApp.model.WorkingHours;
 
 import java.time.LocalDateTime;
 
+@Data
 public class WorkingHoursDTO {
     private Integer id;
     private LocalDateTime start;
-    private LocalDateTime endd;
+    private LocalDateTime end;
 
     public WorkingHoursDTO() {
     }
@@ -19,18 +21,11 @@ public class WorkingHoursDTO {
     public WorkingHoursDTO(Integer id, LocalDateTime start, LocalDateTime end) {
         this.id = id;
         this.start = start;
-        this.endd = end;
+        this.end = end;
     }
 
     public Integer getId() {
         return id;
     }
 
-    public LocalDateTime getStartD() {
-        return start;
-    }
-
-    public LocalDateTime getEndD() {
-        return endd;
-    }
-}
+   }

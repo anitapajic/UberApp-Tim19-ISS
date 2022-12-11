@@ -1,39 +1,44 @@
 package org.Tim19.UberApp.dto;
 
+import lombok.Data;
 import org.Tim19.UberApp.model.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Data
 public class VehicleDTO {
 
     private Integer id;
-    private Driver driver;
-    private String carModel;
+    private Driver driverId;
+    private String model;
     private VehicleType vehicleType;
     private String licenseNumber;
     private Integer passengerSeats;
     private boolean babyTransport;
     private boolean petTransport;
+
+    private LocationDTO currentLocation;
     private Set<Message> reviews = new HashSet<>();
 
 
-    public VehicleDTO(Integer id, Driver driver, String carModel, VehicleType vehicleType, String licenseNumber, Integer passengerSeats, boolean babyTransport, boolean petTransport, Set<Message> reviews) {
+    public VehicleDTO(Integer id, Driver driver, String carModel, VehicleType vehicleType, String licenseNumber, Integer passengerSeats, boolean babyTransport, boolean petTransport, Set<Message> reviews, LocationDTO location) {
         this.id = id;
-        this.driver = driver;
-        this.carModel = carModel;
+        this.driverId = driver;
+        this.model = carModel;
         this.vehicleType = vehicleType;
         this.licenseNumber = licenseNumber;
         this.passengerSeats = passengerSeats;
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
         this.reviews = reviews;
+        this.currentLocation = location;
     }
 
     public VehicleDTO() {}
 
     public VehicleDTO(Vehicle vehicle) {
-        this(vehicle.getId(), vehicle.getDriver(), vehicle.getCarModel(),vehicle.getVehicleType(), vehicle.getLicenseNumber(), vehicle.getPassengerSeats(), vehicle.isBabyTransport(), vehicle.isPetTransport(), vehicle.getReviews());
+        this(vehicle.getId(), vehicle.getDriver(), vehicle.getCarModel(),vehicle.getVehicleType(), vehicle.getLicenseNumber(), vehicle.getPassengerSeats(), vehicle.isBabyTransport(), vehicle.isPetTransport(), vehicle.getReviews(), new LocationDTO());
     }
 
 
@@ -41,12 +46,12 @@ public class VehicleDTO {
         return id;
     }
 
-    public Driver getDriver() {
-        return driver;
+    public Driver getDriverId() {
+        return driverId;
     }
 
-    public String getCarModel() {
-        return carModel;
+    public String getModel() {
+        return model;
     }
 
     public VehicleType getVehicleType() {
@@ -72,4 +77,6 @@ public class VehicleDTO {
     public Set<Message> getReviews() {
         return reviews;
     }
+
+
 }

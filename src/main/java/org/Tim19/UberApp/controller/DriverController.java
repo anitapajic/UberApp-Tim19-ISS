@@ -42,7 +42,7 @@ public class DriverController {
         driver.setPassword(driverDTO.getPassword());
 
         driver = driverService.save(driver);
-        return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.CREATED);
+        return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 
     //GETTING PAGINATED DRIVER DATA  /api/driver
@@ -126,7 +126,7 @@ public class DriverController {
             results.put("locations", locations);
 
             Map<String, Object> response = new HashMap<>();
-            response.put("totalcounts",2);
+            response.put("totalCount",2);
             response.put("results",results);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }

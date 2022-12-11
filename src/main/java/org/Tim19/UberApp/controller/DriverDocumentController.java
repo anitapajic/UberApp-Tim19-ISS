@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.criteria.CriteriaBuilder;
 
 @RestController
-@RequestMapping(value = "/api/driver/{id}/documents")
+@RequestMapping(value = "/api/driver")
 public class    DriverDocumentController {
 
     @Autowired
@@ -23,7 +23,7 @@ public class    DriverDocumentController {
     private DriverService driverService;
 
     //DRIVER DOCUMENTS /api/driver/{id}/documents   (driverId)z
-    @GetMapping
+    @GetMapping(value = "/{id}/documents")
     public ResponseEntity<DriverDocumentPaginatedDTO> getDriverDocuments(@PathVariable Integer id) {
 
         DriverDocumentPaginatedDTO driverDocument = new DriverDocumentPaginatedDTO(123,"Vozačka dozvola","U3dhZ2dlciByb2Nrcw=",id);
@@ -31,7 +31,7 @@ public class    DriverDocumentController {
     }
 
     //DELETING DRIVERS DOCUMENTS /api/driver/{id}/documents  (documentId)
-    @DeleteMapping
+    @DeleteMapping(value = "/document/{id}")
     public ResponseEntity<Void> deleteDriverDocument(@PathVariable Integer id) {
 
         DriverDocument driverDocument = driverDocumentService.findOne(id);
@@ -44,7 +44,7 @@ public class    DriverDocumentController {
     }
 
     //ADDING NEW DRIVER DOCUMENTS  /api/driver/{id}/documents  (driverId)
-    @PostMapping(consumes = "application/json")
+    @PostMapping(value = "/{id}/documents",consumes = "application/json")
     public ResponseEntity<DriverDocumentDTO> createDriverDocuments(@PathVariable Integer id, @RequestBody DriverDocumentDTO driverDocumentDTO) {
 
         DriverDocument driverDocument = new DriverDocument();
@@ -54,7 +54,7 @@ public class    DriverDocumentController {
         driverDocument.setDriver(driver);
 
         driverDocument = driverDocumentService.save(driverDocument);
-        return new ResponseEntity<>(new DriverDocumentDTO(driverDocument), HttpStatus.CREATED);
+        return new ResponseEntity<>(new DriverDocumentDTO(driverDocument), HttpStatus.OK);
     }
 
 }

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public class WorkingHoursPaginatedDTO {
     private Integer id;
     private LocalDateTime start;
-    private LocalDateTime endd;
+    private LocalDateTime end;
 
     public WorkingHoursPaginatedDTO() {
     }
@@ -13,7 +13,7 @@ public class WorkingHoursPaginatedDTO {
     public WorkingHoursPaginatedDTO(Integer id, LocalDateTime start, LocalDateTime endd) {
         this.id = id;
         this.start = start;
-        this.endd = endd;
+        this.end = endd;
     }
 
     public Integer getId() {
@@ -24,7 +24,7 @@ public class WorkingHoursPaginatedDTO {
         return start;
     }
 
-    public LocalDateTime getEndd() {
-        return endd;
+    public LocalDateTime getEnd() {
+        return end;
     }
 }

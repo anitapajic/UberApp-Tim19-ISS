@@ -27,31 +27,28 @@ public class WorkingHoursController {
     @Autowired
     private DriverService driverService;
 
-    @GetMapping(value = "/{id}/working-hours")
+    @GetMapping(value = "/{id}/working-hour")
     public ResponseEntity<Map<String, Object>> getDriversWH(){
 
         WorkingHoursPaginatedDTO workingHours = new WorkingHoursPaginatedDTO(10,LocalDateTime.now(),LocalDateTime.now());
         Map<String, Object> response = new HashMap<>();
-        response.put("totalcounts",243);
+        response.put("totalCount",243);
         response.put("results",workingHours);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
-    @PostMapping(value = "/{id}/working-hours")
+    @PostMapping(value = "/{id}/working-hour")
     public ResponseEntity<WorkingHoursDTO> postDriversWH(@PathVariable Integer id,@RequestBody WorkingHoursDTO workingHoursDTO){
 
         //Driver driver = new Driver(16,"tamara@gmail.com","tamara","dzambic","ahhajhsjah","0645554454","Brace Ribnikar 17","tam123",true,false,new HashSet<>(),new HashSet<>(),null);
         Driver driver = driverService.findOne(id);
-        WorkingHours workingHours= new WorkingHours();
-        workingHours.setDriver(driver);
-        workingHours.setStartD(LocalDateTime.now());
-        workingHours.setEndD(LocalDateTime.now());
+        WorkingHours workingHours= new WorkingHours(workingHoursDTO.getId(), workingHoursDTO.getStart(),workingHoursDTO.getEnd(), driver);
         workingHours= workingHoursService.save(workingHours);
 
-        return new ResponseEntity<>(new WorkingHoursDTO(workingHours), HttpStatus.CREATED);
+        return new ResponseEntity<>(new WorkingHoursDTO(workingHours), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/working-hours/{wh_id}")
+    @GetMapping(value = "/working-hour/{wh_id}")
     public ResponseEntity<WorkingHoursPaginatedDTO> getWHDetails(@PathVariable Integer wh_id){
 
         WorkingHoursPaginatedDTO workingHours = new WorkingHoursPaginatedDTO(wh_id,LocalDateTime.now(),LocalDateTime.now());
@@ -59,7 +56,7 @@ public class WorkingHoursController {
         return new ResponseEntity<>(workingHours,HttpStatus.OK);
 
     }
-    @PutMapping(value = "/working-hours/{wh_id}")
+    @PutMapping(value = "/working-hour/{wh_id}")
     public ResponseEntity<WorkingHoursPaginatedDTO> chaneWHDetails(@PathVariable Integer wh_id,@RequestBody WorkingHoursPaginatedDTO update){
         return new ResponseEntity<>(update, HttpStatus.OK);
 
