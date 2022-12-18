@@ -1,6 +1,7 @@
 package org.Tim19.UberApp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class DriverDocument {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,12 +27,5 @@ public class DriverDocument {
     @JoinColumn(name = "driver_id")
     private Driver driver;
 
-    public DriverDocument(Integer id, String name, String documentImage, Driver driver) {
-        super();
-        this.id = id;
-        this.name = name;
-        this.documentImage = documentImage;
-        this.driver = driver;
-    }
 
 }

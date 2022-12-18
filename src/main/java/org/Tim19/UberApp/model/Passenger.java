@@ -22,7 +22,14 @@ public class Passenger extends User{
     )
     private Set<Ride> rides = new HashSet<>();
 
-    //private List<> favourite = new ArrayList<>();
+    @JsonIgnore
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @JoinTable(
+            name = "passenger_favourites",
+            joinColumns = @JoinColumn(name = "path_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id")
+    )
+    private Set<Path> favourite = new HashSet<>();
 
 
     public Passenger(Integer id, String firstname, String lastname, String profilePicture, String telephoneNumber, String email, String address, String password, Boolean active, Boolean blocked, Set<Ride> rides) {

@@ -11,18 +11,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Rejection {
+public class Activation {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @OneToOne
     private User user;
 
-    private String reason;
+    private LocalDateTime creationDate;
 
-    private LocalDateTime timeOfRejection;
+    private LocalDateTime expirationDate;
 
-    @ManyToOne
-    private Ride ride;
 }
