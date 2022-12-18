@@ -90,8 +90,8 @@ public class DriverController {
 
         driver.setBlocked(false);
         driver.setActive(true);
-        driver.setDocuments(driverDTO.getDocuments());
-        driver.setRides(driverDTO.getRides());
+        //driver.setDocuments(driverDTO.getDocuments());
+        //driver.setRides(driverDTO.getRides());
         driver.setVehicle(driverDTO.getVehicle());
         driver.setProfilePicture(driverDTO.getProfilePicture());
         driver.setTelephoneNumber(driverDTO.getTelephoneNumber());

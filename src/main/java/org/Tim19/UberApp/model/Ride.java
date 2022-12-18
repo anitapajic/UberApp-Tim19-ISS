@@ -46,16 +46,12 @@ public class Ride {
     @Column(name="estimatedTimeInMinutes", nullable = false)
     private Integer estimatedTimeInMinutes;
 
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Message> reviews = new HashSet<>();
+//    @JsonIgnore
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private Set<Message> reviews = new HashSet<>();
 
     @Column(name="status", nullable = false)
     private String status;
-
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Rejection> rejections;
 
     @Column(name="panic", nullable = false)
     private boolean panic;
@@ -68,7 +64,7 @@ public class Ride {
     private VehicleType vehicleType;
 
 
-    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengers, Set<Path> paths, Integer estimatedTimeInMinutes, Set<Message> reviews, String status, Set<Rejection> rejections, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType) {
+    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengers, Set<Path> paths, Integer estimatedTimeInMinutes, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -77,9 +73,9 @@ public class Ride {
         this.passengers = passengers;
         this.paths = paths;
         this.estimatedTimeInMinutes = estimatedTimeInMinutes;
-        this.reviews = reviews;
+        //this.reviews = reviews;
         this.status = status;
-        this.rejections = rejections;
+        //this.rejections = rejections;
         this.panic = panic;
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
@@ -94,12 +90,12 @@ public class Ride {
         this.passengers.remove(passenger);
     }
 
-    public void addReview(Message message){
-        this.reviews.add(message);
-    }
-
-    public  void removeReview(Message message){
-        this.reviews.remove(message);
-    }
+//    public void addReview(Message message){
+//        this.reviews.add(message);
+//    }
+//
+//    public  void removeReview(Message message){
+//        this.reviews.remove(message);
+//    }
 }
 

@@ -22,23 +22,23 @@ public class VehicleDTO {
     private Set<Message> reviews = new HashSet<>();
 
 
-    public VehicleDTO(Integer id, Driver driver, String carModel, VehicleType vehicleType, String licenseNumber, Integer passengerSeats, boolean babyTransport, boolean petTransport, Set<Message> reviews, LocationDTO location) {
+    public VehicleDTO(Integer id, String carModel, VehicleType vehicleType, String licenseNumber, Integer passengerSeats, boolean babyTransport, boolean petTransport, LocationDTO location) {
         this.id = id;
-        this.driverId = driver;
+       // this.driverId = driver;
         this.model = carModel;
         this.vehicleType = vehicleType;
         this.licenseNumber = licenseNumber;
         this.passengerSeats = passengerSeats;
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
-        this.reviews = reviews;
+       // this.reviews = reviews;
         this.currentLocation = location;
     }
 
     public VehicleDTO() {}
 
     public VehicleDTO(Vehicle vehicle) {
-        this(vehicle.getId(), vehicle.getDriver(), vehicle.getCarModel(),vehicle.getVehicleType(), vehicle.getLicenseNumber(), vehicle.getPassengerSeats(), vehicle.isBabyTransport(), vehicle.isPetTransport(), vehicle.getReviews(), new LocationDTO());
+        this(vehicle.getId(), vehicle.getCarModel(),vehicle.getVehicleType(), vehicle.getLicenseNumber(), vehicle.getPassengerSeats(), vehicle.isBabyTransport(), vehicle.isPetTransport(), new LocationDTO());
     }
 
 

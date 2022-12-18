@@ -50,7 +50,6 @@ public class VehicleController {
         vehicle.setPassengerSeats(vehicleDTO.getPassengerSeats());
         vehicle.setBabyTransport(vehicleDTO.isBabyTransport());
         vehicle.setPetTransport(vehicleDTO.isBabyTransport());
-        vehicle.setDriver(null);
 
         driver.setVehicle(vehicle);
         vehicle = vehicleService.save(vehicle);

@@ -19,7 +19,7 @@ public class Review {
     @ManyToOne
     private User user;
 
-    private String commment;
+    private String comment;
 
     private Integer rating;
 

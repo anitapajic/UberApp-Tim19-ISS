@@ -6,6 +6,7 @@ import org.Tim19.UberApp.dto.MessageDTO;
 import org.Tim19.UberApp.dto.NoteDTO;
 import org.Tim19.UberApp.dto.PaginatedData.*;
 import org.Tim19.UberApp.model.MSGType;
+import org.Tim19.UberApp.model.Ride;
 import org.Tim19.UberApp.model.User;
 import org.Tim19.UberApp.model.VehicleType;
 import org.Tim19.UberApp.service.UserService;
@@ -35,20 +36,14 @@ public class UserController {
                                                            @RequestParam(required = false) String sort,
                                                            @RequestParam(required = false) String  from,
                                                            @RequestParam(required = false) String  to){
-        List<UserPaginatedDTO> passengers = new ArrayList<>();
-        passengers.add(new UserPaginatedDTO(id, "user@example.com"));
-        List<PathPaginatedDTO> locations = new ArrayList<>();
-        LocationPaginatedDTO departure = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
-        LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
-        locations.add(new PathPaginatedDTO(departure, destination));
-        RidePaginatedDTO ride = new RidePaginatedDTO(123, LocalDateTime.of(2022,12,7,20,15,26), LocalDateTime.of(2022,12,7,20,30,15),
-                1235.00, new UserPaginatedDTO(12, "user@example.com"), passengers, 5, VehicleType.STANDARDNO, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "PENDING");
 
-        List<RidePaginatedDTO> rides = new ArrayList<>();
-        rides.add(ride);
+
+        //TODO: findAllDriverRides ili findAllPassengerRides prvo pronadji tip korisnika
+        Set<RidePaginatedDTO> allRides = userService.findAllRides(id);
+
         Map<String, Object> response = new HashMap<>();
-        response.put("totalCount", 243);
-        response.put("results", rides);
+        response.put("totalCount", allRides.size());
+        response.put("results", allRides);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

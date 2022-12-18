@@ -20,10 +20,10 @@ public class Vehicle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @JsonIgnore
-    @OneToOne
-    @JoinColumn(name = "driver_id")
-    private Driver driver;
+//    @JsonIgnore
+//    @OneToOne
+//    @JoinColumn(name = "driver_id")
+//    private Driver driver;
 
     @Column(name = "carModel", nullable = false)
     private String carModel;
@@ -46,18 +46,18 @@ public class Vehicle {
     @Column(name = "petTransport", nullable = false)
     private boolean petTransport;
 
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Message> reviews = new HashSet<>();
+//    @JsonIgnore
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private Set<Message> reviews = new HashSet<>();
 
 
-    public void addReview(Message message){
-        this.reviews.add(message);
-    }
-
-    public  void removeReview(Message message){
-        this.reviews.remove(message);
-    }
+//    public void addReview(Message message){
+//        this.reviews.add(message);
+//    }
+//
+//    public  void removeReview(Message message){
+//        this.reviews.remove(message);
+//    }
 
 }
 

@@ -3,8 +3,6 @@ package org.Tim19.UberApp.dto;
 import lombok.Data;
 import org.Tim19.UberApp.model.MSGType;
 import org.Tim19.UberApp.model.Message;
-import org.Tim19.UberApp.model.Ride;
-import org.Tim19.UberApp.model.User;
 
 import java.time.LocalDateTime;
 
