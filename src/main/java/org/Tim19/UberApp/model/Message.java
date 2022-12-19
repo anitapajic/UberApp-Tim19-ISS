@@ -29,7 +29,7 @@ public class Message {
     private MSGType type;
 
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.MERGE,CascadeType.DETACH})
     @JoinColumn(name = "ride_id")
     private Ride ride;
 

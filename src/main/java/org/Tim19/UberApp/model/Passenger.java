@@ -1,6 +1,7 @@
 package org.Tim19.UberApp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
@@ -13,8 +14,7 @@ import java.util.Set;
 @DiscriminatorValue("Passenger")
 public class Passenger extends User{
 
-    @JsonIgnore
-    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "passenger_ride",
             joinColumns = @JoinColumn(name = "ride_id", referencedColumnName = "id"),

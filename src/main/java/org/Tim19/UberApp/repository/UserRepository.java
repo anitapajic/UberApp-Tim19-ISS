@@ -13,7 +13,7 @@ import java.util.Set;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
 
-    public User findOneByEmail(String email);
+    public User findOneById(Integer id);
 
     public User findOneByEmailAndPassword(String email, String password);
 

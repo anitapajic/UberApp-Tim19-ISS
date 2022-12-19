@@ -1,7 +1,9 @@
 package org.Tim19.UberApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.Tim19.UberApp.dto.NoteDTO;
 
 import javax.persistence.*;
 
@@ -15,7 +17,7 @@ public class Note {
     private Integer id;
     @Column(name = "text")
     private String text;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.MERGE,CascadeType.DETACH})
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -24,4 +26,5 @@ public class Note {
         this.text = text;
         this.user = user;
     }
+
 }

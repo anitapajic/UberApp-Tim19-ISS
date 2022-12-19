@@ -121,9 +121,9 @@ public class PassengerController {
                                                            @RequestParam(defaultValue = "4") Integer size,
                                                            @RequestParam(required = false) String from,
                                                            @RequestParam(required = false) String to){
-        List<UserPaginatedDTO> passengers = new ArrayList<>();
+        Set<UserPaginatedDTO> passengers = new HashSet<>();
         passengers.add(new UserPaginatedDTO(id, "user@example.com"));
-        List<PathPaginatedDTO> locations = new ArrayList<>();
+        Set<PathPaginatedDTO> locations = new HashSet<>();
         LocationPaginatedDTO departure = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));

@@ -4,11 +4,10 @@ package org.Tim19.UberApp.controller;
 import org.Tim19.UberApp.dto.LoginDTO;
 import org.Tim19.UberApp.dto.MessageDTO;
 import org.Tim19.UberApp.dto.NoteDTO;
-import org.Tim19.UberApp.dto.PaginatedData.*;
-import org.Tim19.UberApp.model.MSGType;
-import org.Tim19.UberApp.model.Ride;
-import org.Tim19.UberApp.model.User;
-import org.Tim19.UberApp.model.VehicleType;
+import org.Tim19.UberApp.model.*;
+import org.Tim19.UberApp.service.MessageService;
+import org.Tim19.UberApp.service.NoteService;
+import org.Tim19.UberApp.service.RideService;
 import org.Tim19.UberApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -27,6 +25,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private NoteService noteService;
+    @Autowired
+    private MessageService messageService;
+    @Autowired
+    private RideService rideService;
 
     //RIDES OF THE USER  /api/user/{id}/ride
     @GetMapping(value = "/{id}/ride")
@@ -39,7 +43,7 @@ public class UserController {
 
 
         //TODO: findAllDriverRides ili findAllPassengerRides prvo pronadji tip korisnika
-        Set<RidePaginatedDTO> allRides = userService.findAllRides(id);
+        Set<Ride> allRides = rideService.findByUserId(id);
 
         Map<String, Object> response = new HashMap<>();
         response.put("totalCount", allRides.size());
@@ -66,11 +70,11 @@ public class UserController {
     @PostMapping(value = "/login",consumes = "application/json")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody LoginDTO loginDTO) {
 
-//        User user = userService.findOneLogin(loginDTO.getEmail(), loginDTO.getPassword());
-//
-//        if (user == null) {
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        }
+        User user = userService.findOneLogin(loginDTO.getEmail(), loginDTO.getPassword());
+
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         Map<String, Object> response = new HashMap<>();
         response.put("accessToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
@@ -84,16 +88,18 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> getUserMessage(@PathVariable Integer id){
 
 
-        MessageDTO message1 = new MessageDTO(1,id, 123, "Message text", LocalDateTime.now(), MSGType.SUPPORT,465 );
-        MessageDTO message2 = new MessageDTO(2,id, 256, "Message text2", LocalDateTime.now(), MSGType.SUPPORT,111 );
+        List<Message> messages = messageService.findAllByUserId(id);
+        Set<MessageDTO> messageDTOS = new HashSet<>();
 
-        Set<Object> messageDTOS = new HashSet<>();
-        messageDTOS.add(message1);
-        messageDTOS.add(message2);
+        for (Message m: messages) {
+            MessageDTO messageDTO = new MessageDTO(m);
+            messageDTOS.add(messageDTO);
+        }
+
 
 
         Map<String, Object> response = new HashMap<>();
-        response.put("totalCount",243);
+        response.put("totalCount",messageDTOS.size());
         response.put("results", messageDTOS);
 
         return new ResponseEntity<>(response,HttpStatus.OK);
@@ -103,11 +109,9 @@ public class UserController {
     @PostMapping(value = "/{id}/message", consumes = "application/json")
     public ResponseEntity<MessageDTO> postUserMessage(@PathVariable Integer id, @RequestBody MessageDTO messageDTO){
         MessageDTO message = messageDTO;
-        message.setId(666);
-        message.setTimeOfSending(LocalDateTime.now());
         message.setSenderId(id);
 
-
+        message = messageService.save(messageDTO);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
@@ -116,7 +120,7 @@ public class UserController {
     public ResponseEntity<Void> updateUser(@PathVariable Integer id) {
 
         // a user must exist
-        User user = userService.findOne(id);
+        User user = userService.findOneById(id);
 
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -133,7 +137,7 @@ public class UserController {
     public ResponseEntity<Void> unblockUser(@PathVariable Integer id) {
 
         // a user must exist
-        User user = userService.findOne(id);
+        User user = userService.findOneById(id);
 
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -149,11 +153,14 @@ public class UserController {
     @GetMapping(value = "/{id}/note")
     public ResponseEntity<Map<String, Object>> getUserNotes(@PathVariable Integer id){
 
-        NoteDTO note1 = new NoteDTO(1, LocalDateTime.now(), "Note text");
-        NoteDTO note2 = new NoteDTO(2, LocalDateTime.now(), "Note text");
+        List<Note> notes = noteService.findAllByUserId(id);
         Set<NoteDTO> noteDTOS = new HashSet<>();
-        noteDTOS.add(note1);
-        noteDTOS.add(note2);
+
+        for (Note n: notes) {
+            NoteDTO noteDTO = new NoteDTO(n);
+            noteDTOS.add(noteDTO);
+        }
+
         Map<String, Object> response = new HashMap<>();
         response.put("totalCount", noteDTOS.size());
         response.put("results", noteDTOS);
@@ -165,8 +172,9 @@ public class UserController {
     @PostMapping(value = "/{id}/note")
     public ResponseEntity<NoteDTO> postUserNote(@PathVariable Integer id, @RequestBody NoteDTO noteDTO){
         NoteDTO note = noteDTO;
-        note.setId(666);
-        note.setDate(LocalDateTime.now());
+        note.setUserId(id);
+
+        note = noteService.save(noteDTO);
 
         return new ResponseEntity<>(note, HttpStatus.OK);
     }

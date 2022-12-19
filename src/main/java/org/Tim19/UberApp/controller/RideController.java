@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping(value="/api/ride")
@@ -54,9 +51,9 @@ public class RideController {
     @GetMapping(value="/driver/{driverId}/active")
     public ResponseEntity<RidePaginatedDTO> activeRideForDriver(@PathVariable Integer driverId) {
 
-        List<UserPaginatedDTO> passengers = new ArrayList<>();
+        Set<UserPaginatedDTO> passengers = new HashSet<>();
         passengers.add(new UserPaginatedDTO(123, "user@example.com"));
-        List<PathPaginatedDTO> locations = new ArrayList<>();
+        Set<PathPaginatedDTO> locations = new HashSet<>();
         LocationPaginatedDTO departure = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));
@@ -72,9 +69,9 @@ public class RideController {
     public ResponseEntity<RidePaginatedDTO> activeRideForPassenger(@PathVariable Integer passengerId) {
 
 
-        List<UserPaginatedDTO> passengers = new ArrayList<>();
+        Set<UserPaginatedDTO> passengers = new HashSet<>();
         passengers.add(new UserPaginatedDTO(passengerId, "user@example.com"));
-        List<PathPaginatedDTO> locations = new ArrayList<>();
+        Set<PathPaginatedDTO> locations = new HashSet<>();
         LocationPaginatedDTO departure = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));
@@ -95,9 +92,9 @@ public class RideController {
 //        if (ride == null) {
 //            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 //        }
-        List<UserPaginatedDTO> passengers = new ArrayList<>();
+        Set<UserPaginatedDTO> passengers = new HashSet<>();
         passengers.add(new UserPaginatedDTO(id, "user@example.com"));
-        List<PathPaginatedDTO> locations = new ArrayList<>();
+        Set<PathPaginatedDTO> locations = new HashSet<>();
         LocationPaginatedDTO departure = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));
@@ -112,9 +109,9 @@ public class RideController {
     @PutMapping(value="/{id}/withdraw")
     public ResponseEntity<RidePaginatedDTO> cancelRide(@PathVariable Integer id) {
 
-        List<UserPaginatedDTO> passengers = new ArrayList<>();
-        passengers.add(new UserPaginatedDTO(123, "user@example.com"));
-        List<PathPaginatedDTO> locations = new ArrayList<>();
+        Set<UserPaginatedDTO> passengers = new HashSet<>();
+        passengers.add(new UserPaginatedDTO(id, "user@example.com"));
+        Set<PathPaginatedDTO> locations = new HashSet<>();
         LocationPaginatedDTO departure = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));
@@ -131,9 +128,9 @@ public class RideController {
 
         UserPanicPaginatedDTO user = new UserPanicPaginatedDTO("Pera", "Peric", "U3dhZ2dlciByb2Nrcw==", "+381123123", "pera.peric@email.com", "Bulevar Oslobodjenja 74");
 
-        List<UserPaginatedDTO> passengers = new ArrayList<>();
-        passengers.add(new UserPaginatedDTO(123, "user@example.com"));
-        List<PathPaginatedDTO> locations = new ArrayList<>();
+        Set<UserPaginatedDTO> passengers = new HashSet<>();
+        passengers.add(new UserPaginatedDTO(id, "user@example.com"));
+        Set<PathPaginatedDTO> locations = new HashSet<>();
         LocationPaginatedDTO departure = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));
@@ -151,9 +148,9 @@ public class RideController {
     @PutMapping(value="/{id}/accept")
     public ResponseEntity<RidePaginatedDTO> acceptRide(@PathVariable Integer id) {
 
-        List<UserPaginatedDTO> passengers = new ArrayList<>();
-        passengers.add(new UserPaginatedDTO(123, "user@example.com"));
-        List<PathPaginatedDTO> locations = new ArrayList<>();
+        Set<UserPaginatedDTO> passengers = new HashSet<>();
+        passengers.add(new UserPaginatedDTO(id, "user@example.com"));
+        Set<PathPaginatedDTO> locations = new HashSet<>();
         LocationPaginatedDTO departure = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));
@@ -168,9 +165,9 @@ public class RideController {
     @PutMapping(value="/{id}/end")
     public ResponseEntity<RidePaginatedDTO> endRide(@PathVariable Integer id) {
 
-        List<UserPaginatedDTO> passengers = new ArrayList<>();
-        passengers.add(new UserPaginatedDTO(123, "user@example.com"));
-        List<PathPaginatedDTO> locations = new ArrayList<>();
+        Set<UserPaginatedDTO> passengers = new HashSet<>();
+        passengers.add(new UserPaginatedDTO(id, "user@example.com"));
+        Set<PathPaginatedDTO> locations = new HashSet<>();
         LocationPaginatedDTO departure = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));
@@ -185,9 +182,9 @@ public class RideController {
     public ResponseEntity<RidePaginatedDTO> cancelRideWithExpl(@PathVariable Integer id,
                                                                @RequestBody String explanation) {
 
-        List<UserPaginatedDTO> passengers = new ArrayList<>();
-        passengers.add(new UserPaginatedDTO(123, "user@example.com"));
-        List<PathPaginatedDTO> locations = new ArrayList<>();
+        Set<UserPaginatedDTO> passengers = new HashSet<>();
+        passengers.add(new UserPaginatedDTO(id, "user@example.com"));
+        Set<PathPaginatedDTO> locations = new HashSet<>();
         LocationPaginatedDTO departure = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));

@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/panic")
@@ -28,10 +25,10 @@ public class PanicController {
         List<PanicDTO> results = new ArrayList<>();
         PanicUserDTO user = new PanicUserDTO("pera.peric@email.com","Pera", "Peric", "U3dhZ2dlciByb2Nrcw==", "+381123123","Bulevar Oslobodjenja 74");
 
-        List<UserPaginatedDTO> passengers = new ArrayList<>();
+        Set<UserPaginatedDTO> passengers = new HashSet<>();
         passengers.add(new UserPaginatedDTO(16, "user@example.com"));
 
-        List<PathPaginatedDTO> locations = new ArrayList<>();
+        Set<PathPaginatedDTO> locations = new HashSet<>();
         LocationPaginatedDTO departure = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
         locations.add(new PathPaginatedDTO(departure, destination));

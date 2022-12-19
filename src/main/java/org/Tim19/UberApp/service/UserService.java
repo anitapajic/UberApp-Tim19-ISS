@@ -23,9 +23,8 @@ public class UserService {
     @Autowired
     private RideRepository rideRepository;
 
-    public User findOne(Integer id){return userRepository.findById(id).orElseGet(null);}
-
-    public User findOneLogin (String email, String password){return userRepository.findOneByEmailAndPassword(email,password);}
+    public User findOneById(Integer id){return userRepository.findById(id).orElseGet(null);}
+    public User findOneLogin(String email, String password){return userRepository.findOneByEmailAndPassword(email,password);}
     public List<User> findAll(){return userRepository.findAll();}
 
     public Page<User> findAll(Pageable page){return userRepository.findAll(page);}
@@ -33,8 +32,6 @@ public class UserService {
     public User save(User user){return userRepository.save(user);}
 
     public void remove(Integer id){userRepository.deleteById(id);}
-
-    public User findByEmail(String email){return userRepository.findOneByEmail(email);}
 
     public Set<RidePaginatedDTO> findAllRides(Integer id){
         //Set<String> result = userRepository.findAllRides(id);
@@ -58,7 +55,4 @@ public class UserService {
         return rides;
     }
 
-    public List<User> findByFirstNameAndLastName(String firstname, String lastname){
-        return userRepository.findByFirstnameAndLastnameAllIgnoringCase(firstname, lastname);
-    }
 }

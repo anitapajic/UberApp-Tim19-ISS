@@ -1,5 +1,7 @@
 package org.Tim19.UberApp.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,8 +11,8 @@ import java.util.*;
 
 
 @Entity
-@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Ride {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,21 +66,122 @@ public class Ride {
     private VehicleType vehicleType;
 
 
-    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengers, Set<Path> paths, Integer estimatedTimeInMinutes, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType) {
+        public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Integer estimatedTimeInMinutes, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
         this.totalCost = totalCost;
         this.driver = driver;
-        this.passengers = passengers;
-        this.paths = paths;
         this.estimatedTimeInMinutes = estimatedTimeInMinutes;
-        //this.reviews = reviews;
         this.status = status;
-        //this.rejections = rejections;
         this.panic = panic;
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
+        this.vehicleType = vehicleType;
+    }
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public Double getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(Double totalCost) {
+        this.totalCost = totalCost;
+    }
+
+    public Driver getDriver() {
+        return driver;
+    }
+
+    public void setDriver(Driver driver) {
+        this.driver = driver;
+    }
+
+    public Set<Passenger> getPassengers() {
+        return passengers;
+    }
+
+    public void setPassengers(Set<Passenger> passengers) {
+        this.passengers = passengers;
+    }
+
+    public Set<Path> getPaths() {
+        return paths;
+    }
+
+    public void setPaths(Set<Path> paths) {
+        this.paths = paths;
+    }
+
+    public Integer getEstimatedTimeInMinutes() {
+        return estimatedTimeInMinutes;
+    }
+
+    public void setEstimatedTimeInMinutes(Integer estimatedTimeInMinutes) {
+        this.estimatedTimeInMinutes = estimatedTimeInMinutes;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean isPanic() {
+        return panic;
+    }
+
+    public void setPanic(boolean panic) {
+        this.panic = panic;
+    }
+
+    public boolean isBabyTransport() {
+        return babyTransport;
+    }
+
+    public void setBabyTransport(boolean babyTransport) {
+        this.babyTransport = babyTransport;
+    }
+
+    public boolean isPetTransport() {
+        return petTransport;
+    }
+
+    public void setPetTransport(boolean petTransport) {
+        this.petTransport = petTransport;
+    }
+
+    public VehicleType getVehicleType() {
+        return vehicleType;
+    }
+
+    public void setVehicleType(VehicleType vehicleType) {
         this.vehicleType = vehicleType;
     }
 
