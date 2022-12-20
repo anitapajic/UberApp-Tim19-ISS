@@ -21,6 +21,8 @@ public class MessageService {
     @Autowired
     RideRepository rideRepository;
     public List<Message> findAllByUserId(Integer id){return messageRepository.findAllBySenderId(id);}
+    public List<Message> findAll(){return messageRepository.findAll();}
+
 
     public MessageDTO save(MessageDTO messageDTO){
 
@@ -29,12 +31,12 @@ public class MessageService {
         Ride ride = rideRepository.findOneById(messageDTO.getRideId());
 
         Message message = new Message();
-        message.setReceiver(receiver);
-        message.setSender(sender);
+        message.setReceiverId(receiver);
+        message.setSenderId(sender);
         message.setText(messageDTO.getMessage());
         message.setTime(messageDTO.getTimeOfSending());
         message.setType(messageDTO.getType());
-        message.setRide(ride);
+        message.setRideId(ride);
 
         message = messageRepository.save(message);
         return new MessageDTO(message);

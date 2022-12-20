@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -42,7 +43,7 @@ public class UserController {
                                                            @RequestParam(required = false) String  to){
 
 
-        //TODO: findAllDriverRides ili findAllPassengerRides prvo pronadji tip korisnika
+        //TODO: dodaj passengers i rejections svakoj voznji
         Set<Ride> allRides = rideService.findByUserId(id);
 
         Map<String, Object> response = new HashMap<>();
@@ -173,7 +174,7 @@ public class UserController {
     public ResponseEntity<NoteDTO> postUserNote(@PathVariable Integer id, @RequestBody NoteDTO noteDTO){
         NoteDTO note = noteDTO;
         note.setUserId(id);
-
+        note.setDate(LocalDateTime.now());
         note = noteService.save(noteDTO);
 
         return new ResponseEntity<>(note, HttpStatus.OK);

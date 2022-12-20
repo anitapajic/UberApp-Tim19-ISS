@@ -78,11 +78,12 @@ insert into working_hours (endd, startd, driver_id) values
                                                         ('2022-12-18T19:00:00Z', '2022-12-19T03:00:00Z', 4);
 
 -- Notes
-insert into note (text, user_id) values
-                                     ('Note 1', 2),
-                                     ('Note 2', 3),
-                                     ('Note 3', 3);
+insert into note (text, "DATE",  user_id) values
+                                     ('Note 1', '2017-07-21T17:32:28Z', 2),
+                                     ('Note 2', '2017-07-21T17:32:28Z', 3),
+                                     ('Note 3', '2017-07-21T17:32:28Z', 3);
 
 -- Messages
 insert into message (text, "TIME", "TYPE", receiver_id, sender_id, ride_id) values
-                                                                       ('message1', '2017-07-21T17:32:28Z', 0, 1, 2, 1);
+                                                                       ('message1', '2017-07-21T17:32:28Z', 0, 1, 2, 1),
+                                                                       ('message2', '2017-07-21T17:32:28Z', 0, 1, 2, 1);

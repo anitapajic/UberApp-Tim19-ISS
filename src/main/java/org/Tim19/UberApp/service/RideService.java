@@ -1,6 +1,10 @@
 package org.Tim19.UberApp.service;
 
+import org.Tim19.UberApp.model.Rejection;
+import org.Tim19.UberApp.model.Review;
 import org.Tim19.UberApp.model.Ride;
+import org.Tim19.UberApp.repository.RejectionRepository;
+import org.Tim19.UberApp.repository.ReviewRepository;
 import org.Tim19.UberApp.repository.RideRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,10 @@ import java.util.Set;
 public class RideService {
     @Autowired
     private RideRepository rideRepository;
+    @Autowired
+    private ReviewRepository reviewRepository;
+    @Autowired
+    private RejectionRepository rejectionRepository;
 
 
     public Ride findOne(Integer id){return rideRepository.findById(id).orElseGet(null);}
@@ -35,11 +43,21 @@ public class RideService {
         Set<Ride> rides = new HashSet<>();
 
         rides.addAll(rideRepository.findAllByDriverId(id));
-       // rides.addAll(rideRepository.findAll());
+        rides.addAll(rideRepository.findAllByPassengersId(id));
 
-       rides.addAll(rideRepository.findAllByPassengersId(id));
-
+        findRideReviewsAndRejections(rides);
 
         return rides;}
+
+
+    private void findRideReviewsAndRejections(Set<Ride> rides){
+        for (Ride r: rides) {
+            Set<Review> reviews = reviewRepository.findAllByRideId(r.getId());
+            Set<Rejection> rejections = rejectionRepository.findAllByRideId(r.getId());
+            r.addReviews(reviews);
+            r.addRejections(rejections);
+        }
+
+    }
 
 }

@@ -14,6 +14,7 @@ import java.util.Set;
 @DiscriminatorValue("Passenger")
 public class Passenger extends User{
 
+    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "passenger_ride",

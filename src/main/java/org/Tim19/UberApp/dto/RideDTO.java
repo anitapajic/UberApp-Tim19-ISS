@@ -54,7 +54,7 @@ public class RideDTO {
 
 
     public RideDTO(Ride ride) {
-        this(ride.getId(), ride.getStartTime(), ride.getEndTime(), ride.getTotalCost(), ride.getDriver(), ride.getPassengers(), ride.getEstimatedTimeInMinutes(), ride.getVehicleType(), ride.isPanic(), ride.isBabyTransport(), ride.isPetTransport(), ride.getStatus(), ride.getPaths());
+        this(ride.getId(), ride.getStartTime(), ride.getEndTime(), ride.getTotalCost(), ride.getDriver(), ride.getPassengers(), ride.getEstimatedTimeInMinutes(), ride.getVehicleType(), ride.isPanic(), ride.isBabyTransport(), ride.isPetTransport(), ride.getStatus(), ride.getLocations());
     }
 
 

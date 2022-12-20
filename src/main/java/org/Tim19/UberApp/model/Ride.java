@@ -31,8 +31,8 @@ public class Ride {
     @JoinColumn(name = "driver_id")
     private Driver driver;
 
-    @JsonIgnore
-    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH},
+            fetch = FetchType.EAGER)
     @JoinTable(
             name = "passenger_ride",
             joinColumns = @JoinColumn(name = "ride_id", referencedColumnName = "id"),
@@ -40,17 +40,22 @@ public class Ride {
     )
     private Set<Passenger> passengers = new HashSet<>();
 
-    @JsonIgnore
     @OneToMany(cascade ={CascadeType.ALL},
-            fetch = FetchType.LAZY)
-    private Set<Path> paths = new HashSet<>();
+            fetch = FetchType.EAGER)
+    @JoinTable(name = "ride_paths",
+            joinColumns = @JoinColumn(name = "ride_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "paths_id", referencedColumnName = "id"))
+    private Set<Path> locations = new HashSet<>();
 
     @Column(name="estimatedTimeInMinutes", nullable = false)
     private Integer estimatedTimeInMinutes;
 
-//    @JsonIgnore
-//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private Set<Message> reviews = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "ride")
+    private Set<Review> reviews = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "ride")
+    private Set<Rejection> rejection = new HashSet<>();
 
     @Column(name="status", nullable = false)
     private String status;
@@ -129,12 +134,12 @@ public class Ride {
         this.passengers = passengers;
     }
 
-    public Set<Path> getPaths() {
-        return paths;
+    public Set<Path> getLocations() {
+        return locations;
     }
 
-    public void setPaths(Set<Path> paths) {
-        this.paths = paths;
+    public void setLocations(Set<Path> paths) {
+        this.locations = paths;
     }
 
     public Integer getEstimatedTimeInMinutes() {
@@ -185,6 +190,22 @@ public class Ride {
         this.vehicleType = vehicleType;
     }
 
+    public Set<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(Set<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public Set<Rejection> getRejection() {
+        return rejection;
+    }
+
+    public void setRejection(Set<Rejection> rejection) {
+        this.rejection = rejection;
+    }
+
     public void addPassenger(Passenger passenger){
         this.passengers.add(passenger);
     }
@@ -193,12 +214,29 @@ public class Ride {
         this.passengers.remove(passenger);
     }
 
-//    public void addReview(Message message){
-//        this.reviews.add(message);
-//    }
-//
-//    public  void removeReview(Message message){
-//        this.reviews.remove(message);
-//    }
+    public void addReview(Review review){
+        this.reviews.add(review);
+    }
+
+    public void addReviews(Set<Review> reviews){
+        this.reviews.addAll(reviews);
+    }
+
+    public  void removeReview(Review review){
+        this.reviews.remove(review);
+    }
+
+
+    public void addRejection(Rejection rejection){
+        this.rejection.add(rejection);
+    }
+
+    public void addRejections(Set<Rejection> rejections){
+        this.rejection.addAll(rejections);
+    }
+
+    public  void removeRejection(Rejection rejection){
+        this.rejection.remove(rejection);
+    }
 }
 

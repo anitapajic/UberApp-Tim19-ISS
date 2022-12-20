@@ -30,7 +30,7 @@ public class MessageDTO {
     public MessageDTO(){}
 
     public MessageDTO(Message message){
-        this(message.getId(), message.getSender().getId(), message.getReceiver().getId(), message.getText(), message.getTime(), message.getType(), message.getRide().getId());
+        this(message.getId(), message.getSenderId().getId(), message.getReceiverId().getId(), message.getText(), message.getTime(), message.getType(), message.getRideId().getId());
     }
 
 }

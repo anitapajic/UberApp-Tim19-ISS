@@ -1,5 +1,6 @@
 package org.Tim19.UberApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,13 +17,14 @@ public class Rejection {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
 
+    @JsonIgnore
     @ManyToOne
     private User user;
 
     private String reason;
 
     private LocalDateTime timeOfRejection;
-
+    @JsonIgnore
     @ManyToOne
     private Ride ride;
 }

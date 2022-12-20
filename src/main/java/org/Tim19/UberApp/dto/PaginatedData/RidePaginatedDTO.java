@@ -67,7 +67,7 @@ public class RidePaginatedDTO {
         this.petTransport = ride.isPetTransport();
 
         Set<PathPaginatedDTO> paths = new HashSet<>();
-        for (Path p : ride.getPaths()) {
+        for (Path p : ride.getLocations()) {
             PathPaginatedDTO path = new PathPaginatedDTO();
             path.setDeparture(new LocationPaginatedDTO(p.getDeparture()));
             path.setDestination(new LocationPaginatedDTO(p.getDestination()));

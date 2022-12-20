@@ -15,24 +15,15 @@ import java.util.Set;
 @DiscriminatorValue("Driver")
 public class Driver extends User{
 
-//    @JsonIgnore
-//    @OneToMany(cascade ={CascadeType.ALL},
-//            fetch = FetchType.EAGER)
-//    @JoinTable(name = "driver_ride",
-//            joinColumns = @JoinColumn(name = "ride_id", referencedColumnName = "id"),
-//            inverseJoinColumns = @JoinColumn(name = "driver_id", referencedColumnName = "id")
-//    )
-//    private Set<Ride> rides = new HashSet<Ride>();
+    @JsonIgnore
+    @OneToMany(cascade ={CascadeType.ALL},
+            fetch = FetchType.LAZY, mappedBy = "driver")
+    private Set<Ride> rides = new HashSet<Ride>();
 
-//    @JsonIgnore
-//    @OneToMany(cascade ={CascadeType.ALL},
-//            fetch = FetchType.LAZY)
-//    @JoinTable(name = "DRIVER_DOCUMENT",
-//            joinColumns = @JoinColumn(name = "document_id", referencedColumnName = "id"),
-//            inverseJoinColumns = @JoinColumn(name = "driver_id", referencedColumnName = "id")
-//   )
-
-    //private Set<DriverDocument> documents = new HashSet<DriverDocument>();
+    @JsonIgnore
+    @OneToMany(cascade ={CascadeType.ALL},
+            fetch = FetchType.LAZY, mappedBy = "driver")
+    private Set<DriverDocument> documents = new HashSet<DriverDocument>();
 
     @JsonIgnore
     @OneToOne
@@ -41,24 +32,24 @@ public class Driver extends User{
 
     public Driver(Integer id, String email, String firstname, String lastname, String profilePicture, String telephoneNumber, String address, String password, Boolean active, Boolean blocked, Set<Ride> rides, Set<DriverDocument> documents, Vehicle vehicle) {
         super(id, email, firstname, lastname, profilePicture, telephoneNumber, address, password, active, blocked);
-       // this.rides = rides;
-        //this.documents = documents;
+        this.rides = rides;
+        this.documents = documents;
         this.vehicle = vehicle;
     }
 
-//    public void addDocument(DriverDocument document){
-//        this.documents.add(document);
-//    }
-//
-//    public  void removeDocument(DriverDocument document){
-//        this.documents.remove(document);
-//    }
-//    public void addRide(Ride ride){
-//        this.rides.add(ride);
-//    }
-//
-//    public  void removeRide(Ride ride){
-//        this.rides.remove(ride);
-//    }
+    public void addDocument(DriverDocument document){
+        this.documents.add(document);
+    }
+
+    public  void removeDocument(DriverDocument document){
+        this.documents.remove(document);
+    }
+    public void addRide(Ride ride){
+        this.rides.add(ride);
+    }
+
+    public  void removeRide(Ride ride){
+        this.rides.remove(ride);
+    }
 
 }

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.Tim19.UberApp.dto.NoteDTO;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -21,10 +22,13 @@ public class Note {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Note(Integer id, String text, User user) {
+    private LocalDateTime date;
+
+    public Note(Integer id, String text, User user, LocalDateTime date) {
         this.id = id;
         this.text = text;
         this.user = user;
+        this.date = date;
     }
 
 }

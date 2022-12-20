@@ -15,16 +15,20 @@ public class NoteDTO {
     private String message;
     private Integer userId;
 
-    public NoteDTO(Integer id, Integer userId, String message){
+    private LocalDateTime date;
+
+    public NoteDTO(Integer id, Integer userId, String message, LocalDateTime date){
         this.id = id;
         this.userId = userId;
         this.message = message;
+        this.date = date;
     }
 
     public  NoteDTO(Note note){
         this.id = note.getId();
         this.userId = note.getUser().getId();
         this.message = note.getText();
+        this.date = note.getDate();
     }
 
 }
