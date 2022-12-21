@@ -47,8 +47,19 @@ public class RideService {
 
         findRideReviewsAndRejections(rides);
 
-        return rides;}
+        return rides;
+    }
 
+    public Set<Ride> findByPassengerId(Integer id){
+        Set<Ride> rides = rideRepository.findAllByPassengersId(id);
+
+        return rides;
+    }
+    public Set<Ride> findByDriverId(Integer id){
+        Set<Ride> rides = rideRepository.findAllByDriverId(id);
+
+        return rides;
+    }
 
     private void findRideReviewsAndRejections(Set<Ride> rides){
         for (Ride r: rides) {

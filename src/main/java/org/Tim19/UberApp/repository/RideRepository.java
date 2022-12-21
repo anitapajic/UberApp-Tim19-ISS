@@ -13,7 +13,7 @@ public interface RideRepository extends JpaRepository<Ride,Integer> {
     public Ride findOneById(Integer id);
 
 
-    @Query(value = "select * from ride r where r.driver_id = ?1", nativeQuery = true)
+//    @Query(value = "select * from ride r where r.driver_id = ?1", nativeQuery = true)
     public Set<Ride> findAllByDriverId(Integer id);
 
 
