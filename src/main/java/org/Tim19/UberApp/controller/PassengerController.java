@@ -5,6 +5,7 @@ import org.Tim19.UberApp.dto.PaginatedData.*;
 import org.Tim19.UberApp.dto.PassengerDTO;
 import org.Tim19.UberApp.model.*;
 import org.Tim19.UberApp.service.PassengerService;
+import org.Tim19.UberApp.service.RideService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +23,8 @@ public class PassengerController {
 
     @Autowired
     private PassengerService passengerService;
+    @Autowired
+    private RideService rideService;
 
 
     //CREATE PASSENGER  /api/passenger
@@ -115,28 +118,22 @@ public class PassengerController {
     }
 
     //PASSENGER RIDES  /api/passenger/{id}/ride
-    @GetMapping(value="/{id}/ride")
+    @GetMapping(value = "/{id}/ride")
     public ResponseEntity<Map<String, Object>> getAllRides(@PathVariable Integer id,
                                                            @RequestParam(defaultValue = "0") Integer page,
                                                            @RequestParam(defaultValue = "4") Integer size,
-                                                           @RequestParam(required = false) String from,
-                                                           @RequestParam(required = false) String to){
-        Set<UserPaginatedDTO> passengers = new HashSet<>();
-        passengers.add(new UserPaginatedDTO(id, "user@example.com"));
-        Set<PathPaginatedDTO> locations = new HashSet<>();
-        LocationPaginatedDTO departure = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
-        LocationPaginatedDTO destination = new LocationPaginatedDTO("Bulevar oslobodjenja 46", 45.267136, 19.833549);
-        locations.add(new PathPaginatedDTO(departure, destination));
-        RidePaginatedDTO ride = new RidePaginatedDTO(123, LocalDateTime.of(2022,12,7,20,15,26), LocalDateTime.of(2022,12,7,20,30,15),
-                1235.00, new UserPaginatedDTO(12, "user@example.com"), passengers, 5, VehicleType.STANDARDNO, true, true, new RejectionPaginatedDTO("Ride is canceled due to previous problems with the passenger", LocalDateTime.of(2022,12,7,21,0,0)), locations, "PENDING");
+                                                           @RequestParam(required = false) String sort,
+                                                           @RequestParam(required = false) String  from,
+                                                           @RequestParam(required = false) String  to){
 
+
+        Set<Ride> allRides = rideService.findByPassengerId(id);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("totalCount", 243);
-        response.put("results", ride);
+        response.put("totalCount", allRides.size());
+        response.put("results", allRides);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
 
 }

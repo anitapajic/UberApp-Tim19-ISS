@@ -43,7 +43,6 @@ public class UserController {
                                                            @RequestParam(required = false) String  to){
 
 
-        //TODO: dodaj passengers i rejections svakoj voznji
         Set<Ride> allRides = rideService.findByUserId(id);
 
         Map<String, Object> response = new HashMap<>();
