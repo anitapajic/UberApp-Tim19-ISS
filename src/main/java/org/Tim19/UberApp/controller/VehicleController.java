@@ -42,7 +42,7 @@ public class VehicleController {
     @PostMapping(value="/driver/{id}/vehicle", consumes = "application/json")
     public ResponseEntity<VehicleDTO> saveVehicle(@RequestBody VehicleDTO vehicleDTO) {
 
-        Driver driver = new Driver(100,"tamara@gmail.com","tamara","dzambic","ahhajhsjah","0645554454","Brace Ribnikar 17","tam123",true,false,new HashSet<>(),new HashSet<>(),null);
+        Driver driver = new Driver(111111,"tamara116@gmail.com","tamara","dzambic","ahhajhsjah","0645554454","Brace Ribnikar 17","tam123",true,false,new HashSet<>(),new HashSet<>(),null);
         Vehicle vehicle = new Vehicle();
         vehicle.setVehicleType(vehicleDTO.getVehicleType());
         vehicle.setCarModel(vehicleDTO.getModel());
@@ -50,7 +50,6 @@ public class VehicleController {
         vehicle.setPassengerSeats(vehicleDTO.getPassengerSeats());
         vehicle.setBabyTransport(vehicleDTO.isBabyTransport());
         vehicle.setPetTransport(vehicleDTO.isBabyTransport());
-        vehicle.setDriver(null);
 
         driver.setVehicle(vehicle);
         vehicle = vehicleService.save(vehicle);

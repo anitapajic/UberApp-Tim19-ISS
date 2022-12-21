@@ -11,27 +11,26 @@ import java.util.Set;
 
 public class DriverDTO extends UserDTO{
 
-    @JsonIgnore
-    private Set<Ride> rides = new HashSet<Ride>();
+//    @JsonIgnore
+//    private Set<Ride> rides = new HashSet<Ride>();
     @JsonIgnore
     private Set<DriverDocument> documents = new HashSet<>();
     private Vehicle vehicle;
 
-    public DriverDTO(Integer id, String firstname, String lastname, String profilePicture, String telephoneNumber, String email, String address, String password, Boolean active, Boolean blocked,Set<Ride> rides, Set<DriverDocument> documents, Vehicle vehicle) {
+    public DriverDTO(Integer id, String firstname, String lastname, String profilePicture, String telephoneNumber, String email, String address, String password, Boolean active, Boolean blocked, Vehicle vehicle) {
         super(id, email, firstname, lastname, profilePicture, telephoneNumber, address, password, active, blocked);
-        this.rides = rides;
-        this.documents = documents;
+        //this.documents = documents;
         this.vehicle = vehicle;
     }
     public DriverDTO() {}
 
     public DriverDTO(Driver driver){
-        this(driver.getId(), driver.getFirstname(), driver.getLastname(), driver.getProfilePicture(), driver.getTelephoneNumber(), driver.getEmail(), driver.getAddress(), driver.getPassword(), driver.getActive(), driver.getBlocked(),driver.getRides(), driver.getDocuments(), driver.getVehicle());
+        this(driver.getId(), driver.getFirstname(), driver.getLastname(), driver.getProfilePicture(), driver.getTelephoneNumber(), driver.getEmail(), driver.getAddress(), driver.getPassword(), driver.getActive(), driver.getBlocked(), driver.getVehicle());
     }
 
-    public Set<Ride> getRides() {
-        return rides;
-    }
+//    public Set<Ride> getRides() {
+//        return rides;
+//    }
 
     public Set<DriverDocument> getDocuments() {
         return documents;

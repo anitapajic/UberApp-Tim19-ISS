@@ -1,5 +1,7 @@
 package org.Tim19.UberApp.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,8 +11,8 @@ import java.util.*;
 
 
 @Entity
-@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Ride {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,8 +31,8 @@ public class Ride {
     @JoinColumn(name = "driver_id")
     private Driver driver;
 
-    @JsonIgnore
-    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH},
+            fetch = FetchType.EAGER)
     @JoinTable(
             name = "passenger_ride",
             joinColumns = @JoinColumn(name = "ride_id", referencedColumnName = "id"),
@@ -38,24 +40,25 @@ public class Ride {
     )
     private Set<Passenger> passengers = new HashSet<>();
 
-    @JsonIgnore
     @OneToMany(cascade ={CascadeType.ALL},
-            fetch = FetchType.LAZY)
-    private Set<Path> paths = new HashSet<>();
+            fetch = FetchType.EAGER)
+    @JoinTable(name = "ride_paths",
+            joinColumns = @JoinColumn(name = "ride_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "paths_id", referencedColumnName = "id"))
+    private Set<Path> locations = new HashSet<>();
 
     @Column(name="estimatedTimeInMinutes", nullable = false)
     private Integer estimatedTimeInMinutes;
 
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Message> reviews = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "ride")
+    private Set<Review> reviews = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "ride")
+    private Set<Rejection> rejection = new HashSet<>();
 
     @Column(name="status", nullable = false)
     private String status;
-
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Rejection> rejections;
 
     @Column(name="panic", nullable = false)
     private boolean panic;
@@ -68,22 +71,139 @@ public class Ride {
     private VehicleType vehicleType;
 
 
-    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengers, Set<Path> paths, Integer estimatedTimeInMinutes, Set<Message> reviews, String status, Set<Rejection> rejections, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType) {
+        public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Integer estimatedTimeInMinutes, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
         this.totalCost = totalCost;
         this.driver = driver;
-        this.passengers = passengers;
-        this.paths = paths;
         this.estimatedTimeInMinutes = estimatedTimeInMinutes;
-        this.reviews = reviews;
         this.status = status;
-        this.rejections = rejections;
         this.panic = panic;
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
         this.vehicleType = vehicleType;
+    }
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public Double getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(Double totalCost) {
+        this.totalCost = totalCost;
+    }
+
+    public Driver getDriver() {
+        return driver;
+    }
+
+    public void setDriver(Driver driver) {
+        this.driver = driver;
+    }
+
+    public Set<Passenger> getPassengers() {
+        return passengers;
+    }
+
+    public void setPassengers(Set<Passenger> passengers) {
+        this.passengers = passengers;
+    }
+
+    public Set<Path> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(Set<Path> paths) {
+        this.locations = paths;
+    }
+
+    public Integer getEstimatedTimeInMinutes() {
+        return estimatedTimeInMinutes;
+    }
+
+    public void setEstimatedTimeInMinutes(Integer estimatedTimeInMinutes) {
+        this.estimatedTimeInMinutes = estimatedTimeInMinutes;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean isPanic() {
+        return panic;
+    }
+
+    public void setPanic(boolean panic) {
+        this.panic = panic;
+    }
+
+    public boolean isBabyTransport() {
+        return babyTransport;
+    }
+
+    public void setBabyTransport(boolean babyTransport) {
+        this.babyTransport = babyTransport;
+    }
+
+    public boolean isPetTransport() {
+        return petTransport;
+    }
+
+    public void setPetTransport(boolean petTransport) {
+        this.petTransport = petTransport;
+    }
+
+    public VehicleType getVehicleType() {
+        return vehicleType;
+    }
+
+    public void setVehicleType(VehicleType vehicleType) {
+        this.vehicleType = vehicleType;
+    }
+
+    public Set<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(Set<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public Set<Rejection> getRejection() {
+        return rejection;
+    }
+
+    public void setRejection(Set<Rejection> rejection) {
+        this.rejection = rejection;
     }
 
     public void addPassenger(Passenger passenger){
@@ -94,12 +214,29 @@ public class Ride {
         this.passengers.remove(passenger);
     }
 
-    public void addReview(Message message){
-        this.reviews.add(message);
+    public void addReview(Review review){
+        this.reviews.add(review);
     }
 
-    public  void removeReview(Message message){
-        this.reviews.remove(message);
+    public void addReviews(Set<Review> reviews){
+        this.reviews.addAll(reviews);
+    }
+
+    public  void removeReview(Review review){
+        this.reviews.remove(review);
+    }
+
+
+    public void addRejection(Rejection rejection){
+        this.rejection.add(rejection);
+    }
+
+    public void addRejections(Set<Rejection> rejections){
+        this.rejection.addAll(rejections);
+    }
+
+    public  void removeRejection(Rejection rejection){
+        this.rejection.remove(rejection);
     }
 }
 

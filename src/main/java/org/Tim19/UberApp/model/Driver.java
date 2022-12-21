@@ -1,6 +1,7 @@
 package org.Tim19.UberApp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,12 +17,12 @@ public class Driver extends User{
 
     @JsonIgnore
     @OneToMany(cascade ={CascadeType.ALL},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY, mappedBy = "driver")
     private Set<Ride> rides = new HashSet<Ride>();
 
     @JsonIgnore
     @OneToMany(cascade ={CascadeType.ALL},
-            fetch = FetchType.LAZY)
+            fetch = FetchType.LAZY, mappedBy = "driver")
     private Set<DriverDocument> documents = new HashSet<DriverDocument>();
 
     @JsonIgnore

@@ -19,7 +19,6 @@ public class RideDTO {
 
     private Driver driver;
 
-
     private Set<Passenger> passengersDTO = new HashSet<>();
     private Integer estimatedTimeInMinutes;
 
@@ -37,7 +36,7 @@ public class RideDTO {
     private Set<Rejection> rejectons;
 
 
-    public RideDTO(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengersDTO, Integer estimatedTimeInMinutes, Set<Message> reviews, VehicleType vehicleType, Boolean panic, boolean babyTransport, boolean petTransport, String status, Set<Path> paths, Set<Rejection> rejectons) {
+    public RideDTO(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengersDTO, Integer estimatedTimeInMinutes, VehicleType vehicleType, Boolean panic, boolean babyTransport, boolean petTransport, String status, Set<Path> paths) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -45,19 +44,17 @@ public class RideDTO {
         this.driver = driver;
         this.passengersDTO = passengersDTO;
         this.estimatedTimeInMinutes = estimatedTimeInMinutes;
-        this.reviews = reviews;
         this.vehicleType = vehicleType;
         this.panic = panic;
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
         this.status = status;
         this.paths = paths;
-        this.rejectons = rejectons;
     }
 
 
     public RideDTO(Ride ride) {
-        this(ride.getId(), ride.getStartTime(), ride.getEndTime(), ride.getTotalCost(), ride.getDriver(), ride.getPassengers(), ride.getEstimatedTimeInMinutes(), ride.getReviews(), ride.getVehicleType(), ride.isPanic(), ride.isBabyTransport(), ride.isPetTransport(), ride.getStatus(), ride.getPaths(), ride.getRejections());
+        this(ride.getId(), ride.getStartTime(), ride.getEndTime(), ride.getTotalCost(), ride.getDriver(), ride.getPassengers(), ride.getEstimatedTimeInMinutes(), ride.getVehicleType(), ride.isPanic(), ride.isBabyTransport(), ride.isPetTransport(), ride.getStatus(), ride.getLocations());
     }
 
 

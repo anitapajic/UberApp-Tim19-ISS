@@ -3,8 +3,6 @@ package org.Tim19.UberApp.dto;
 import lombok.Data;
 import org.Tim19.UberApp.model.MSGType;
 import org.Tim19.UberApp.model.Message;
-import org.Tim19.UberApp.model.Ride;
-import org.Tim19.UberApp.model.User;
 
 import java.time.LocalDateTime;
 
@@ -32,7 +30,7 @@ public class MessageDTO {
     public MessageDTO(){}
 
     public MessageDTO(Message message){
-        this(message.getId(), message.getSender().getId(), message.getReceiver().getId(), message.getText(), message.getTime(), message.getType(), message.getRide().getId());
+        this(message.getId(), message.getSenderId().getId(), message.getReceiverId().getId(), message.getText(), message.getTime(), message.getType(), message.getRideId().getId());
     }
 
 }
