@@ -2,11 +2,9 @@ package org.Tim19.UberApp.controller;
 
 import org.Tim19.UberApp.dto.*;
 import org.Tim19.UberApp.dto.PaginatedData.*;
-import org.Tim19.UberApp.model.Driver;
-import org.Tim19.UberApp.model.Passenger;
-import org.Tim19.UberApp.model.Vehicle;
-import org.Tim19.UberApp.model.VehicleType;
+import org.Tim19.UberApp.model.*;
 import org.Tim19.UberApp.service.DriverService;
+import org.Tim19.UberApp.service.RideService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +22,8 @@ public class DriverController {
 
     @Autowired
     private DriverService driverService;
+    @Autowired
+    private RideService rideService;
 
     //CREATE DRIVER  /api/driver
     //DONE
@@ -104,32 +104,23 @@ public class DriverController {
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 
-        @GetMapping(value = "/{id}/ride")
-        public ResponseEntity<Map<String, Object>> getAllRidesFromDriver(){
+    @GetMapping(value = "/{id}/ride")
+    public ResponseEntity<Map<String, Object>> getAllRides(@PathVariable Integer id,
+                                                           @RequestParam(defaultValue = "0") Integer page,
+                                                           @RequestParam(defaultValue = "4") Integer size,
+                                                           @RequestParam(required = false) String sort,
+                                                           @RequestParam(required = false) String  from,
+                                                           @RequestParam(required = false) String  to){
 
-            UserPaginatedDTO driver = new UserPaginatedDTO(1,"aleks@gmail.com");
-            List<UserPaginatedDTO> passengers = new ArrayList<>();
-            passengers.add(new UserPaginatedDTO(1, "tamara@example.com"));
-            VehiclePaginatedDTO vehicle = new VehiclePaginatedDTO(5,"Standardno",true,false);
-            LocationPaginatedDTO departure = new LocationPaginatedDTO("Mise Dimitrijevica 42",45.267136,19.345633);
-            LocationPaginatedDTO destination = new LocationPaginatedDTO("Mise Dimitrijevica 42",45.267136,19.345633);
-            RejectionPaginatedDTO rejection = new RejectionPaginatedDTO("Ride is canceled due to previous problem with the passenger",LocalDateTime.now());
 
-            List<PathPaginatedDTO> locations = new ArrayList<>();
-            locations.add(new PathPaginatedDTO(departure, destination));
-            
-            Map<String, Object> results = new HashMap<>();
-            results.put("passenger",passengers);
-            results.put("driver", driver);
-            results.put("vehicle", vehicle);
-            results.put("rejection", rejection);
-            results.put("locations", locations);
+        Set<Ride> allRides = rideService.findByDriverId(id);
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("totalCount",2);
-            response.put("results",results);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalCount", allRides.size());
+        response.put("results", allRides);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 
 }
