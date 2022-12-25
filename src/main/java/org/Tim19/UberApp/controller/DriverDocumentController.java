@@ -53,6 +53,7 @@ public class    DriverDocumentController {
         DriverDocument driverDocument = driverDocumentService.findOne(id);
 
         if (driverDocument != null) {
+            driverDocumentService.remove(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -65,6 +66,10 @@ public class    DriverDocumentController {
 
         DriverDocument driverDocument = new DriverDocument();
         Driver driver = driverService.findOne(id);
+        if (driver == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         driverDocument.setName(driverDocumentDTO.getName());
         driverDocument.setDocumentImage(driverDocumentDTO.getDocumentImage());
         driverDocument.setDriver(driver);

@@ -66,14 +66,14 @@ public class DriverController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<DriverDTO> getDriver(@PathVariable Integer id) {
 
-        Driver users = driverService.findOne(id);
+        Driver driver = driverService.findOne(id);
 
         // user must exist
-        if (users == null) {
+        if (driver == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-            return new ResponseEntity<>(new DriverDTO(users), HttpStatus.OK);
+            return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
         }
 
     //UPDATE EXISTING DRIVER  /api/driver/{id}
@@ -100,6 +100,8 @@ public class DriverController {
         driver.setFirstname(driverDTO.getName());
         driver.setLastname(driverDTO.getSurname());
         driver.setPassword(driverDTO.getPassword());
+
+        //driver = driverService.save(driver);
 
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
