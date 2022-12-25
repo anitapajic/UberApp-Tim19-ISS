@@ -104,24 +104,24 @@ public class DriverController {
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{id}/ride")
-    public ResponseEntity<Map<String, Object>> getAllRides(@PathVariable Integer id,
-                                                           @RequestParam(defaultValue = "0") Integer page,
-                                                           @RequestParam(defaultValue = "4") Integer size,
-                                                           @RequestParam(required = false) String sort,
-                                                           @RequestParam(required = false) String  from,
-                                                           @RequestParam(required = false) String  to){
+
+        @GetMapping(value = "/{id}/ride")
+        public ResponseEntity<Map<String, Object>> getAllRidesFromDriver(@PathVariable Integer id,
+                                                                         @RequestParam(defaultValue = "0") Integer page,
+                                                                         @RequestParam(defaultValue = "4") Integer size,
+                                                                         @RequestParam(required = false) String sort,
+                                                                         @RequestParam(required = false) String  from,
+                                                                         @RequestParam(required = false) String  to) {
 
 
-        Set<Ride> allRides = rideService.findByDriverId(id);
+            Set<Ride> allRides = rideService.findByDriverId(id);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("totalCount", allRides.size());
-        response.put("results", allRides);
+            Map<String, Object> response = new HashMap<>();
+            response.put("totalCount", allRides.size());
+            response.put("results", allRides);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+            return new ResponseEntity<>(response, HttpStatus.OK);
 
-
+        }
 }
 

@@ -10,7 +10,7 @@ import java.util.Set;
 public class VehicleDTO {
 
     private Integer id;
-    private Driver driverId;
+    private Integer driverId;
     private String model;
     private VehicleType vehicleType;
     private String licenseNumber;
@@ -46,7 +46,7 @@ public class VehicleDTO {
         return id;
     }
 
-    public Driver getDriverId() {
+    public Integer getDriverId() {
         return driverId;
     }
 

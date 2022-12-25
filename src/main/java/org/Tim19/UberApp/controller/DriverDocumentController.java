@@ -1,17 +1,26 @@
 package org.Tim19.UberApp.controller;
 
+import org.Tim19.UberApp.dto.DriverDTO;
 import org.Tim19.UberApp.dto.DriverDocumentDTO;
+import org.Tim19.UberApp.dto.NoteDTO;
 import org.Tim19.UberApp.dto.PaginatedData.DriverDocumentPaginatedDTO;
 import org.Tim19.UberApp.model.Driver;
 import org.Tim19.UberApp.model.DriverDocument;
+import org.Tim19.UberApp.model.Note;
+import org.Tim19.UberApp.model.Ride;
 import org.Tim19.UberApp.service.DriverDocumentService;
 import org.Tim19.UberApp.service.DriverService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import java.io.Serial;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/driver")
@@ -24,10 +33,17 @@ public class    DriverDocumentController {
 
     //DRIVER DOCUMENTS /api/driver/{id}/documents   (driverId)z
     @GetMapping(value = "/{id}/documents")
-    public ResponseEntity<DriverDocumentPaginatedDTO> getDriverDocuments(@PathVariable Integer id) {
+    public ResponseEntity<List<DriverDocumentDTO>> getDriverDocuments(@PathVariable Integer id) {
 
-        DriverDocumentPaginatedDTO driverDocument = new DriverDocumentPaginatedDTO(123,"Vozačka dozvola","U3dhZ2dlciByb2Nrcw=",id);
-        return new ResponseEntity<>(driverDocument, HttpStatus.OK);
+        List<DriverDocument> documents = driverDocumentService.findAllByDriverId(id);
+        List<DriverDocumentDTO> driverDocuments = new ArrayList<>();
+
+        for (DriverDocument d: documents) {
+            DriverDocumentDTO driverDocumentDTO = new DriverDocumentDTO(d);
+            driverDocuments.add(driverDocumentDTO);
+        }
+        return new ResponseEntity<>(driverDocuments,HttpStatus.OK);
+
     }
 
     //DELETING DRIVERS DOCUMENTS /api/driver/{id}/documents  (documentId)
