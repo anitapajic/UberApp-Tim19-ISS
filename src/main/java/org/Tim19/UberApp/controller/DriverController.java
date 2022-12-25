@@ -104,6 +104,7 @@ public class DriverController {
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 
+
         @GetMapping(value = "/{id}/ride")
         public ResponseEntity<Map<String, Object>> getAllRidesFromDriver(@PathVariable Integer id,
                                                                          @RequestParam(defaultValue = "0") Integer page,
