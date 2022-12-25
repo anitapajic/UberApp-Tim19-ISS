@@ -68,8 +68,8 @@ insert into review (comment, rating, ride_id, user_id) values
 insert into document(name, document_image, driver_id) values
                                                           ('vozacka dozvola', 'pic1', 1),
                                                           ('licna karta', 'pic1', 1),
-                                                          ('vozacka dozvola', 'pic2', 2),
-                                                          ('licna karta', 'pic2', 2);
+                                                          ('vozacka dozvola', 'pic2', 4),
+                                                          ('licna karta', 'pic2', 4);
 
 
 -- Working hours

@@ -24,7 +24,7 @@ public class DriverDocument {
     private String documentImage;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "driver_id")
     private Driver driver;
 

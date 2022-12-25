@@ -6,6 +6,7 @@ import org.Tim19.UberApp.dto.PaginatedData.Vehicle3PaginatedDTO;
 import org.Tim19.UberApp.dto.PaginatedData.VehiclePaginated2DTO;
 import org.Tim19.UberApp.dto.VehicleDTO;
 import org.Tim19.UberApp.model.Driver;
+import org.Tim19.UberApp.model.DriverDocument;
 import org.Tim19.UberApp.model.Vehicle;
 import org.Tim19.UberApp.model.VehicleType;
 import org.Tim19.UberApp.service.DriverService;
@@ -30,12 +31,20 @@ public class VehicleController {
 
     //VEHICLE OF THE DRIVER  /api/driver/{id}/vehicle
     @GetMapping(value="/driver/{id}/vehicle")
-    public ResponseEntity<VehiclePaginated2DTO> getVehicle(@PathVariable Integer id) {
+    public ResponseEntity<VehicleDTO> getVehicle(@PathVariable Integer id) {
 
-        LocationPaginatedDTO location = new LocationPaginatedDTO("Bulevar oslobodjenja 46",45.267136,19.833549);
-        VehiclePaginated2DTO vehicle = new VehiclePaginated2DTO(1,id,"audi",VehicleType.STANDARDNO ,"NS 123-AB",location,4,true,true);
+        Driver driver = driverService.findOne(id);
+        Integer vehicleID = driver.getVehicle().getId();
+        Vehicle vehicle = vehicleService.findOne(vehicleID);
 
-        return new ResponseEntity<>(vehicle, HttpStatus.OK);
+        if (vehicle == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        VehicleDTO vehicleDTO = new VehicleDTO(vehicle);
+        vehicleDTO.setDriverId(id);
+
+        return new ResponseEntity<>(vehicleDTO, HttpStatus.OK);
+
     }
 
     //ADD VEHICLE TO THE DRIVER  /api/driver/{id}/vehicle
