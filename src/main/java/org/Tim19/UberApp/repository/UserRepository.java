@@ -19,6 +19,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     public Page<User> findAll(Pageable pageable);
 
+    @Query( value = "select * from \"USER\" d where d.vehicle_id = ?1", nativeQuery = true)
+    public  User findOneByVehicleId(Integer id);
+
     public List<User> findByFirstnameAndLastnameAllIgnoringCase(String firstname, String lastname);
 
 
