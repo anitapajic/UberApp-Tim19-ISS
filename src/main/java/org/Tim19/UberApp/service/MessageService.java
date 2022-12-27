@@ -1,6 +1,7 @@
 package org.Tim19.UberApp.service;
 
 import org.Tim19.UberApp.dto.MessageDTO;
+import org.Tim19.UberApp.model.MSGType;
 import org.Tim19.UberApp.model.Message;
 import org.Tim19.UberApp.model.Ride;
 import org.Tim19.UberApp.model.User;
@@ -22,6 +23,10 @@ public class MessageService {
     RideRepository rideRepository;
     public List<Message> findAllByUserId(Integer id){return messageRepository.findAllBySenderId(id);}
     public List<Message> findAll(){return messageRepository.findAll();}
+
+    public List<Message> findAllPanic(){return messageRepository.findByType(MSGType.PANIC);}
+
+
 
 
     public MessageDTO save(MessageDTO messageDTO){
