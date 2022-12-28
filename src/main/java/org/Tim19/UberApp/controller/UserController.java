@@ -22,6 +22,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/user")
+@CrossOrigin(value = "*")
 public class UserController {
 
     @Autowired
@@ -32,6 +33,7 @@ public class UserController {
     private MessageService messageService;
     @Autowired
     private RideService rideService;
+
 
     //RIDES OF THE USER  /api/user/{id}/ride
     @GetMapping(value = "/{id}/ride")
@@ -72,14 +74,14 @@ public class UserController {
 
         User user = userService.findOneLogin(loginDTO.getEmail(), loginDTO.getPassword());
 
-        if (user == null) {
+        if (user == null || !user.getActive()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         Map<String, Object> response = new HashMap<>();
         response.put("accessToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
         response.put("refreshToken","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" );
-
+        response.put("user", user);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
