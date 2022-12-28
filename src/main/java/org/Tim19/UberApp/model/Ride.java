@@ -21,7 +21,7 @@ public class Ride {
     @Column(name="startTime", nullable = false)
     private LocalDateTime startTime;
 
-    @Column(name="endTime", nullable = false)
+    @Column(name="endTime", nullable = true)
     private LocalDateTime endTime;
 
     @Column(name="totalCost", nullable = false)
@@ -67,7 +67,7 @@ public class Ride {
 
     @Column(name="petTransport", nullable = false)
     private boolean petTransport;
-    @Column(name="vehicleType", nullable = false)
+    @Column(name="vehicleType", nullable = true)
     private VehicleType vehicleType;
 
 

@@ -33,8 +33,8 @@ public class Passenger extends User{
     private Set<Path> favourite = new HashSet<>();
 
 
-    public Passenger(Integer id, String firstname, String lastname, String profilePicture, String telephoneNumber, String email, String address, String password, Boolean active, Boolean blocked, Set<Ride> rides) {
-        super(id, firstname, lastname, profilePicture, telephoneNumber, email, address, password, active, blocked);
+    public Passenger(Integer id, String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, Boolean active, Boolean blocked, Set<Ride> rides) {
+        super(id, name, surname, profilePicture, telephoneNumber, email, address, password, active, blocked);
         this.rides = rides;
     }
 

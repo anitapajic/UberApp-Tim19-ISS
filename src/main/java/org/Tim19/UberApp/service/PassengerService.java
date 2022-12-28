@@ -32,8 +32,8 @@ public class PassengerService {
 
     public Passenger findByEmail(String email){return passengerRepository.findOneByEmail(email);}
 
-    public List<Passenger> findByFirstNameAndLastName(String firstname, String lastname){
-        return passengerRepository.findByFirstnameAndLastnameAllIgnoringCase(firstname, lastname);
+    public List<Passenger> findByNameAndSurnameAllIgnoringCase(String firstname, String lastname){
+        return passengerRepository.findByNameAndSurnameAllIgnoringCase(firstname, lastname);
     }
 
 

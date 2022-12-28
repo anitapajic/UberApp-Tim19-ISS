@@ -38,8 +38,8 @@ public class DriverController {
         driver.setTelephoneNumber(driverDTO.getTelephoneNumber());
         driver.setAddress(driverDTO.getAddress());
         driver.setEmail(driverDTO.getEmail());
-        driver.setFirstname(driverDTO.getName());
-        driver.setLastname(driverDTO.getSurname());
+        driver.setName(driverDTO.getName());
+        driver.setSurname(driverDTO.getSurname());
         driver.setPassword(driverDTO.getPassword());
 
         driver = driverService.save(driver);
@@ -98,8 +98,8 @@ public class DriverController {
         driver.setTelephoneNumber(driverDTO.getTelephoneNumber());
         driver.setAddress(driverDTO.getAddress());
         driver.setEmail(driverDTO.getEmail());
-        driver.setFirstname(driverDTO.getName());
-        driver.setLastname(driverDTO.getSurname());
+        driver.setName(driverDTO.getName());
+        driver.setSurname(driverDTO.getSurname());
         driver.setPassword(driverDTO.getPassword());
 
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);

@@ -19,7 +19,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/passenger")
-@CrossOrigin(value = "*")
+@CrossOrigin(value="*")
 public class PassengerController {
 
     @Autowired
@@ -40,12 +40,12 @@ public class PassengerController {
         passenger.setTelephoneNumber(passengerDTO.getTelephoneNumber());
         passenger.setAddress(passengerDTO.getAddress());
         passenger.setEmail(passengerDTO.getEmail());
-        passenger.setFirstname(passengerDTO.getName());
-        passenger.setLastname(passengerDTO.getSurname());
+        passenger.setName(passengerDTO.getName());
+        passenger.setSurname(passengerDTO.getSurname());
         passenger.setPassword(passengerDTO.getPassword());
 
         passenger = passengerService.save(passenger);
-        return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
+        return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.CREATED);
     }
 
     //GETTING PASSENGERS /api/passenger
@@ -110,8 +110,8 @@ public class PassengerController {
         passenger.setTelephoneNumber(passengerDTO.getTelephoneNumber());
         passenger.setAddress(passengerDTO.getAddress());
         passenger.setEmail(passengerDTO.getEmail());
-        passenger.setFirstname(passengerDTO.getName());
-        passenger.setLastname(passengerDTO.getSurname());
+        passenger.setName(passengerDTO.getName());
+        passenger.setSurname(passengerDTO.getSurname());
         passenger.setPassword(passengerDTO.getPassword());
 
         //passengerService.save(passenger);

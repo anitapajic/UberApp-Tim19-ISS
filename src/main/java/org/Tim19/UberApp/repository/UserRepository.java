@@ -19,11 +19,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     public Page<User> findAll(Pageable pageable);
 
+    public List<User> findByNameAndSurnameAllIgnoringCase(String firstname, String lastname);
+
     @Query( value = "select * from \"USER\" d where d.vehicle_id = ?1", nativeQuery = true)
     public  User findOneByVehicleId(Integer id);
-
-    public List<User> findByFirstnameAndLastnameAllIgnoringCase(String firstname, String lastname);
-
 
 
 //ovo je za sve voznje putnika sa zadatim id

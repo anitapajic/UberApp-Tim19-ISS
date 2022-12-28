@@ -17,6 +17,6 @@ public interface DriverRepository extends JpaRepository<Driver, Integer> {
 
     public Page<Driver> findAll(Pageable pageable);
 
-    public List<Driver> findByFirstnameAndLastnameAllIgnoringCase(String firstname, String lastname);
+    public List<Driver> findByNameAndSurnameAllIgnoringCase(String firstname, String lastname);
 
 }
