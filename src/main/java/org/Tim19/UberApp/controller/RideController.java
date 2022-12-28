@@ -3,6 +3,8 @@ package org.Tim19.UberApp.controller;
 import org.Tim19.UberApp.dto.PaginatedData.*;
 import org.Tim19.UberApp.dto.RideDTO;
 import org.Tim19.UberApp.dto.UserDTO;
+import org.Tim19.UberApp.model.Driver;
+import org.Tim19.UberApp.model.Ride;
 import org.Tim19.UberApp.model.VehicleType;
 import org.Tim19.UberApp.service.DriverService;
 import org.Tim19.UberApp.service.RideService;
@@ -26,26 +28,28 @@ public class RideController {
     private DriverService driverService;
 
     //CREATING A RIDE  /api/ride
+    ///TODO: Popraviti bug 'detached entity passed to persist' za passengers
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<RidePaginatedDTO> createRide(@RequestBody RidePaginatedDTO rideDTO) {
+    public ResponseEntity<RideDTO> createRide(@RequestBody CreateRideBodyPaginatedDTO rideDTO) {
 
-        RidePaginatedDTO ride = new RidePaginatedDTO();
-        UserPaginatedDTO driver = new UserPaginatedDTO(100,"user@example.com");
+        Driver driver = driverService.findOne(1);
+        Ride ride = new Ride();
 
-        ride.setPassengers(rideDTO.getPassengers());
-        ride.setRejection(ride.getRejection());
-        ride.setId(123);
-        ride.setBabyTransport(rideDTO.getBabyTransport());
-        ride.setEndTime(rideDTO.getEndTime());
-        ride.setStatus(rideDTO.getStatus());
-        ride.setPetTransport(rideDTO.getPetTransport());
-        ride.setStartTime(rideDTO.getStartTime());
-        ride.setTotalCost(rideDTO.getTotalCost());
-        ride.setVehicleType(rideDTO.getVehicleType());
-        ride.setEstimatedTimeInMinutes(rideDTO.getEstimatedTimeInMinutes());
+        ride.setPanic(false);
         ride.setDriver(driver);
+        ride.setStartTime(LocalDateTime.now());
+        ride.setTotalCost(480.00);
+        ride.setPassengers(rideDTO.getPassengers());
         ride.setLocations(rideDTO.getLocations());
-        return new ResponseEntity<>(ride, HttpStatus.OK);
+        ride.setEstimatedTimeInMinutes(7);
+        ride.setStatus("PENDING");
+        ride.setBabyTransport(rideDTO.isBabyTransport());
+        ride.setPetTransport(rideDTO.isPetTransport());
+        ride.setVehicleType(rideDTO.getVehicleType());
+
+        ride = rideService.save(ride);
+
+        return new ResponseEntity<>(new RideDTO(ride),  HttpStatus.CREATED);
     }
 
     //ACTIVE RIDE FOR DRIVER  /api/ride/driver/{driverId}/active

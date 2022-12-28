@@ -19,7 +19,7 @@ public class RideDTO {
 
     private Driver driver;
 
-    private Set<Passenger> passengersDTO = new HashSet<>();
+    private Set<Passenger> passengers = new HashSet<>();
     private Integer estimatedTimeInMinutes;
 
 
@@ -42,7 +42,7 @@ public class RideDTO {
         this.endTime = endTime;
         this.totalCost = totalCost;
         this.driver = driver;
-        this.passengersDTO = passengersDTO;
+        this.passengers = passengersDTO;
         this.estimatedTimeInMinutes = estimatedTimeInMinutes;
         this.vehicleType = vehicleType;
         this.panic = panic;

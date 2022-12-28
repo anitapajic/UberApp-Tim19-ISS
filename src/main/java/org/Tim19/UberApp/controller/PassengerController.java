@@ -45,7 +45,7 @@ public class PassengerController {
         passenger.setPassword(passengerDTO.getPassword());
 
         passenger = passengerService.save(passenger);
-        return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
+        return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.CREATED);
     }
 
     //GETTING PASSENGERS /api/passenger
