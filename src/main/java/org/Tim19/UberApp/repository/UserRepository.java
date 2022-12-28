@@ -21,6 +21,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     public List<User> findByNameAndSurnameAllIgnoringCase(String firstname, String lastname);
 
+    @Query( value = "select * from \"USER\" d where d.vehicle_id = ?1", nativeQuery = true)
+    public  User findOneByVehicleId(Integer id);
 
 
 //ovo je za sve voznje putnika sa zadatim id
