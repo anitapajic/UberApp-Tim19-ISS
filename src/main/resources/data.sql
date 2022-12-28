@@ -59,10 +59,10 @@ insert into rejection (reason, time_of_rejection, ride_id, user_id) values
 
 
 -- Reviews
-insert into review (comment, rating, ride_id, user_id) values
-                                                           ('comment1', 4, 1, 2),
-                                                           ('comment2', 3, 2, 2),
-                                                           ('comment3', 5, 3, 3);
+insert into review (comment, rating, ride_id, user_id, driver_id) values
+                                                                                    ('comment1', 4, 1, 2, 1),
+                                                                                    ('comment2', 3, 2, 2, 4),
+                                                                                    ('comment3', 5, 3, 3, 1);
 
 -- Documents
 insert into document(name, document_image, driver_id) values
@@ -86,4 +86,6 @@ insert into note (text, "DATE",  user_id) values
 -- Messages
 insert into message (text, "TIME", "TYPE", receiver_id, sender_id, ride_id) values
                                                                        ('message1', '2017-07-21T17:32:28Z', 0, 1, 2, 1),
+                                                                       ('panic1', '2017-07-21T17:32:28Z', 2, 1, 2, 1),
+                                                                       ('panic2', '2017-07-21T17:32:28Z', 2, 1, 2, 1),
                                                                        ('message2', '2017-07-21T17:32:28Z', 0, 1, 2, 1);

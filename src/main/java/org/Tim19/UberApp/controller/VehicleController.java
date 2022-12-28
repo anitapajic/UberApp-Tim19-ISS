@@ -23,6 +23,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api")
+@CrossOrigin(value = "*")
 public class VehicleController {
     @Autowired
     private VehicleService vehicleService;

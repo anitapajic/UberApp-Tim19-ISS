@@ -20,6 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/driver")
+@CrossOrigin(value = "*")
 public class WorkingHoursController {
 
     @Autowired

@@ -17,6 +17,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping(value="/api/ride")
+@CrossOrigin(value = "*")
 public class RideController {
 
     @Autowired

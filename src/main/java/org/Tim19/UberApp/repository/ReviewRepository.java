@@ -11,6 +11,15 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
 
     public List<Review> findAll();
 
-    @Query( value = "select * from review r where r.ride_id = ?1", nativeQuery = true)
+   // @Query( value = "select * from review r where r.ride_id = ?1", nativeQuery = true)
     public Set<Review> findAllByRideId(Integer id);
+
+    @Query( value = "select r.* from review r, \"USER\" d where r.driver_id = d.id and d.vehicle_id = ?1", nativeQuery = true)
+    public Set<Review> findAllByVehicleId(Integer id);
+    //@Query( value = "select r.* from review r, \"USER\" d where r.driver_id = d.id and d.vehicle_id = ?1", nativeQuery = true)
+    public Set<Review> findAllByDriverId(Integer id);
+
+    public Review save(Review review);
+
+
 }

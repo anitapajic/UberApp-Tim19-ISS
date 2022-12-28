@@ -34,6 +34,7 @@ public class UserController {
     @Autowired
     private RideService rideService;
 
+
     //RIDES OF THE USER  /api/user/{id}/ride
     @GetMapping(value = "/{id}/ride")
     public ResponseEntity<Map<String, Object>> getAllRides(@PathVariable Integer id,
@@ -73,7 +74,7 @@ public class UserController {
 
         User user = userService.findOneLogin(loginDTO.getEmail(), loginDTO.getPassword());
 
-        if (user == null) {
+        if (user == null || !user.getActive()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
