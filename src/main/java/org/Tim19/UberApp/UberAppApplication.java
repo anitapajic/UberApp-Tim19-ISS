@@ -15,6 +15,7 @@ public class UberAppApplication {
 	}
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(UberAppApplication.class, args);
 	}
 
