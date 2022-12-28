@@ -28,8 +28,8 @@ public class DriverService {
 
     public Driver findByEmail(String email){return driverRepository.findOneByEmail(email);}
 
-    public List<Driver> findByFirstNameAndLastName(String firstname, String lastname){
-        return driverRepository.findByFirstnameAndLastnameAllIgnoringCase(firstname, lastname);
+    public List<Driver> findByNameAndSurnameAllIgnoringCase(String firstname, String lastname){
+        return driverRepository.findByNameAndSurnameAllIgnoringCase(firstname, lastname);
     }
     
 }

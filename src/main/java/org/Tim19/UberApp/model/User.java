@@ -20,19 +20,19 @@ public class User {
     @Column(name="email",unique = true, nullable = false)
     private String email;
 
-    @Column(name = "firstname", nullable = false)
-    private String firstname;
+    @Column(name = "name", nullable = false)
+    private String name;
 
-    @Column(name="lastname", nullable = false)
-    private String lastname;
+    @Column(name="surname", nullable = false)
+    private String surname;
 
-    @Column(name="profile_picture", nullable = false)
+    @Column(name="profile_picture", nullable = true)
     private String profilePicture;
 
     @Column(name="telephone_number", nullable = false)
     private String telephoneNumber;
 
-    @Column(name="address", nullable = false)
+    @Column(name="address", nullable = true)
     private String address;
 
     @Column(name="password", nullable = false)

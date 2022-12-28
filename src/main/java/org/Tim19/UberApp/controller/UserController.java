@@ -22,6 +22,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/user")
+@CrossOrigin(value="*")
 public class UserController {
 
     @Autowired
@@ -79,7 +80,7 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
         response.put("accessToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
         response.put("refreshToken","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" );
-
+        response.put("user", user);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

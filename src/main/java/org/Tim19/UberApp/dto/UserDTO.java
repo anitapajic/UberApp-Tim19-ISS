@@ -31,7 +31,7 @@ public class UserDTO {
     public UserDTO() {}
 
     public UserDTO(User users){
-        this(users.getId(), users.getEmail(), users.getFirstname(), users.getLastname(), users.getProfilePicture(), users.getTelephoneNumber(), users.getAddress(), users.getPassword(), users.getActive(), users.getBlocked());
+        this(users.getId(), users.getEmail(), users.getName(), users.getSurname(), users.getProfilePicture(), users.getTelephoneNumber(), users.getAddress(), users.getPassword(), users.getActive(), users.getBlocked());
     }
 
 

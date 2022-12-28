@@ -30,8 +30,8 @@ public class Driver extends User{
     @JoinColumn(name="vehicle_id")
     private Vehicle vehicle;
 
-    public Driver(Integer id, String email, String firstname, String lastname, String profilePicture, String telephoneNumber, String address, String password, Boolean active, Boolean blocked, Set<Ride> rides, Set<DriverDocument> documents, Vehicle vehicle) {
-        super(id, email, firstname, lastname, profilePicture, telephoneNumber, address, password, active, blocked);
+    public Driver(Integer id, String email, String name, String surname, String profilePicture, String telephoneNumber, String address, String password, Boolean active, Boolean blocked, Set<Ride> rides, Set<DriverDocument> documents, Vehicle vehicle) {
+        super(id, email, name, surname, profilePicture, telephoneNumber, address, password, active, blocked);
         this.rides = rides;
         this.documents = documents;
         this.vehicle = vehicle;
