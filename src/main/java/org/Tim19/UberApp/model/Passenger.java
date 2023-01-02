@@ -1,9 +1,9 @@
 package org.Tim19.UberApp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,8 +33,8 @@ public class Passenger extends User{
     private Set<Path> favourite = new HashSet<>();
 
 
-    public Passenger(Integer id, String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, Boolean active, Boolean blocked, Set<Ride> rides) {
-        super(id, name, surname, profilePicture, telephoneNumber, email, address, password, active, blocked);
+    public Passenger(Integer id, String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, Boolean active, Boolean blocked, Set<Ride> rides, String authorities) {
+        super(id, name, surname, profilePicture, telephoneNumber, email, address, password, active, blocked, authorities);
         this.rides = rides;
     }
 
