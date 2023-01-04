@@ -17,11 +17,13 @@ public class UserFactory {
             authorities = null;
         }
 
-        return new SecurityUser(
+        SecurityUser su = new SecurityUser(
                 user.getId(),
-                user.getEmail(),
+                user.getUsername(),
                 user.getPassword(),
                 authorities
         );
+
+        return su;
     }
 }

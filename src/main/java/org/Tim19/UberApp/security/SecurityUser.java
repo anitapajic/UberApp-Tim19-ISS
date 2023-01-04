@@ -17,15 +17,12 @@ public class SecurityUser implements UserDetails {
     private Boolean credentialsNonExpired = true;
     private Boolean enabled = true;
 
-    public SecurityUser(Integer id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
-        super();
-    }
 
-    public SecurityUser(Long id,
+    public SecurityUser(Integer id,
                         String username,
                         String password,
                         Collection<? extends GrantedAuthority> authorities) {
-        this.id = id;
+        this.id = Long.valueOf(id);
         this.username = username;
         this.password = password;
         this.authorities = authorities;

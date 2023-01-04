@@ -37,7 +37,7 @@ public class DriverController {
         driver.setProfilePicture(driverDTO.getProfilePicture());
         driver.setTelephoneNumber(driverDTO.getTelephoneNumber());
         driver.setAddress(driverDTO.getAddress());
-        driver.setEmail(driverDTO.getEmail());
+        driver.setUsername(driverDTO.getUsername());
         driver.setName(driverDTO.getName());
         driver.setSurname(driverDTO.getSurname());
         driver.setPassword(driverDTO.getPassword());
@@ -97,7 +97,7 @@ public class DriverController {
         driver.setProfilePicture(driverDTO.getProfilePicture());
         driver.setTelephoneNumber(driverDTO.getTelephoneNumber());
         driver.setAddress(driverDTO.getAddress());
-        driver.setEmail(driverDTO.getEmail());
+        driver.setUsername(driverDTO.getUsername());
         driver.setName(driverDTO.getName());
         driver.setSurname(driverDTO.getSurname());
         driver.setPassword(driverDTO.getPassword());

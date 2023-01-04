@@ -19,7 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
+@CrossOrigin(value = "*")
 @RestController
 public class AuthenticationController {
 
@@ -42,7 +42,7 @@ public class AuthenticationController {
 
 
     @PostMapping(
-            value = "/logIn",
+            value = "api/user/login",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -60,13 +60,13 @@ public class AuthenticationController {
 
         try {
             TokenDTO token = new TokenDTO();
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(login.getEmail());
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(login.getUsername());
             String tokenValue = this.tokenUtils.generateToken(userDetails);
             token.setToken(tokenValue);
+            UsernamePasswordAuthenticationToken uToken = new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword());
 
-            Authentication authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword()));
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            //Authentication authentication = this.authenticationManager.authenticate(uToken);
+            //SecurityContextHolder.getContext().setAuthentication(authentication);
 
             return new ResponseEntity<>(token, HttpStatus.OK);
         } catch (BadCredentialsException e) {

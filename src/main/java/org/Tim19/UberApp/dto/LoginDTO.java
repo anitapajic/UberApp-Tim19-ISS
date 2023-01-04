@@ -3,22 +3,22 @@ package org.Tim19.UberApp.dto;
 import org.Tim19.UberApp.model.User;
 
 public class LoginDTO {
-    private String email;
+    private String username;
     private String password;
 
     public LoginDTO(String email, String password) {
-        this.email = email;
+        this.username = email;
         this.password = password;
     }
 
     public LoginDTO(){}
 
     public LoginDTO(User user){
-        this(user.getEmail(), user.getPassword());
+        this(user.getUsername(), user.getPassword());
     }
 
-    public String getEmail() {
-        return email;
+    public String getUsername() {
+        return username;
     }
 
     public String getPassword() {

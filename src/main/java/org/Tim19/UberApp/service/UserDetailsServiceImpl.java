@@ -4,6 +4,7 @@ package org.Tim19.UberApp.service;
 import org.Tim19.UberApp.exceptions.NotFoundException;
 import org.Tim19.UberApp.model.User;
 import org.Tim19.UberApp.repository.UserRepository;
+import org.Tim19.UberApp.security.SecurityUser;
 import org.Tim19.UberApp.security.UserFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,9 +18,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) {
-        User user = this.userRepository.findOneByEmail(email).orElseThrow(() -> new NotFoundException(String.format("User with email '%s' is not found!", email)));
-
+    public UserDetails loadUserByUsername(String username) {
+        User user = this.userRepository.findOneByUsername(username)
+                .orElseThrow(() -> new NotFoundException(String.format("User with username '%s' is not found!", username)));
+        if(!user.getActive()){
+            return null;
+        }
         return UserFactory.create(user);
     }
 }
