@@ -1,7 +1,6 @@
 package org.Tim19.UberApp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -30,8 +29,8 @@ public class Driver extends User{
     @JoinColumn(name="vehicle_id")
     private Vehicle vehicle;
 
-    public Driver(Integer id, String email, String name, String surname, String profilePicture, String telephoneNumber, String address, String password, Boolean active, Boolean blocked, Set<Ride> rides, Set<DriverDocument> documents, Vehicle vehicle) {
-        super(id, email, name, surname, profilePicture, telephoneNumber, address, password, active, blocked);
+    public Driver(Integer id, String email, String name, String surname, String profilePicture, String telephoneNumber, String address, String password, Boolean active, Boolean blocked, Set<Ride> rides, Set<DriverDocument> documents, Vehicle vehicle, String authorities) {
+        super(id, email, name, surname, profilePicture, telephoneNumber, address, password, active, blocked, authorities);
         this.rides = rides;
         this.documents = documents;
         this.vehicle = vehicle;

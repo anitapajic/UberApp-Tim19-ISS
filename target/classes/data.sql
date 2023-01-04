@@ -3,12 +3,12 @@ insert into vehicle (car_model, vehicle_type, license_number, passenger_seats, b
                                                                                                                   ('audi', '0', 'NS 010 WQ', '4', 'true', 'false'),
                                                                                                                   ('audi', '1', 'NS 011 WA', '4', 'true', 'true');
 
--- User (Passenger, Driver)
-insert into user (dtype, email, name, surname, profile_picture, telephone_number, address, password, active, blocked, vehicle_id) values
-                                                                                                                                            ('Driver', 'tamara@gmail.com','tamara', 'dzambic','pic1', '22232', 'NS 12', '123', 'true', 'false', '1'),
-                                                                                                                                            ('Passenger', 'anita@gmail.com','anita', 'pajic','pic2', '22232', 'NS 12', '123', 'false', 'false', null),
-                                                                                                                                            ('Passenger', 'aleksandra@gmail.com','aleksandra', 'filipic','pic3', '22232', 'NS 12', '123', 'true', 'false', null),
-                                                                                                                                            ('Driver', 'anja@gmail.com','anja', 'petkovic','pic1', '22232', 'NS 12', '123', 'true', 'false', '2');
+-- User (Passenger, Driver)  password = test
+insert into user (dtype, username, name, surname, profile_picture, telephone_number, address, password, active, blocked, vehicle_id, authorities) values
+                                                                                                                                            ('Driver', 'tamara@gmail.com','tamara', 'dzambic','pic1', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', '1', 'DRIVER'),
+                                                                                                                                            ('Passenger', 'anita@gmail.com','anita', 'pajic','pic2', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'false', 'false', null, 'PASSENGER'),
+                                                                                                                                            ('Passenger', 'aleksandra@gmail.com','aleksandra', 'filipic','pic3', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', null, 'PASSENGER'),
+                                                                                                                                            ('Driver', 'anja@gmail.com','anja', 'petkovic','pic1', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', '2', 'DRIVER');
 
 -- Activations
 insert into activation (creation_date, expiration_date, user_id) values

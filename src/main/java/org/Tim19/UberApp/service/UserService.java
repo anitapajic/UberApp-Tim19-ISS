@@ -24,7 +24,7 @@ public class UserService {
     private RideRepository rideRepository;
 
     public User findOneById(Integer id){return userRepository.findById(id).orElseGet(null);}
-    public User findOneLogin(String email, String password){return userRepository.findOneByEmailAndPassword(email,password);}
+    public User findOneLogin(String email, String password){return userRepository.findOneByUsernameAndPassword(email,password);}
     public List<User> findAll(){return userRepository.findAll();}
 
     public Page<User> findAll(Pageable page){return userRepository.findAll(page);}

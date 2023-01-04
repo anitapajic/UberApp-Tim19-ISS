@@ -1,6 +1,9 @@
 package org.Tim19.UberApp.controller;
 
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.Tim19.UberApp.dto.LoginDTO;
 import org.Tim19.UberApp.dto.MessageDTO;
 import org.Tim19.UberApp.dto.NoteDTO;
@@ -68,22 +71,22 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    //USER MESSAGES  /api/user/login
-    @PostMapping(value = "/login",consumes = "application/json")
-    public ResponseEntity<Map<String, Object>> loginUser(@RequestBody LoginDTO loginDTO) {
-
-        User user = userService.findOneLogin(loginDTO.getEmail(), loginDTO.getPassword());
-
-        if (user == null || !user.getActive()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("accessToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
-        response.put("refreshToken","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" );
-        response.put("user", user);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+    //USER MESSAGES  /api/user/login   --> u Authentication Controller
+//    @PostMapping(value = "/login",consumes = "application/json")
+//    public ResponseEntity<Map<String, Object>> loginUser(@RequestBody LoginDTO loginDTO) {
+//
+//        User user = userService.findOneLogin(loginDTO.getUsername(), loginDTO.getPassword());
+//
+//        if (user == null || !user.getActive()) {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
+//
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("accessToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
+//        response.put("refreshToken","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" );
+//        response.put("user", user);
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
 
     //USER MESSAGES  /api/user/{id}/message
     @GetMapping(value = "/{id}/message")

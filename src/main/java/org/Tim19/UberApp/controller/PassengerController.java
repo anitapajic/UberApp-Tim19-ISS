@@ -45,10 +45,11 @@ public class PassengerController {
         passenger.setProfilePicture(passengerDTO.getProfilePicture());
         passenger.setTelephoneNumber(passengerDTO.getTelephoneNumber());
         passenger.setAddress(passengerDTO.getAddress());
-        passenger.setEmail(passengerDTO.getEmail());
+        passenger.setUsername(passengerDTO.getUsername());
         passenger.setName(passengerDTO.getName());
         passenger.setSurname(passengerDTO.getSurname());
         passenger.setPassword(passengerDTO.getPassword());
+        passenger.setAuthorities("PASSENGER");
 
         passenger = passengerService.save(passenger);
         sendMail(passenger.getId());
@@ -136,7 +137,7 @@ public class PassengerController {
         passenger.setProfilePicture(passengerDTO.getProfilePicture());
         passenger.setTelephoneNumber(passengerDTO.getTelephoneNumber());
         passenger.setAddress(passengerDTO.getAddress());
-        passenger.setEmail(passengerDTO.getEmail());
+        passenger.setUsername(passengerDTO.getUsername());
         passenger.setName(passengerDTO.getName());
         passenger.setSurname(passengerDTO.getSurname());
         passenger.setPassword(passengerDTO.getPassword());

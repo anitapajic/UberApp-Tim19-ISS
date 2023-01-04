@@ -25,7 +25,7 @@ public class DriverDTO extends UserDTO{
     public DriverDTO() {}
 
     public DriverDTO(Driver driver){
-        this(driver.getId(), driver.getName(), driver.getSurname(), driver.getProfilePicture(), driver.getTelephoneNumber(), driver.getEmail(), driver.getAddress(), driver.getPassword(), driver.getActive(), driver.getBlocked(), driver.getVehicle());
+        this(driver.getId(), driver.getName(), driver.getSurname(), driver.getProfilePicture(), driver.getTelephoneNumber(), driver.getUsername(), driver.getAddress(), driver.getPassword(), driver.getActive(), driver.getBlocked(), driver.getVehicle());
     }
 
 //    public Set<Ride> getRides() {

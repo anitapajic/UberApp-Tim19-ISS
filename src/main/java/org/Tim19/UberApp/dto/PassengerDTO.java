@@ -20,7 +20,7 @@ public class PassengerDTO extends UserDTO{
     }
 
     public PassengerDTO(Passenger passenger){
-        this(passenger.getId(), passenger.getName(), passenger.getSurname(), passenger.getProfilePicture(), passenger.getTelephoneNumber(), passenger.getEmail(), passenger.getAddress(), passenger.getPassword(), passenger.getActive(), passenger.getBlocked(),passenger.getRides());
+        this(passenger.getId(), passenger.getName(), passenger.getSurname(), passenger.getProfilePicture(), passenger.getTelephoneNumber(), passenger.getUsername(), passenger.getAddress(), passenger.getPassword(), passenger.getActive(), passenger.getBlocked(),passenger.getRides());
     }
 
     public Set<Ride> getRides() {
