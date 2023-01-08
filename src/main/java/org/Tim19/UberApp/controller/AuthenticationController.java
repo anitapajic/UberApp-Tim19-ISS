@@ -63,19 +63,18 @@ public class AuthenticationController {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(login.getUsername());
             String tokenValue = this.tokenUtils.generateToken(userDetails);
             token.setToken(tokenValue);
-            UsernamePasswordAuthenticationToken uToken = new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword());
 
-            //Authentication authentication = this.authenticationManager.authenticate(uToken);
-            //SecurityContextHolder.getContext().setAuthentication(authentication);
+            Authentication authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
             return new ResponseEntity<>(token, HttpStatus.OK);
         } catch (BadCredentialsException e) {
-            throw new BadRequestException("Wrong password!");
+            throw e;
         }
     }
 
     @GetMapping(
-            value = "/logOut",
+            value = "api/user/logout",
             produces = MediaType.TEXT_PLAIN_VALUE
     )
     public ResponseEntity logoutUser() {
