@@ -114,12 +114,13 @@ public class DriverController {
                                                                          @RequestParam(required = false) String  from,
                                                                          @RequestParam(required = false) String  to) {
 
+            Pageable paging = PageRequest.of(page, size);
 
-            Set<Ride> allRides = rideService.findByDriverId(id);
+            Page<Ride> allRides = rideService.findByDriverId(id, paging);
 
             Map<String, Object> response = new HashMap<>();
-            response.put("totalCount", allRides.size());
-            response.put("results", allRides);
+            response.put("totalCount", allRides.getTotalElements());
+            response.put("results", allRides.getContent());
 
             return new ResponseEntity<>(response, HttpStatus.OK);
 

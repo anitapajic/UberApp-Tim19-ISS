@@ -19,6 +19,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @CrossOrigin(value = "*")
 @RestController
 public class AuthenticationController {
@@ -69,7 +72,8 @@ public class AuthenticationController {
 
             return new ResponseEntity<>(token, HttpStatus.OK);
         } catch (BadCredentialsException e) {
-            throw e;
+            Map<String, String> response = new HashMap<>(){{put("message", e.getMessage());}};
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 

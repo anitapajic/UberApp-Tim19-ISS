@@ -14,10 +14,9 @@ public interface RideRepository extends JpaRepository<Ride,Integer> {
 
 
     @Query(value = "select * from ride r where r.driver_id = ?1", nativeQuery = true)
-    public Set<Ride> findAllByDriverId(Integer id);
+    public Page<Ride> findAllByDriverId(Integer id, Pageable pageable);
 
-
-    public Set<Ride> findAllByPassengersId(Integer id);
+    public Page<Ride> findAllByPassengersId(Integer id, Pageable pageable);
     public Page<Ride> findAll(Pageable pageable);
 
 }
