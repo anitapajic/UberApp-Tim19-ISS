@@ -9,18 +9,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data
 @NoArgsConstructor
 @DiscriminatorValue("Driver")
 public class Driver extends User{
 
     @JsonIgnore
-    @OneToMany(cascade ={CascadeType.ALL},
+    @OneToMany(cascade ={CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH},
             fetch = FetchType.LAZY, mappedBy = "driver")
     private Set<Ride> rides = new HashSet<Ride>();
 
     @JsonIgnore
-    @OneToMany(cascade ={CascadeType.ALL},
+    @OneToMany(cascade ={CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH},
             fetch = FetchType.LAZY, mappedBy = "driver")
     private Set<DriverDocument> documents = new HashSet<DriverDocument>();
 
@@ -51,4 +50,27 @@ public class Driver extends User{
         this.rides.remove(ride);
     }
 
+    public Set<Ride> getRides() {
+        return rides;
+    }
+
+    public void setRides(Set<Ride> rides) {
+        this.rides = rides;
+    }
+
+    public Set<DriverDocument> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(Set<DriverDocument> documents) {
+        this.documents = documents;
+    }
+
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
+    }
 }

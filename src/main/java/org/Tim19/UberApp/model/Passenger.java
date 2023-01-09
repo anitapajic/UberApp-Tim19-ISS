@@ -15,7 +15,7 @@ import java.util.Set;
 public class Passenger extends User{
 
     @JsonIgnore
-    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "passenger_ride",
             joinColumns = @JoinColumn(name = "ride_id", referencedColumnName = "id"),

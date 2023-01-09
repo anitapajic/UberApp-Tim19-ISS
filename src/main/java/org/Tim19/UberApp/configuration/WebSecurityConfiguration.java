@@ -64,25 +64,19 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.headers().frameOptions().disable();
+    protected void configure(HttpSecurity http) throws Exception {
 
-        httpSecurity
-                .csrf()
-                .disable()
-                .exceptionHandling()
-                .authenticationEntryPoint(this.unauthorizedHandler)
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers("/api/user/login", "/api/user/logout", "/h2-console/**","/api/passenger", "/api/passenger/activate/**").permitAll()
-                .anyRequest().authenticated();
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+        http.exceptionHandling().authenticationEntryPoint(this.unauthorizedHandler);
 
-        httpSecurity
+        http.authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
+                .antMatchers("/api/user/login", "/api/user/logout", "/h2-console/**","/api/passenger", "/api/passenger/activate/**", "/api/user/**/resetPassword").permitAll()
+                .anyRequest().authenticated().and()
+                .cors().and()
                 .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
+
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
     }
 }
