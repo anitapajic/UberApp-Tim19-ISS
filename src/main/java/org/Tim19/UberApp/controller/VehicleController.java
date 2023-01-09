@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
+import java.util.Optional;
 
 
 @RestController
@@ -29,12 +30,12 @@ public class VehicleController {
 
         Driver driver = driverService.findOne(id);
         Integer vehicleID = driver.getVehicle().getId();
-        Vehicle vehicle = vehicleService.findOne(vehicleID);
+        Optional<Vehicle> vehicle = vehicleService.findOne(vehicleID);
 
-        if (vehicle == null) {
+        if (vehicle.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        VehicleDTO vehicleDTO = new VehicleDTO(vehicle);
+        VehicleDTO vehicleDTO = new VehicleDTO(vehicle.get());
         vehicleDTO.setDriverId(id);
 
         return new ResponseEntity<>(vehicleDTO, HttpStatus.OK);

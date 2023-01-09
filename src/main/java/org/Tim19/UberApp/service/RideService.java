@@ -24,7 +24,7 @@ public class RideService {
     private RejectionRepository rejectionRepository;
 
 
-    public Ride findOne(Integer id){return rideRepository.findById(id).orElseGet(null);}
+    public Optional<Ride> findOneById(Integer id){return rideRepository.findById(id);}
 
     public List<Ride> findAll(){return rideRepository.findAll();}
 
