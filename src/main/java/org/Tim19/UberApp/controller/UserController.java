@@ -102,8 +102,8 @@ public class UserController {
 
         String mailContent = "<p>Dear,"+ username +" </p>";
         mailContent +="<p>Your code is:" + code + "</p>";
-        mailContent +="<p>Please click the link below to change your password:</p>";
-        mailContent +="<h3><a href=\"" + "http://localhost:4200/reset-code\">CHANGE PASSWORD</a></h3>";
+//        mailContent +="<p>Please click the link below to change your password:</p>";
+//        mailContent +="<h3><a href=\"" + "http://localhost:4200/reset-code\">CHANGE PASSWORD</a></h3>";
         mailContent +="<p>Thank you<br>TAAXI Team</p>";
 
         MimeMessage message = mailSender.createMimeMessage();
