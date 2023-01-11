@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -28,6 +29,7 @@ public class DriverController {
 
     //CREATE DRIVER  /api/driver
     //DONE
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping(consumes = "application/json")
     public ResponseEntity<DriverDTO> createDriver(@RequestBody DriverDTO driverDTO) {
 
@@ -48,6 +50,7 @@ public class DriverController {
 
     //GETTING PAGINATED DRIVER DATA  /api/driver
     //DONE
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllDrivers(@RequestParam(defaultValue = "0") Integer page,
                                                              @RequestParam(defaultValue = "4") Integer size) {
@@ -64,6 +67,7 @@ public class DriverController {
 
     //DRIVER DETAILS  /api/driver/{id}
     //DONE
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<DriverDTO> getDriver(@PathVariable Integer id) {
 
@@ -79,6 +83,7 @@ public class DriverController {
 
     //UPDATE EXISTING DRIVER  /api/driver/{id}
     //DONE
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PutMapping(value= "/{id}" ,consumes = "application/json")
     public ResponseEntity<DriverDTO> updateDriver(@PathVariable Integer id, @RequestBody DriverDTO driverDTO) {
 
@@ -108,6 +113,7 @@ public class DriverController {
     }
 
 
+    @PreAuthorize("hasAnyAuthority('ADMIN','DRIVER')")
         @GetMapping(value = "/{id}/ride")
         public ResponseEntity<Map<String, Object>> getAllRidesFromDriver(@PathVariable Integer id,
                                                                          @RequestParam(defaultValue = "0") Integer page,
