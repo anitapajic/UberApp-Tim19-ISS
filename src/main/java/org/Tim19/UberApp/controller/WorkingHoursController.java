@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -28,6 +29,7 @@ public class WorkingHoursController {
     @Autowired
     private DriverService driverService;
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DRIVER')")
     @GetMapping(value = "/{id}/working-hour")
     public ResponseEntity<Map<String, Object>> getDriversWH(@PathVariable Integer id,
                                                             @RequestParam(defaultValue = "0") Integer page,
@@ -45,6 +47,7 @@ public class WorkingHoursController {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping(value = "/{id}/working-hour",consumes = "application/json")
     public ResponseEntity<WorkingHoursDTO> postDriversWH(@PathVariable Integer id,
                                                          @RequestBody WorkingHoursDTO workingHoursDTO){
@@ -62,13 +65,14 @@ public class WorkingHoursController {
         workingHours = workingHoursService.save(workingHours);
         return new ResponseEntity<>(new WorkingHoursDTO(workingHours), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DRIVER')")
     @GetMapping(value = "/working-hour/{wh_id}")
     public ResponseEntity<WorkingHours> getWHDetails(@PathVariable Integer wh_id){
 
         WorkingHours workingHours = workingHoursService.findOne(wh_id);
         return new ResponseEntity<>(workingHours,HttpStatus.OK);
     }
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PutMapping(value = "/working-hour/{wh_id}",consumes = "application/json")
     public ResponseEntity<WorkingHoursDTO> chaneWHDetails(@PathVariable Integer wh_id,
                                                           @RequestBody WorkingHoursDTO update){
