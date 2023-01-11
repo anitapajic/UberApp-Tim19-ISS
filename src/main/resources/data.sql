@@ -76,7 +76,9 @@ insert into document(name, document_image, driver_id) values
 -- Working hours
 insert into working_hours (endd, startd, driver_id) values
                                                         ('2022-12-18T12:00:00Z', '2022-12-18T20:00:00Z', 1),
-                                                        ('2022-12-18T19:00:00Z', '2022-12-19T03:00:00Z', 4);
+                                                        ('2022-12-18T19:00:00Z', '2022-12-19T03:00:00Z', 4),
+                                                        ('2022-11-18T12:00:00Z', '2022-12-18T20:00:00Z', 1),
+                                                        ('2022-10-18T19:00:00Z', '2022-12-19T03:00:00Z', 4);
 
 -- Notes
 insert into note (text, "DATE",  user_id) values

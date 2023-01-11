@@ -1,6 +1,7 @@
 package org.Tim19.UberApp.service;
 
 import org.Tim19.UberApp.dto.DriverDocumentDTO;
+import org.Tim19.UberApp.model.Driver;
 import org.Tim19.UberApp.model.DriverDocument;
 import org.Tim19.UberApp.model.Note;
 import org.Tim19.UberApp.model.Ride;
@@ -35,7 +36,5 @@ public class DriverDocumentService {
         return driverDocumentRepository.findDriverDocument(id);
         }
 
-    public DriverDocument findOne(Integer id) {
-        return null;
-    }
+    public DriverDocument findOne(Integer id){return driverDocumentRepository.findById(id).orElseGet(null);}
 }
