@@ -26,6 +26,10 @@ public class RideService {
 
     public Optional<Ride> findOneById(Integer id){return rideRepository.findById(id);}
 
+    public Ride findOneRideById(Integer id){
+        return rideRepository.findOneRideById(id);
+    }
+
     public List<Ride> findAll(){return rideRepository.findAll();}
 
     public Page<Ride> findAll(Pageable page){return rideRepository.findAll(page);}
@@ -48,6 +52,11 @@ public class RideService {
 
         return rides;
     }
+    public Set<Ride> findAllByPassengerId(Integer id){
+        Set<Ride> rides = rideRepository.findAllByPassengersId(id);
+
+        return rides;
+    }
     public Page<Ride> findByDriverId(Integer id, Pageable pageable){
         Page<Ride> rides = rideRepository.findAllByDriverId(id, pageable);
 
@@ -62,7 +71,7 @@ public class RideService {
             for (Ride ride : rides){
                 statuses.add(ride.getStatus());
             }
-            if (statuses.contains("ACTIVE")){
+            if (statuses.contains("STARTED")){
                 continue;
             }
             else{
