@@ -31,7 +31,7 @@ public class ReviewDTO {
         this.id = review.getId();
         this.rating = review.getRating();
         this.comment = review.getComment();
-        this.passenger = new UserPaginatedDTO(review.getUser().getId(), review.getUser().getEmail());
+        this.passenger = new UserPaginatedDTO(review.getUser().getId(), review.getUser().getUsername());
         this.driver = review.getDriver().getId();
         this.ride = review.getRide().getId();
         this.vehicle = review.getDriver().getVehicle().getId();

@@ -19,6 +19,9 @@ public class NoteService {
     public List<Note> findAllByUserId(Integer id){return noteRepository.findAllByUserId(id);}
 
     public NoteDTO save(NoteDTO noteDTO){
+        if (userService.findOneById(noteDTO.getUserId()) == null){
+            return new NoteDTO();
+        }
         User user = userService.findOneById(noteDTO.getUserId());
 
         Note note = new Note();

@@ -1,7 +1,6 @@
 package org.Tim19.UberApp.controller;
 
 
-import org.Tim19.UberApp.dto.PaginatedData.*;
 import org.Tim19.UberApp.dto.PassengerDTO;
 import org.Tim19.UberApp.model.*;
 import org.Tim19.UberApp.service.PassengerService;
@@ -15,11 +14,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.print.DocFlavor;
 import java.io.UnsupportedEncodingException;
-import java.time.LocalDateTime;
+import java.net.URI;
 import java.util.*;
 
 @RestController
@@ -45,13 +46,14 @@ public class PassengerController {
         passenger.setProfilePicture(passengerDTO.getProfilePicture());
         passenger.setTelephoneNumber(passengerDTO.getTelephoneNumber());
         passenger.setAddress(passengerDTO.getAddress());
-        passenger.setEmail(passengerDTO.getEmail());
+        passenger.setUsername(passengerDTO.getUsername());
         passenger.setName(passengerDTO.getName());
         passenger.setSurname(passengerDTO.getSurname());
         passenger.setPassword(passengerDTO.getPassword());
+        passenger.setAuthorities("PASSENGER");
 
         passenger = passengerService.save(passenger);
-        sendMail(passenger.getId());
+        this.sendMail(passenger.getId());
         return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.CREATED);
     }
 
@@ -72,7 +74,7 @@ public class PassengerController {
 
     //ACTIVATE PASSENGER ACCOUNT  /api/passenger/activate/activationId
     @GetMapping(value = "/activate/{activationId}")
-    public ResponseEntity<Void> activatePassengerAccount(@PathVariable Integer activationId) {
+    public ResponseEntity activatePassengerAccount(@PathVariable Integer activationId) {
 
         Passenger passenger = passengerService.findOne(activationId);
 
@@ -83,10 +85,14 @@ public class PassengerController {
         }
         passenger.setActive(true);
         passengerService.save(passenger);
-        return new ResponseEntity<>(HttpStatus.OK);
+        //String url = "http:/localhost:4200/home";
+        return new ResponseEntity<>(HttpStatus.FOUND);
     }
 
-    public void sendMail(Integer id) throws MessagingException, UnsupportedEncodingException {
+//        //return new ResponseEntity<>(HttpStatus.OK);
+//    }
+
+    private void sendMail(Integer id) throws MessagingException, UnsupportedEncodingException {
         String subject = "Please verify your registration";
         String senderName = "TAAXI";
 
@@ -136,7 +142,7 @@ public class PassengerController {
         passenger.setProfilePicture(passengerDTO.getProfilePicture());
         passenger.setTelephoneNumber(passengerDTO.getTelephoneNumber());
         passenger.setAddress(passengerDTO.getAddress());
-        passenger.setEmail(passengerDTO.getEmail());
+        passenger.setUsername(passengerDTO.getUsername());
         passenger.setName(passengerDTO.getName());
         passenger.setSurname(passengerDTO.getSurname());
         passenger.setPassword(passengerDTO.getPassword());
@@ -154,12 +160,12 @@ public class PassengerController {
                                                            @RequestParam(required = false) String  from,
                                                            @RequestParam(required = false) String  to){
 
-
-        Set<Ride> allRides = rideService.findByPassengerId(id);
+        Pageable paging = PageRequest.of(page, size);
+        Page<Ride> allRides = rideService.findByPassengerId(id, paging);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("totalCount", allRides.size());
-        response.put("results", allRides);
+        response.put("totalCount", allRides.getTotalElements());
+        response.put("results", allRides.getContent());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

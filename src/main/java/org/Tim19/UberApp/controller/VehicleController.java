@@ -1,14 +1,9 @@
 package org.Tim19.UberApp.controller;
 
-import org.Tim19.UberApp.dto.DriverDTO;
-import org.Tim19.UberApp.dto.PaginatedData.LocationPaginatedDTO;
-import org.Tim19.UberApp.dto.PaginatedData.Vehicle3PaginatedDTO;
 import org.Tim19.UberApp.dto.PaginatedData.VehiclePaginated2DTO;
 import org.Tim19.UberApp.dto.VehicleDTO;
 import org.Tim19.UberApp.model.Driver;
-import org.Tim19.UberApp.model.DriverDocument;
 import org.Tim19.UberApp.model.Vehicle;
-import org.Tim19.UberApp.model.VehicleType;
 import org.Tim19.UberApp.service.DriverService;
 import org.Tim19.UberApp.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.Optional;
 
 
 @RestController
@@ -36,12 +30,12 @@ public class VehicleController {
 
         Driver driver = driverService.findOne(id);
         Integer vehicleID = driver.getVehicle().getId();
-        Vehicle vehicle = vehicleService.findOne(vehicleID);
+        Optional<Vehicle> vehicle = vehicleService.findOne(vehicleID);
 
-        if (vehicle == null) {
+        if (vehicle.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        VehicleDTO vehicleDTO = new VehicleDTO(vehicle);
+        VehicleDTO vehicleDTO = new VehicleDTO(vehicle.get());
         vehicleDTO.setDriverId(id);
 
         return new ResponseEntity<>(vehicleDTO, HttpStatus.OK);
@@ -52,7 +46,7 @@ public class VehicleController {
     @PostMapping(value="/driver/{id}/vehicle", consumes = "application/json")
     public ResponseEntity<VehicleDTO> saveVehicle(@RequestBody VehicleDTO vehicleDTO) {
 
-        Driver driver = new Driver(111111,"tamara116@gmail.com","tamara","dzambic","ahhajhsjah","0645554454","Brace Ribnikar 17","tam123",true,false,new HashSet<>(),new HashSet<>(),null);
+        Driver driver = new Driver(111111,"tamara116@gmail.com","tamara","dzambic","ahhajhsjah","0645554454","Brace Ribnikar 17","tam123",true,false,new HashSet<>(),new HashSet<>(),null, "DRIVER");
         Vehicle vehicle = new Vehicle();
         vehicle.setVehicleType(vehicleDTO.getVehicleType());
         vehicle.setCarModel(vehicleDTO.getModel());

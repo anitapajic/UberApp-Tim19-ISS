@@ -6,13 +6,12 @@ import org.Tim19.UberApp.model.Message;
 
 import java.time.LocalDateTime;
 
-@Data
 public class MessageDTO {
 
     private Integer id;
     private Integer senderId;
     private Integer receiverId;
-    private String message;
+    private String text;
     private LocalDateTime timeOfSending;
     private MSGType type;
     private Integer rideId;
@@ -21,7 +20,7 @@ public class MessageDTO {
         this.id = id;
         this.senderId = sender;
         this.receiverId = receiver;
-        this.message = text;
+        this.text = text;
         this.timeOfSending = time;
         this.type = type;
         this.rideId = ride;
@@ -33,4 +32,59 @@ public class MessageDTO {
         this(message.getId(), message.getSenderId().getId(), message.getReceiverId().getId(), message.getText(), message.getTime(), message.getType(), message.getRideId().getId());
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(Integer senderId) {
+        this.senderId = senderId;
+    }
+
+    public Integer getReceiverId() {
+        return receiverId;
+    }
+
+    public void setReceiverId(Integer receiverId) {
+        this.receiverId = receiverId;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public LocalDateTime getTimeOfSending() {
+        return timeOfSending;
+    }
+
+    public void setTimeOfSending(LocalDateTime timeOfSending) {
+        this.timeOfSending = timeOfSending;
+    }
+
+    public MSGType getType() {
+        return type;
+    }
+
+    public void setType(MSGType type) {
+        this.type = type;
+    }
+
+    public Integer getRideId() {
+        return rideId;
+    }
+
+    public void setRideId(Integer rideId) {
+        this.rideId = rideId;
+    }
 }

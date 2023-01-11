@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface PassengerRepository extends JpaRepository<Passenger, Integer> {
 
-    public Passenger findOneByEmail(String email);
+    public Passenger findOneByUsername(String email);
 
     public Page<Passenger> findAll(Pageable pageable);
 
