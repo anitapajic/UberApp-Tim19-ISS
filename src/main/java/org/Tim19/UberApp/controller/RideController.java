@@ -2,20 +2,22 @@ package org.Tim19.UberApp.controller;
 
 import org.Tim19.UberApp.dto.PaginatedData.*;
 import org.Tim19.UberApp.dto.RideDTO;
-import org.Tim19.UberApp.dto.UserDTO;
 import org.Tim19.UberApp.model.Driver;
+import org.Tim19.UberApp.model.Passenger;
 import org.Tim19.UberApp.model.Ride;
 import org.Tim19.UberApp.model.VehicleType;
 import org.Tim19.UberApp.service.DriverService;
 import org.Tim19.UberApp.service.RideService;
+import org.Tim19.UberApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value="/api/ride")
@@ -26,9 +28,11 @@ public class RideController {
     private RideService rideService;
     @Autowired
     private DriverService driverService;
+    @Autowired
+    private UserService userService;
 
     //CREATING A RIDE  /api/ride
-    ///TODO: Popraviti bug 'detached entity passed to persist' za passengers
+    @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PostMapping(consumes = "application/json")
     public ResponseEntity<RideDTO> createRide(@RequestBody CreateRideBodyPaginatedDTO rideDTO) {
 
@@ -39,13 +43,16 @@ public class RideController {
         ride.setDriver(driver);
         ride.setStartTime(LocalDateTime.now());
         ride.setTotalCost(480.00);
-        ride.setPassengers(rideDTO.getPassengers());
         ride.setLocations(rideDTO.getLocations());
         ride.setEstimatedTimeInMinutes(7);
         ride.setStatus("PENDING");
         ride.setBabyTransport(rideDTO.isBabyTransport());
         ride.setPetTransport(rideDTO.isPetTransport());
         ride.setVehicleType(rideDTO.getVehicleType());
+        for (Passenger p: rideDTO.getPassengers()) {
+            Passenger p2 = (Passenger) userService.findOneById(p.getId());
+            ride.addPassenger(p2);
+        }
 
         ride = rideService.save(ride);
 
