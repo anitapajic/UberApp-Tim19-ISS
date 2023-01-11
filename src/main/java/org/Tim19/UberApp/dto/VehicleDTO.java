@@ -78,5 +78,43 @@ public class VehicleDTO {
         return reviews;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
+    public void setDriverId(Integer driverId) {
+        this.driverId = driverId;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public void setVehicleType(VehicleType vehicleType) {
+        this.vehicleType = vehicleType;
+    }
+
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
+    }
+
+    public void setPassengerSeats(Integer passengerSeats) {
+        this.passengerSeats = passengerSeats;
+    }
+
+    public void setBabyTransport(boolean babyTransport) {
+        this.babyTransport = babyTransport;
+    }
+
+    public void setPetTransport(boolean petTransport) {
+        this.petTransport = petTransport;
+    }
+
+    public void setCurrentLocation(LocationDTO currentLocation) {
+        this.currentLocation = currentLocation;
+    }
+
+    public void setReviews(Set<Message> reviews) {
+        this.reviews = reviews;
+    }
 }
