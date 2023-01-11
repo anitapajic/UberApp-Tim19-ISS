@@ -1,7 +1,6 @@
 package org.Tim19.UberApp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -15,7 +14,7 @@ public class Driver extends User{
 
     @JsonIgnore
     @OneToMany(cascade ={CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH},
-            fetch = FetchType.LAZY, mappedBy = "driver")
+            fetch = FetchType.EAGER, mappedBy = "driver")
     private Set<Ride> rides = new HashSet<Ride>();
 
     @JsonIgnore

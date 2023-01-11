@@ -36,7 +36,7 @@ public class RideController {
     @PostMapping(consumes = "application/json")
     public ResponseEntity<RideDTO> createRide(@RequestBody CreateRideBodyPaginatedDTO rideDTO) {
 
-        Driver driver = driverService.findOne(1);
+        Driver driver = rideService.findFreeDriver();
         Ride ride = new Ride();
 
         ride.setPanic(false);
