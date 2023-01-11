@@ -1,5 +1,6 @@
 package org.Tim19.UberApp.repository;
 
+import org.Tim19.UberApp.model.MSGType;
 import org.Tim19.UberApp.model.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,8 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
 
     @Query(value = "select * from message m where m.sender_id = ?1", nativeQuery = true)
     public List<Message> findAllBySenderId(Integer id);
+
+    public List<Message> findByType(MSGType type);
 
     public Message save(Message message);
 }

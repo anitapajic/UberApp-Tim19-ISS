@@ -30,10 +30,10 @@ public class PassengerService {
 
     public void remove(Integer id){passengerRepository.deleteById(id);}
 
-    public Passenger findByEmail(String email){return passengerRepository.findOneByEmail(email);}
+    public Passenger findByEmail(String email){return passengerRepository.findOneByUsername(email);}
 
-    public List<Passenger> findByFirstNameAndLastName(String firstname, String lastname){
-        return passengerRepository.findByFirstnameAndLastnameAllIgnoringCase(firstname, lastname);
+    public List<Passenger> findByNameAndSurnameAllIgnoringCase(String firstname, String lastname){
+        return passengerRepository.findByNameAndSurnameAllIgnoringCase(firstname, lastname);
     }
 
 

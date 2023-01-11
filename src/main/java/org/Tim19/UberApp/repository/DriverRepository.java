@@ -13,10 +13,10 @@ import java.util.Set;
 
 public interface DriverRepository extends JpaRepository<Driver, Integer> {
 
-    public Driver findOneByEmail(String email);
+    public Driver findOneByUsername(String email);
 
     public Page<Driver> findAll(Pageable pageable);
 
-    public List<Driver> findByFirstnameAndLastnameAllIgnoringCase(String firstname, String lastname);
+    public List<Driver> findByNameAndSurnameAllIgnoringCase(String firstname, String lastname);
 
 }

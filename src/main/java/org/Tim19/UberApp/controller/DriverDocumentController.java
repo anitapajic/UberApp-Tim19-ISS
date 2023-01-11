@@ -24,6 +24,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/driver")
+@CrossOrigin(value = "*")
 public class    DriverDocumentController {
 
     @Autowired

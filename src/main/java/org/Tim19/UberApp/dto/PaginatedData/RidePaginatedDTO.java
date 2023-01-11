@@ -55,7 +55,7 @@ public class RidePaginatedDTO {
         Set<UserPaginatedDTO> passengers = new HashSet<>();
         for (Passenger p : ride.getPassengers()) {
             UserPaginatedDTO passenger = new UserPaginatedDTO();
-            passenger.setEmail(p.getEmail());
+            passenger.setEmail(p.getUsername());
             passenger.setId(p.getId());
             passengers.add(passenger);
         }

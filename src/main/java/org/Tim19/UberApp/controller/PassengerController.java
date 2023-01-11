@@ -1,7 +1,6 @@
 package org.Tim19.UberApp.controller;
 
 
-import org.Tim19.UberApp.dto.PaginatedData.*;
 import org.Tim19.UberApp.dto.PassengerDTO;
 import org.Tim19.UberApp.model.*;
 import org.Tim19.UberApp.service.PassengerService;
@@ -12,24 +11,33 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
-import java.time.LocalDateTime;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import javax.print.DocFlavor;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/passenger")
+@CrossOrigin(value="*")
 public class PassengerController {
 
     @Autowired
     private PassengerService passengerService;
     @Autowired
     private RideService rideService;
-
+    @Autowired
+    private JavaMailSender mailSender;
 
     //CREATE PASSENGER  /api/passenger
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<PassengerDTO> createPassenger(@RequestBody PassengerDTO passengerDTO) {
+    public ResponseEntity<PassengerDTO> createPassenger(@RequestBody PassengerDTO passengerDTO) throws MessagingException, UnsupportedEncodingException {
 
         Passenger passenger = new Passenger();
 
@@ -38,13 +46,15 @@ public class PassengerController {
         passenger.setProfilePicture(passengerDTO.getProfilePicture());
         passenger.setTelephoneNumber(passengerDTO.getTelephoneNumber());
         passenger.setAddress(passengerDTO.getAddress());
-        passenger.setEmail(passengerDTO.getEmail());
-        passenger.setFirstname(passengerDTO.getName());
-        passenger.setLastname(passengerDTO.getSurname());
+        passenger.setUsername(passengerDTO.getUsername());
+        passenger.setName(passengerDTO.getName());
+        passenger.setSurname(passengerDTO.getSurname());
         passenger.setPassword(passengerDTO.getPassword());
+        passenger.setAuthorities("PASSENGER");
 
         passenger = passengerService.save(passenger);
-        return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
+        this.sendMail(passenger.getId());
+        return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.CREATED);
     }
 
     //GETTING PASSENGERS /api/passenger
@@ -64,7 +74,7 @@ public class PassengerController {
 
     //ACTIVATE PASSENGER ACCOUNT  /api/passenger/activate/activationId
     @GetMapping(value = "/activate/{activationId}")
-    public ResponseEntity<Void> activatePassengerAccount(@PathVariable Integer activationId) {
+    public ResponseEntity activatePassengerAccount(@PathVariable Integer activationId) {
 
         Passenger passenger = passengerService.findOne(activationId);
 
@@ -74,8 +84,32 @@ public class PassengerController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         passenger.setActive(true);
+        passengerService.save(passenger);
+        //String url = "http:/localhost:4200/home";
+        return new ResponseEntity<>(HttpStatus.FOUND);
+    }
 
-        return new ResponseEntity<>(HttpStatus.OK);
+//        //return new ResponseEntity<>(HttpStatus.OK);
+//    }
+
+    private void sendMail(Integer id) throws MessagingException, UnsupportedEncodingException {
+        String subject = "Please verify your registration";
+        String senderName = "TAAXI";
+
+        String mailContent = "<p>Dear, user </p>";
+        mailContent +="<p>Please click the link below to verify your registration:</p>";
+        mailContent +="<h3><a href=\"" + "http://localhost:8085/api/passenger/activate/" + id + "\">VERIFY</a></h3>";
+        mailContent +="<p>Thank you<br>TAAXI Team</p>";
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        helper.setFrom("UberAppTim19@gmail.com", senderName);
+        helper.setTo("tamara_dzambic@hotmail.com");
+        helper.setSubject(subject);
+        helper.setText(mailContent, true);
+
+        mailSender.send(message);
     }
 
     //PASSENGER DETAILS  /api/passenger/{id}
@@ -108,9 +142,9 @@ public class PassengerController {
         passenger.setProfilePicture(passengerDTO.getProfilePicture());
         passenger.setTelephoneNumber(passengerDTO.getTelephoneNumber());
         passenger.setAddress(passengerDTO.getAddress());
-        passenger.setEmail(passengerDTO.getEmail());
-        passenger.setFirstname(passengerDTO.getName());
-        passenger.setLastname(passengerDTO.getSurname());
+        passenger.setUsername(passengerDTO.getUsername());
+        passenger.setName(passengerDTO.getName());
+        passenger.setSurname(passengerDTO.getSurname());
         passenger.setPassword(passengerDTO.getPassword());
 
         //passengerService.save(passenger);
@@ -126,12 +160,12 @@ public class PassengerController {
                                                            @RequestParam(required = false) String  from,
                                                            @RequestParam(required = false) String  to){
 
-
-        Set<Ride> allRides = rideService.findByPassengerId(id);
+        Pageable paging = PageRequest.of(page, size);
+        Page<Ride> allRides = rideService.findByPassengerId(id, paging);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("totalCount", allRides.size());
-        response.put("results", allRides);
+        response.put("totalCount", allRides.getTotalElements());
+        response.put("results", allRides.getContent());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

@@ -8,7 +8,7 @@ import org.Tim19.UberApp.model.User;
 public class UserDTO {
     private Integer id;
 
-    private String email;
+    private String username;
     private String name;
     private String surname;
     private String profilePicture;
@@ -18,7 +18,7 @@ public class UserDTO {
 
     public UserDTO(Integer id, String email, String firstname, String lastname, String profilePicture, String telephoneNumber, String address, String password, Boolean active, Boolean blocked) {
         this.id = id;
-        this.email = email;
+        this.username = email;
         this.name = firstname;
         this.surname = lastname;
         this.profilePicture = profilePicture;
@@ -31,7 +31,7 @@ public class UserDTO {
     public UserDTO() {}
 
     public UserDTO(User users){
-        this(users.getId(), users.getEmail(), users.getFirstname(), users.getLastname(), users.getProfilePicture(), users.getTelephoneNumber(), users.getAddress(), users.getPassword(), users.getActive(), users.getBlocked());
+        this(users.getId(), users.getUsername(), users.getName(), users.getSurname(), users.getProfilePicture(), users.getTelephoneNumber(), users.getAddress(), users.getPassword(), users.getActive(), users.getBlocked());
     }
 
 

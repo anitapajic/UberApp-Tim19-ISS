@@ -3,12 +3,13 @@ insert into vehicle (car_model, vehicle_type, license_number, passenger_seats, b
                                                                                                                   ('audi', '0', 'NS 010 WQ', '4', 'true', 'false'),
                                                                                                                   ('audi', '1', 'NS 011 WA', '4', 'true', 'true');
 
--- User (Passenger, Driver)
-insert into user (dtype, email, firstname, lastname, profile_picture, telephone_number, address, password, active, blocked, vehicle_id) values
-                                                                                                                                            ('Driver', 'tamara@gmail.com','tamara', 'dzambic','pic1', '22232', 'NS 12', '123', 'true', 'false', '1'),
-                                                                                                                                            ('Passenger', 'anita@gmail.com','anita', 'pajic','pic2', '22232', 'NS 12', '123', 'true', 'false', null),
-                                                                                                                                            ('Passenger', 'aleksandra@gmail.com','aleksandra', 'filipic','pic3', '22232', 'NS 12', '123', 'true', 'false', null),
-                                                                                                                                            ('Driver', 'anja@gmail.com','anja', 'petkovic','pic1', '22232', 'NS 12', '123', 'true', 'false', '2');
+-- User (Passenger, Driver)  password = test
+insert into user (dtype, username, name, surname, profile_picture, telephone_number, address, password, active, blocked, vehicle_id, authorities) values
+                                                                                                                                            ('Driver', 'tamara@gmail.com','tamara', 'dzambic','pic1', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', '1', 'DRIVER'),
+                                                                                                                                            ('Passenger', 'anita@gmail.com','anita', 'pajic','pic2', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', null, 'PASSENGER'),
+                                                                                                                                            ('Passenger', 'aleksandra@gmail.com','aleksandra', 'filipic','pic3', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', null, 'PASSENGER'),
+                                                                                                                                            ('Driver', 'anja@gmail.com','anja', 'petkovic','pic1', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', '2', 'DRIVER'),
+                                                                                                                                            ('User', 'admin@gmail.com','admin', 'admin','pic1', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', null, 'ADMIN');
 
 -- Activations
 insert into activation (creation_date, expiration_date, user_id) values
@@ -59,10 +60,10 @@ insert into rejection (reason, time_of_rejection, ride_id, user_id) values
 
 
 -- Reviews
-insert into review (comment, rating, ride_id, user_id) values
-                                                           ('comment1', 4, 1, 2),
-                                                           ('comment2', 3, 2, 2),
-                                                           ('comment3', 5, 3, 3);
+insert into review (comment, rating, ride_id, user_id, driver_id) values
+                                                                                    ('comment1', 4, 1, 2, 1),
+                                                                                    ('comment2', 3, 2, 2, 4),
+                                                                                    ('comment3', 5, 3, 3, 1);
 
 -- Documents
 insert into document(name, document_image, driver_id) values
@@ -88,4 +89,7 @@ insert into note (text, "DATE",  user_id) values
 -- Messages
 insert into message (text, "TIME", "TYPE", receiver_id, sender_id, ride_id) values
                                                                        ('message1', '2017-07-21T17:32:28Z', 0, 1, 2, 1),
+                                                                       ('panic1', '2017-07-21T17:32:28Z', 2, 1, 2, 1),
+                                                                       ('panic2', '2017-07-21T17:32:28Z', 2, 1, 2, 1),
                                                                        ('message2', '2017-07-21T17:32:28Z', 0, 1, 2, 1);
+
