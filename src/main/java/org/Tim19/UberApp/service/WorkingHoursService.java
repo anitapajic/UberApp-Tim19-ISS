@@ -7,21 +7,31 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 @Service
 public class WorkingHoursService {
     @Autowired
-    private WorkingHoursRepository workingHours;
+    private WorkingHoursRepository workingHoursRepository;
 
-    public WorkingHours findOne(Integer id){return workingHours.findById(id).orElseGet(null);}
+    public WorkingHours findOne(Integer id){return workingHoursRepository.findById(id).orElseGet(null);}
 
-    public List<WorkingHours> findAll(){return workingHours.findAll();}
+    public List<WorkingHours> findAll(){return workingHoursRepository.findAll();}
 
-    public Page<WorkingHours> findAll(Pageable page){return workingHours.findAll(page);}
+    public Page<WorkingHours> findAll(Pageable page){return workingHoursRepository.findAll(page);}
 
-    public WorkingHours save(WorkingHours hours){return workingHours.save(hours);}
+
 
     public void remove(Integer id){
-        workingHours.deleteById(id);}
+        workingHoursRepository.deleteById(id);}
+
+    public Set<WorkingHours> findByDriverId(Integer id) {return workingHoursRepository.findByDriverId(id);}
+
+    public List<WorkingHours> findWorkingHoursByDriver(Integer wh_id) {return workingHoursRepository.findWorkingHoursByDriver(wh_id);}
+
+    public WorkingHours save(WorkingHours workingHours) {return workingHoursRepository.save(workingHours);}
+
 
 }

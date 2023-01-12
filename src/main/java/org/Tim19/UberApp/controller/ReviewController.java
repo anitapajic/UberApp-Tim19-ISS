@@ -48,8 +48,8 @@ public class ReviewController {
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping(value = "/vehicle/{id}")
     public ResponseEntity getVehicleReviews(@PathVariable Integer id){
-        Optional<Vehicle> vehicle = vehicleService.findOne(id);
-        if(vehicle.isEmpty()){
+        Vehicle vehicle = vehicleService.findOne(id);
+        if(vehicle == null){
             return new ResponseEntity<>("Vehicle does not exist!", HttpStatus.NOT_FOUND);
         }
 
