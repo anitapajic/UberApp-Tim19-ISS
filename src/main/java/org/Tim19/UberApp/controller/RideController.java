@@ -44,6 +44,7 @@ public class RideController {
     @PostMapping(consumes = "application/json")
     public ResponseEntity<RideDTO> createRide(@RequestBody CreateRideBodyPaginatedDTO rideDTO) {
 
+        ///TODO:Dodati error response
 
         Driver driver = rideService.findFreeDriver();
         Ride ride = new Ride();
@@ -71,7 +72,7 @@ public class RideController {
     //ACTIVE RIDE FOR DRIVER  /api/ride/driver/{driverId}/active
     @GetMapping(value="/driver/{driverId}/active")
     @PreAuthorize("hasAnyAuthority('DRIVER', 'ADMIN')")
-    public ResponseEntity<RideDTO> activeRideForDriver(@PathVariable Integer driverId) {
+    public ResponseEntity activeRideForDriver(@PathVariable Integer driverId) {
 
         Driver driver = driverService.findOne(driverId);
 
@@ -80,12 +81,16 @@ public class RideController {
         }
 
         Set<Ride> ridesOfDriver = driver.getRides();
-        Ride activeRide = new Ride();
+        Ride activeRide = null;
 
         for (Ride r : ridesOfDriver){
-            if (r.getStatus().equals("ACTIVE")){
+            if (r.getStatus().equals("STARTED")){
                 activeRide = r;
             }
+        }
+
+        if(activeRide==null){
+            return new ResponseEntity<>("Active ride does not exist!", HttpStatus.NOT_FOUND);
         }
 
         return new ResponseEntity<>(new RideDTO(activeRide),HttpStatus.OK);
@@ -94,7 +99,7 @@ public class RideController {
     //ACTIVE RIDE FOR PASSENGER  /api/ride/passenger/{passengerId}/active
     @PreAuthorize("hasAnyAuthority('PASSENGER', 'ADMIN')")
     @GetMapping(value="/passenger/{passengerId}/active")
-    public ResponseEntity<RideDTO> activeRideForPassenger(@PathVariable Integer passengerId) {
+    public ResponseEntity activeRideForPassenger(@PathVariable Integer passengerId) {
 
         Passenger passenger = passengerService.findOne(passengerId);
 
@@ -103,7 +108,7 @@ public class RideController {
         }
 
         Set<Ride> ridesOfPassenger = rideService.findAllByPassengerId(passengerId);
-        Ride activeRide = new Ride();
+        Ride activeRide = null;
 
         for (Ride r : ridesOfPassenger){
             if (r.getStatus().equals("STARTED")){
@@ -111,6 +116,9 @@ public class RideController {
             }
         }
 
+        if(activeRide==null){
+            return new ResponseEntity<>("Active ride does not exist!", HttpStatus.NOT_FOUND);
+        }
 
         return new ResponseEntity<>(new RideDTO(activeRide),HttpStatus.OK);
     }
@@ -118,13 +126,19 @@ public class RideController {
     //RIDE DETAILS  api/ride/{id}
     @PreAuthorize("hasAnyAuthority('PASSENGER', 'ADMIN', 'DRIVER')")
     @GetMapping(value = "/{id}")
-    public ResponseEntity<RideDTO> getRide(@PathVariable Integer id) {
+    public ResponseEntity getRide(@PathVariable Integer id) {
+
+
+        String regex = "[0-9]{0,4}";
+        if(!regex.matches(String.valueOf(id))){
+            return new ResponseEntity<>("Invalid data. Bad Id format.", HttpStatus.BAD_REQUEST);
+        }
 
         Ride ride = rideService.findOneRideById(id);
 
         // ride must exist
         if (ride == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
         }
 
         return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
@@ -133,13 +147,18 @@ public class RideController {
     //CANCEL EXISTING RIDE  /api/ride/{id}/withdraw
     @PreAuthorize("hasAnyAuthority('PASSENGER', 'DRIVER')")
     @PutMapping(value="/{id}/withdraw")
-    public ResponseEntity<RideDTO> cancelRide(@PathVariable Integer id) {
+    public ResponseEntity cancelRide(@PathVariable Integer id) {
 
         Ride ride = rideService.findOneRideById(id);
 
         // ride must exist
         if (ride == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
+        }
+
+        if(!(ride.getStatus().equals("STARTED") || ride.getStatus().equals("PENDING"))){
+            return new ResponseEntity<>("Cannot cancel a ride that is not in status PENDING or STARTED!",
+                    HttpStatus.BAD_REQUEST);
         }
 
         ride.setStatus("CANCELED");
@@ -151,14 +170,14 @@ public class RideController {
     //PANIC PROCEDURE FOR THE RIDE  /api/ride/{id}/panic
     @PreAuthorize("hasAnyAuthority('PASSENGER', 'DRIVER')")
     @PutMapping(value="/{id}/panic", consumes = "application/json")
-    public ResponseEntity<PanicPaginatedDTO> panicRide(@RequestBody String reason,
+    public ResponseEntity panicRide(@RequestBody String reason,
                                                        @PathVariable Integer id) {
 
         Ride ride = rideService.findOneRideById(id);
 
         // ride must exist
         if (ride == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
         }
         ///TODO: Dobaviti usera preko tokena (ovo dole ne radi)
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -174,16 +193,42 @@ public class RideController {
         return new ResponseEntity<>(panic, HttpStatus.OK);
     }
 
-    //ACCEPT RIDE  /api/ride/{id}/accept
+    //START RIDE  /api/ride/{id}/start
     @PreAuthorize("hasAnyAuthority('DRIVER')")
-    @PutMapping(value="/{id}/accept")
-    public ResponseEntity<RideDTO> acceptRide(@PathVariable Integer id) {
+    @PutMapping(value="/{id}/start")
+    public ResponseEntity startRide(@PathVariable Integer id) {
 
         Ride ride = rideService.findOneRideById(id);
 
         // ride must exist
         if (ride == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
+        }
+
+        if(!(ride.getStatus().equals("PENDING"))){
+            return new ResponseEntity<>("Cannot start a ride that is not in status ACCEPTED!", HttpStatus.BAD_REQUEST);
+        }
+
+        ride.setStatus("STARTED");
+        rideService.save(ride);
+
+        return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
+    }
+
+    //ACCEPT RIDE  /api/ride/{id}/accept
+    @PreAuthorize("hasAnyAuthority('DRIVER')")
+    @PutMapping(value="/{id}/accept")
+    public ResponseEntity acceptRide(@PathVariable Integer id) {
+
+        Ride ride = rideService.findOneRideById(id);
+
+        // ride must exist
+        if (ride == null) {
+            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
+        }
+
+        if(!(ride.getStatus().equals("PENDING"))){
+            return new ResponseEntity<>("Cannot accept a ride that is not in status PENDING!", HttpStatus.BAD_REQUEST);
         }
 
         ride.setStatus("ACCEPTED");
@@ -195,13 +240,17 @@ public class RideController {
     //END THE RIDE  /api/ride/{id}/end
     @PreAuthorize("hasAnyAuthority('DRIVER')")
     @PutMapping(value="/{id}/end")
-    public ResponseEntity<RideDTO> endRide(@PathVariable Integer id) {
+    public ResponseEntity endRide(@PathVariable Integer id) {
 
         Ride ride = rideService.findOneRideById(id);
 
         // ride must exist
         if (ride == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
+        }
+
+        if(!(ride.getStatus().equals("STARTED"))){
+            return new ResponseEntity<>("Cannot en a ride that is not in status STARTED!", HttpStatus.BAD_REQUEST);
         }
 
         ride.setStatus("FINISHED");
@@ -213,7 +262,7 @@ public class RideController {
     //CANCEL RIDE WITH AN EXPLANATION  /api/ride/{id}/cancel
     @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PutMapping(value="/{id}/cancel", consumes = "application/json")
-    public ResponseEntity<RideDTO> cancelRideWithExpl(@PathVariable Integer id,
+    public ResponseEntity cancelRideWithExpl(@PathVariable Integer id,
                                                                @RequestBody String explanation) {
         Rejection rejection = new Rejection();
         Set<Rejection> rejections = new HashSet<>();
@@ -222,7 +271,12 @@ public class RideController {
 
         // ride must exist
         if (ride == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
+        }
+
+        if(!(ride.getStatus().equals("ACCEPTED") || ride.getStatus().equals("PENDING"))){
+            return new ResponseEntity<>("Cannot cancel a ride that is not in status PENDING or ACCEPTED!",
+                    HttpStatus.BAD_REQUEST);
         }
 
         ///TODO : Videti zasto ispisuje da je rejection null
