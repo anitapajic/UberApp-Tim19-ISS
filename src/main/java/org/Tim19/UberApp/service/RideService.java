@@ -2,6 +2,7 @@ package org.Tim19.UberApp.service;
 
 import org.Tim19.UberApp.model.Driver;
 import org.Tim19.UberApp.model.Ride;
+import org.Tim19.UberApp.model.VehicleType;
 import org.Tim19.UberApp.repository.RejectionRepository;
 import org.Tim19.UberApp.repository.ReviewRepository;
 import org.Tim19.UberApp.repository.RideRepository;
@@ -83,6 +84,25 @@ public class RideService {
         int index = random.nextInt(freeDrivers.size());
         Driver freeDriver = freeDrivers.get(index);
         return freeDriver;
+    }
+
+    public void calculateKilometres(){
+
+    }
+
+    public Double calculatePrice(VehicleType vehicleType, Double kilometres){
+
+        Double price = 0.0;
+        if(vehicleType.equals(VehicleType.STANDARDNO)){
+            price = 170*kilometres;
+        }
+        else if(vehicleType.equals(VehicleType.KOMBI)){
+            price = 150*kilometres;
+        }
+        else if(vehicleType.equals(VehicleType.LUKSUZNO)){
+            price = 220*kilometres;
+        }
+        return price;
     }
 
 //    private void findRideReviewsAndRejections(Set<Ride> rides){
