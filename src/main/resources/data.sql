@@ -9,6 +9,7 @@ insert into user (dtype, username, name, surname, profile_picture, telephone_num
                                                                                                                                             ('Passenger', 'anita@gmail.com','anita', 'pajic','pic2', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', null, 'PASSENGER'),
                                                                                                                                             ('Passenger', 'aleksandra@gmail.com','aleksandra', 'filipic','pic3', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', null, 'PASSENGER'),
                                                                                                                                             ('Driver', 'anja@gmail.com','anja', 'petkovic','pic1', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', '2', 'DRIVER'),
+                                                                                                                                            ('Driver', 'bane@gmail.com','Branislav', 'Stojkovic','pic1', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', '2', 'DRIVER'),
                                                                                                                                             ('User', 'admin@gmail.com','admin', 'admin','pic1', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', null, 'ADMIN');
 
 -- Activations
@@ -38,9 +39,10 @@ insert into passenger_favourites (path_id, passenger_id) values
 
 -- Rides
 insert into ride (start_time, end_time, total_cost, driver_id, estimated_time_in_minutes, status, panic, baby_transport, pet_transport, vehicle_type) values
-                                                                                                                                                          ('2017-07-21T17:32:28Z', '2017-07-21T17:32:28Z', '250', 1, '7', 'pending', 'false', 'false', 'false', '0'),
-                                                                                                                                                          ('2017-07-21T17:32:28Z', '2017-07-21T17:32:28Z', '250', 4, '7', 'pending', 'false', 'false', 'false', '0'),
-                                                                                                                                                          ('2017-07-21T17:32:28Z', '2017-07-21T17:32:28Z', '250', 1, '7', 'pending', 'false', 'false', 'false', '0');
+                                                                                                                                                          ('2017-07-21T17:32:28Z', '2017-07-21T17:32:28Z', '250', 1, '7', 'STARTED', 'false', 'false', 'false', '0'),
+                                                                                                                                                          ('2017-07-21T17:32:28Z', '2017-07-21T17:32:28Z', '250', 4, '7', 'PENDING', 'false', 'false', 'false', '0'),
+                                                                                                                                                          ('2017-07-21T17:32:28Z', '2017-07-21T17:32:28Z', '250', 1, '7', 'PENDING', 'false', 'false', 'false', '0'),
+                                                                                                                                                          ('2017-07-21T17:32:28Z', '2017-07-21T17:32:28Z', '250', 5, '7', 'PENDING', 'false', 'false', 'false', '0');
 
 -- Ride paths
 insert into ride_paths (ride_id, paths_id) values

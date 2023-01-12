@@ -1,8 +1,8 @@
 package org.Tim19.UberApp.service;
 
-import org.Tim19.UberApp.model.Rejection;
-import org.Tim19.UberApp.model.Review;
+import org.Tim19.UberApp.model.Driver;
 import org.Tim19.UberApp.model.Ride;
+import org.Tim19.UberApp.model.VehicleType;
 import org.Tim19.UberApp.repository.RejectionRepository;
 import org.Tim19.UberApp.repository.ReviewRepository;
 import org.Tim19.UberApp.repository.RideRepository;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 
 import java.util.*;
 
@@ -22,9 +21,15 @@ public class RideService {
     private ReviewRepository reviewRepository;
     @Autowired
     private RejectionRepository rejectionRepository;
+    @Autowired
+    private DriverService driverService;
 
 
     public Optional<Ride> findOneById(Integer id){return rideRepository.findById(id);}
+
+    public Ride findOneRideById(Integer id){
+        return rideRepository.findOneRideById(id);
+    }
 
     public List<Ride> findAll(){return rideRepository.findAll();}
 
@@ -48,10 +53,56 @@ public class RideService {
 
         return rides;
     }
+    public Set<Ride> findAllByPassengerId(Integer id){
+        Set<Ride> rides = rideRepository.findAllByPassengersId(id);
+
+        return rides;
+    }
     public Page<Ride> findByDriverId(Integer id, Pageable pageable){
         Page<Ride> rides = rideRepository.findAllByDriverId(id, pageable);
 
         return rides;
+    }
+
+    public Driver findFreeDriver(){
+        List<Driver> freeDrivers = new ArrayList<>();
+        for (Driver driver: driverService.findAll()) {
+            Set<Ride> rides = driver.getRides();
+            List<String> statuses = new ArrayList<>();
+            for (Ride ride : rides){
+                statuses.add(ride.getStatus());
+            }
+            if (statuses.contains("STARTED")){
+                continue;
+            }
+            else{
+                freeDrivers.add(driver);
+            }
+
+        }
+        Random random = new Random();
+        int index = random.nextInt(freeDrivers.size());
+        Driver freeDriver = freeDrivers.get(index);
+        return freeDriver;
+    }
+
+    public void calculateKilometres(){
+
+    }
+
+    public Double calculatePrice(VehicleType vehicleType, Double kilometres){
+
+        Double price = 0.0;
+        if(vehicleType.equals(VehicleType.STANDARDNO)){
+            price = 170*kilometres;
+        }
+        else if(vehicleType.equals(VehicleType.KOMBI)){
+            price = 150*kilometres;
+        }
+        else if(vehicleType.equals(VehicleType.LUKSUZNO)){
+            price = 220*kilometres;
+        }
+        return price;
     }
 
 //    private void findRideReviewsAndRejections(Set<Ride> rides){

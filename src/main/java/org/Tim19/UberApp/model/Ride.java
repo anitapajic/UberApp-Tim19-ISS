@@ -1,13 +1,12 @@
 package org.Tim19.UberApp.model;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -31,8 +30,7 @@ public class Ride {
     @JoinColumn(name = "driver_id")
     private Driver driver;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH},
-            fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "passenger_ride",
             joinColumns = @JoinColumn(name = "ride_id", referencedColumnName = "id"),
