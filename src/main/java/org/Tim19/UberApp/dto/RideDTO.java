@@ -33,10 +33,10 @@ public class RideDTO {
     @JsonIgnore
     private Set<Path> paths;
 
-    private Set<Rejection> rejectons;
+    private Set<Rejection> rejections;
 
 
-    public RideDTO(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengersDTO, Integer estimatedTimeInMinutes, VehicleType vehicleType, Boolean panic, boolean babyTransport, boolean petTransport, String status, Set<Path> paths) {
+    public RideDTO(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengersDTO, Integer estimatedTimeInMinutes, VehicleType vehicleType, Boolean panic, boolean babyTransport, boolean petTransport, String status, Set<Path> paths, Set<Rejection> rejections) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -50,11 +50,12 @@ public class RideDTO {
         this.petTransport = petTransport;
         this.status = status;
         this.paths = paths;
+        this.rejections = rejections;
     }
 
 
     public RideDTO(Ride ride) {
-        this(ride.getId(), ride.getStartTime(), ride.getEndTime(), ride.getTotalCost(), ride.getDriver(), ride.getPassengers(), ride.getEstimatedTimeInMinutes(), ride.getVehicleType(), ride.isPanic(), ride.isBabyTransport(), ride.isPetTransport(), ride.getStatus(), ride.getLocations());
+        this(ride.getId(), ride.getStartTime(), ride.getEndTime(), ride.getTotalCost(), ride.getDriver(), ride.getPassengers(), ride.getEstimatedTimeInMinutes(), ride.getVehicleType(), ride.isPanic(), ride.isBabyTransport(), ride.isPetTransport(), ride.getStatus(), ride.getLocations(), ride.getRejection());
     }
 
 

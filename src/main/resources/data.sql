@@ -31,8 +31,17 @@ insert into path (departure_id, destination_id) values
                                                     (1,3),
                                                     (2,3);
 
+insert into favorite_route(favorite_name, scheduled_time, vehicle_type, baby_transport, pet_transport) values ('Kuca-Posao', '2017-07-21T17:32:28Z', 0, false, false),
+                                                                                                        ('Kuca-Faks', '2017-07-21T17:32:28Z', 0, false, false),
+                                                                                                         ('Kuca-Teretana', '2017-07-21T17:32:28Z', 0, false, false);
+
+insert into favorites_paths(favorite_id, paths_id) values (1,1),
+                                                          (2,2),
+                                                          (3,3);
+
 -- Passenger favourite paths
-insert into passenger_favourites (path_id, passenger_id) values
+
+insert into passenger_favorites (favorite_id, passenger_id) values
                                                              (1, 2),
                                                              (2, 2),
                                                              (3, 3);

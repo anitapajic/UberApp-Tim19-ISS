@@ -4,10 +4,7 @@ import org.Tim19.UberApp.dto.PaginatedData.CreateRideBodyPaginatedDTO;
 import org.Tim19.UberApp.dto.PaginatedData.PanicPaginatedDTO;
 import org.Tim19.UberApp.dto.PaginatedData.UserPanicPaginatedDTO;
 import org.Tim19.UberApp.dto.RideDTO;
-import org.Tim19.UberApp.model.Driver;
-import org.Tim19.UberApp.model.Passenger;
-import org.Tim19.UberApp.model.Rejection;
-import org.Tim19.UberApp.model.Ride;
+import org.Tim19.UberApp.model.*;
 import org.Tim19.UberApp.service.DriverService;
 import org.Tim19.UberApp.service.PassengerService;
 import org.Tim19.UberApp.service.RideService;
@@ -21,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
@@ -263,9 +259,7 @@ public class RideController {
     @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PutMapping(value="/{id}/cancel", consumes = "application/json")
     public ResponseEntity cancelRideWithExpl(@PathVariable Integer id,
-                                                               @RequestBody String explanation) {
-        Rejection rejection = new Rejection();
-        Set<Rejection> rejections = new HashSet<>();
+                                                               @RequestBody Rejection rejection) {
 
         Ride ride = rideService.findOneRideById(id);
 
@@ -279,17 +273,17 @@ public class RideController {
                     HttpStatus.BAD_REQUEST);
         }
 
-        ///TODO : Videti zasto ispisuje da je rejection null
         rejection.setTimeOfRejection(LocalDateTime.now());
-        rejection.setReason(explanation);
-        rejections.add(rejection);
 
-        ride.setRejection(rejections);
+        rejection.setRide(ride);
+        rejection.setUser((User) ride.getPassengers().toArray()[0]);
+
+        ride.addRejection(rejection);
         ride.setStatus("REJECTED");
-
         rideService.save(ride);
 
-        return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
+        RideDTO rDTO = new RideDTO(ride);
+        return new ResponseEntity<>(rDTO, HttpStatus.OK);
     }
 
 }

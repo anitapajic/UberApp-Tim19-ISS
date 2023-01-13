@@ -1,7 +1,6 @@
 package org.Tim19.UberApp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -9,7 +8,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data
 @NoArgsConstructor
 @DiscriminatorValue("Passenger")
 public class Passenger extends User{
@@ -24,13 +22,13 @@ public class Passenger extends User{
     private Set<Ride> rides = new HashSet<>();
 
     @JsonIgnore
-    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @ManyToMany(cascade = {CascadeType.MERGE,CascadeType.DETACH}, fetch = FetchType.EAGER)
     @JoinTable(
-            name = "passenger_favourites",
-            joinColumns = @JoinColumn(name = "path_id", referencedColumnName = "id"),
+            name = "passenger_favorites",
+            joinColumns = @JoinColumn(name = "favorite_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id")
     )
-    private Set<Path> favourite = new HashSet<>();
+    private Set<FavoriteRoute> favourite = new HashSet<>();
 
 
     public Passenger(Integer id, String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, Boolean active, Boolean blocked, Set<Ride> rides, String authorities) {
@@ -44,6 +42,22 @@ public class Passenger extends User{
 
     public  void removeRide(Ride ride){
         this.rides.remove(ride);
+    }
+
+    public Set<Ride> getRides() {
+        return rides;
+    }
+
+    public void setRides(Set<Ride> rides) {
+        this.rides = rides;
+    }
+
+    public Set<FavoriteRoute> getFavourite() {
+        return favourite;
+    }
+
+    public void setFavourite(Set<FavoriteRoute> favourite) {
+        this.favourite = favourite;
     }
 }
 

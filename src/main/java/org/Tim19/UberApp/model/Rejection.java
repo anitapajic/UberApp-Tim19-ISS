@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 public class Rejection {
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
@@ -24,6 +25,7 @@ public class Rejection {
     private String reason;
 
     private LocalDateTime timeOfRejection;
+
     @JsonIgnore
     @ManyToOne
     private Ride ride;
