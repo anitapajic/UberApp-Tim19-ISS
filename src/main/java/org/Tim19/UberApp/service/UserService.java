@@ -1,8 +1,8 @@
 package org.Tim19.UberApp.service;
 
 import org.Tim19.UberApp.dto.PaginatedData.RidePaginatedDTO;
+import org.Tim19.UberApp.dto.PaginatedData.UserPanicPaginatedDTO;
 import org.Tim19.UberApp.model.ResetCode;
-import org.Tim19.UberApp.model.Ride;
 import org.Tim19.UberApp.model.User;
 import org.Tim19.UberApp.repository.ResetCodeRepository;
 import org.Tim19.UberApp.repository.RideRepository;
@@ -12,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +44,9 @@ public class UserService {
 
     public Optional<User> findOneByUsername(String username){
         return this.userRepository.findOneByUsername(username);
+    }
+    public User findOneUserByUsername(String username){
+        return this.userRepository.findOneUserByUsername(username);
     }
     public User findOneLogin(String email, String password){return userRepository.findOneByUsernameAndPassword(email,password);}
     public List<User> findAll(){return userRepository.findAll();}

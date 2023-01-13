@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 @Service
@@ -86,21 +85,27 @@ public class RideService {
         return freeDriver;
     }
 
-    public void calculateKilometres(){
+    public Double calculateKilometres(Float long1, Float long2, Float lat1, Float lat2){
+        Double distance = Math.sqrt(Math.pow((lat1 - lat2), 2) + Math.pow((long1 - long2), 2));
+        return distance;
+    }
 
+    public Integer calculateTravelTime(Double distance){
+        Integer time = (int) ((distance)*2);
+        return time;
     }
 
     public Double calculatePrice(VehicleType vehicleType, Double kilometres){
 
         Double price = 0.0;
         if(vehicleType.equals(VehicleType.STANDARDNO)){
-            price = 170*kilometres;
+            price = 170 + 70*kilometres;
         }
         else if(vehicleType.equals(VehicleType.KOMBI)){
-            price = 150*kilometres;
+            price = 170 + 50*kilometres;
         }
         else if(vehicleType.equals(VehicleType.LUKSUZNO)){
-            price = 220*kilometres;
+            price = 170 + 100*kilometres;
         }
         return price;
     }

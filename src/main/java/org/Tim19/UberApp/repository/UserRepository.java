@@ -1,16 +1,13 @@
 package org.Tim19.UberApp.repository;
 
-import org.Tim19.UberApp.model.Ride;
 import org.Tim19.UberApp.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import javax.persistence.NamedNativeQuery;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
 
@@ -19,6 +16,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     public User findOneByUsernameAndPassword(String email, String password);
 
     Optional<User> findOneByUsername(String username);
+    User findOneUserByUsername(String username);
 
     public Page<User> findAll(Pageable pageable);
 
