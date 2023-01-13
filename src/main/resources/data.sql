@@ -61,8 +61,8 @@ insert into ride_paths (ride_id, paths_id) values
 
 -- Passenger rides
 insert into passenger_ride (ride_id, passenger_id) values(1, 2),
-                                                         (2, 3),
-                                                         (3, 2);
+                                                         (2, 3);
+                                                         --(3, 3);
 
 -- Rejections
 

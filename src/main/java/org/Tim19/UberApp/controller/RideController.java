@@ -5,6 +5,7 @@ import org.Tim19.UberApp.dto.PaginatedData.PanicPaginatedDTO;
 import org.Tim19.UberApp.dto.PaginatedData.UserPanicPaginatedDTO;
 import org.Tim19.UberApp.dto.RideDTO;
 import org.Tim19.UberApp.model.*;
+import org.Tim19.UberApp.security.SecurityUser;
 import org.Tim19.UberApp.service.DriverService;
 import org.Tim19.UberApp.service.PassengerService;
 import org.Tim19.UberApp.service.RideService;
@@ -18,6 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -38,9 +41,23 @@ public class RideController {
     //CREATING A RIDE  /api/ride
     @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<RideDTO> createRide(@RequestBody CreateRideBodyPaginatedDTO rideDTO) {
+    public ResponseEntity createRide(@RequestBody CreateRideBodyPaginatedDTO rideDTO) {
 
-        ///TODO:Dodati error response
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityUser user = (SecurityUser) auth.getPrincipal();
+
+        Passenger passenger = passengerService.findByEmail(user.getUsername());
+        System.out.println(passenger.getUsername());
+        Set<Ride> rides = rideService.findAllByPassengerId(passenger.getId());
+        System.out.println(passenger.getRides());
+        List<String> statuses = new ArrayList<>();
+        for (Ride ride : rides){
+            statuses.add(ride.getStatus());
+            System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"+ride.getId());
+        }
+        if (statuses.contains("PENDING")){
+            return new ResponseEntity<>("Cannot create a ride while you have one already pending!",  HttpStatus.BAD_REQUEST);
+        }
 
         Driver driver = rideService.findFreeDriver();
         Ride ride = new Ride();
@@ -48,9 +65,16 @@ public class RideController {
         ride.setPanic(false);
         ride.setDriver(driver);
         ride.setStartTime(LocalDateTime.now());
-        ride.setTotalCost(480.00);
+
+        List<Float> coordinates = rideDTO.getCoordinates();
+        Float long1 = coordinates.get(0);
+        Float long2 = coordinates.get(1);
+        Float lat1 = coordinates.get(2);
+        Float lat2 = coordinates.get(3);
+
+        ride.setTotalCost(rideService.calculatePrice(rideDTO.getVehicleType(), rideService.calculateKilometres(long1, long2, lat1, lat2)));
         ride.setLocations(rideDTO.getLocations());
-        ride.setEstimatedTimeInMinutes(7);
+        ride.setEstimatedTimeInMinutes(rideService.calculateTravelTime(rideService.calculateKilometres(long1, long2, lat1, lat2)));
         ride.setStatus("PENDING");
         ride.setBabyTransport(rideDTO.isBabyTransport());
         ride.setPetTransport(rideDTO.isPetTransport());
@@ -166,7 +190,7 @@ public class RideController {
     //PANIC PROCEDURE FOR THE RIDE  /api/ride/{id}/panic
     @PreAuthorize("hasAnyAuthority('PASSENGER', 'DRIVER')")
     @PutMapping(value="/{id}/panic", consumes = "application/json")
-    public ResponseEntity panicRide(@RequestBody String reason,
+    public ResponseEntity panicRide(@RequestBody PanicPaginatedDTO panic,
                                                        @PathVariable Integer id) {
 
         Ride ride = rideService.findOneRideById(id);
@@ -175,16 +199,25 @@ public class RideController {
         if (ride == null) {
             return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
         }
-        ///TODO: Dobaviti usera preko tokena (ovo dole ne radi)
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityUser user = (SecurityUser) auth.getPrincipal();
 
-        UserPanicPaginatedDTO user = (UserPanicPaginatedDTO) auth.getDetails();
+        User passenger = userService.findOneUserByUsername(user.getUsername());
 
+        UserPanicPaginatedDTO user2 = new UserPanicPaginatedDTO();
+        user2.setEmail(passenger.getUsername());
+        user2.setName(passenger.getName());
+        user2.setAddress(passenger.getAddress());
+        user2.setSurname(passenger.getSurname());
+        user2.setTelephoneNumber(passenger.getTelephoneNumber());
+        user2.setProfilePicture(passenger.getProfilePicture());
 
         int randomNumber = new Random().nextInt(9000) + 1000;
-        PanicPaginatedDTO panic = new PanicPaginatedDTO(randomNumber, user, ride, LocalDateTime.now(), reason);
-
-
+        panic.setId(randomNumber);
+        panic.setRide(ride);
+        panic.setUser(user2);
+        panic.setTime(LocalDateTime.now());
 
         return new ResponseEntity<>(panic, HttpStatus.OK);
     }
