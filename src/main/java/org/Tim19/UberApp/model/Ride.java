@@ -69,7 +69,7 @@ public class Ride {
     private VehicleType vehicleType;
 
 
-        public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Integer estimatedTimeInMinutes, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType) {
+        public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Integer estimatedTimeInMinutes, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType, Set<Rejection> rejection) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -81,6 +81,7 @@ public class Ride {
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
         this.vehicleType = vehicleType;
+        this.rejection = rejection;
     }
 
 
