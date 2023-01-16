@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
@@ -35,6 +36,7 @@ public class PassengerController {
     private ActivationService activationService;
 
     //CREATE PASSENGER  /api/passenger
+    @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PostMapping(consumes = "application/json")
     public ResponseEntity createPassenger(@RequestBody PassengerDTO passengerDTO) throws MessagingException, UnsupportedEncodingException {
 
@@ -42,7 +44,7 @@ public class PassengerController {
 
         // if passenger already exist
         if (passengerService.findByEmail(passengerDTO.getUsername()) != null) {
-            return new ResponseEntity<>("User with that email already exists!",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("User with that email already exists!", HttpStatus.BAD_REQUEST);
         }
 
         Passenger passenger = new Passenger();
@@ -73,6 +75,7 @@ public class PassengerController {
     }
 
     //GETTING PASSENGERS /api/passenger
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllPassengers(@RequestParam(defaultValue = "0") Integer page,
                                                                 @RequestParam(defaultValue = "4") Integer size) {
@@ -88,6 +91,7 @@ public class PassengerController {
     }
 
     //ACTIVATE PASSENGER ACCOUNT  /api/passenger/activate/activationId
+    @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @GetMapping(value = "/activate/{activationId}")
     public ResponseEntity activatePassengerAccount(@PathVariable Integer activationId) {
 
@@ -112,6 +116,7 @@ public class PassengerController {
 
 
     //PASSENGER DETAILS  /api/passenger/{id}
+    @PreAuthorize("hasAnyAuthority('PASSENGER', 'ADMIN', 'DRIVER')")
     @GetMapping(value = "/{id}")
     public ResponseEntity getPassenger(@PathVariable Integer id) {
 
@@ -126,6 +131,7 @@ public class PassengerController {
     }
 
     //UPDATE EXISTING PASSENGER /api/passenger/{id}
+    @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PutMapping(value = "/{id}", consumes = "application/json")
     public ResponseEntity updatePassenger(@PathVariable Integer id, @RequestBody PassengerDTO passengerDTO) {
 
@@ -151,6 +157,7 @@ public class PassengerController {
     }
 
     //PASSENGER RIDES  /api/passenger/{id}/ride
+    @PreAuthorize("hasAnyAuthority('PASSENGER', 'ADMIN')")
     @GetMapping(value = "/{id}/ride")
     public ResponseEntity getAllRides(@PathVariable Integer id,
                                                            @RequestParam(defaultValue = "0") Integer page,
