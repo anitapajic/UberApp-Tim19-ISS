@@ -36,10 +36,15 @@ public class    DriverDocumentController {
     //DRIVER DOCUMENTS /api/driver/{id}/documents   (driverId)z
     @PreAuthorize("hasAnyAuthority('ADMIN','DRIVER')")
     @GetMapping(value = "/{id}/documents")
-    public ResponseEntity<List<DriverDocumentDTO>> getDriverDocuments(@PathVariable Integer id) {
+    public ResponseEntity getDriverDocuments(@PathVariable Integer id) {
 
+        Driver driver = driverService.findOne(id);
         List<DriverDocument> documents = driverDocumentService.findAllByDriverId(id);
         List<DriverDocumentDTO> driverDocuments = new ArrayList<>();
+
+        if (driver == null) {
+            return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
+        }
 
         for (DriverDocument d: documents) {
             DriverDocumentDTO driverDocumentDTO = new DriverDocumentDTO(d);
