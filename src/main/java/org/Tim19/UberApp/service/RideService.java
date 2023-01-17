@@ -87,30 +87,31 @@ public class RideService {
 
     public Double calculateKilometres(Float long1, Float long2, Float lat1, Float lat2){
         Double distance = Math.sqrt(Math.pow((lat1 - lat2), 2) + Math.pow((long1 - long2), 2));
-        return distance;
+        return distance * 150;
     }
 
     public Integer calculateTravelTime(Double distance){
-        Integer time = (int) ((distance)*2);
+        Integer time = (int) ((distance)*4);
         return time;
     }
 
     public Double calculatePrice(VehicleType vehicleType, Double kilometres, Boolean babyTransport, Boolean petTransport){
 
-        Double price = 0.0;
+        Double price = 170.0;
         if(vehicleType.equals(VehicleType.STANDARDNO)){
-            price = 170 + 70*kilometres;
+            price += 70*kilometres;
         }
         else if(vehicleType.equals(VehicleType.KOMBI)){
-            price = 170 + 50*kilometres;
+            price += 50*kilometres;
         }
         else if(vehicleType.equals(VehicleType.LUKSUZNO)){
-            price = 170 + 100*kilometres;
+            price +=100*kilometres;
         }
         if(babyTransport)
             price += 50;
         if(petTransport)
             price += 50;
+
 
         return price;
     }

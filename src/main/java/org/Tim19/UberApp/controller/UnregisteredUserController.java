@@ -38,7 +38,7 @@ public class UnregisteredUserController {
 
         Map<String, Object> response = new HashMap<>();
         response.put("estimatedTimeInMinutes", estimatedMinutes);
-        response.put("estimatedCost", totalCost);
+        response.put("estimatedCost", String.format("%.2f", totalCost));
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
