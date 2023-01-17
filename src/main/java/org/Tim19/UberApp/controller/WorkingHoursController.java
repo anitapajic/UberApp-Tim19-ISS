@@ -31,7 +31,7 @@ public class WorkingHoursController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'DRIVER')")
     @GetMapping(value = "/{id}/working-hour")
-    public ResponseEntity<Map<String, Object>> getDriversWH(@PathVariable Integer id,
+    public ResponseEntity getDriversWH(@PathVariable Integer id,
                                                             @RequestParam(defaultValue = "0") Integer page,
                                                             @RequestParam(defaultValue = "4") Integer size,
                                                             @RequestParam(required = false) String sort,
@@ -39,11 +39,14 @@ public class WorkingHoursController {
                                                             @RequestParam(required = false) String  to){
 
 
+        Driver driver = driverService.findOne(id);
+        if (driver == null) {
+            return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
+        }
         Set<WorkingHours> allDriverWH = workingHoursService.findByDriverId(id);
         Map<String, Object> response = new HashMap<>();
         response.put("totalCount",allDriverWH.size());
         response.put("results", allDriverWH);
-
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
@@ -55,7 +58,7 @@ public class WorkingHoursController {
         WorkingHours workingHours = new WorkingHours();
         Driver driver = driverService.findOne(id);
         if (driver == null) {
-            return new ResponseEntity<>("Driver does not exist",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
         }
 
         workingHours.setStartD(workingHoursDTO.getStart());
@@ -67,9 +70,12 @@ public class WorkingHoursController {
     }
     @PreAuthorize("hasAnyAuthority('ADMIN', 'DRIVER')")
     @GetMapping(value = "/working-hour/{wh_id}")
-    public ResponseEntity<WorkingHours> getWHDetails(@PathVariable Integer wh_id){
+    public ResponseEntity getWHDetails(@PathVariable Integer wh_id){
 
         WorkingHours workingHours = workingHoursService.findOne(wh_id);
+        if (workingHours == null) {
+            return new ResponseEntity<>("Working hour does not exist!",HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(workingHours,HttpStatus.OK);
     }
     @PreAuthorize("hasAnyAuthority('ADMIN')")
@@ -79,7 +85,7 @@ public class WorkingHoursController {
 
         WorkingHours workingHours = workingHoursService.findOne(wh_id);
         if (workingHours == null) {
-            return new ResponseEntity<>("Working hours do not exist",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Working hour does not exist!",HttpStatus.BAD_REQUEST);
         }
 
         workingHours.setStartD(update.getStart());

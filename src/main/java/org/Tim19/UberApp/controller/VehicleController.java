@@ -37,6 +37,10 @@ public class VehicleController {
         if (vehicle == null) {
             return new ResponseEntity<>("Vehicle does not exist",HttpStatus.NOT_FOUND);
         }
+        if (driver.getVehicle() == null) {
+            return new ResponseEntity<>("Vehicle is not assigned!",HttpStatus.BAD_REQUEST);
+        }
+
         VehicleDTO vehicleDTO = new VehicleDTO(vehicle);
         vehicleDTO.setDriverId(id);
 
@@ -51,7 +55,7 @@ public class VehicleController {
 
         Driver driver = driverService.findOne(id);
         if (driver == null) {
-            return new ResponseEntity<>("Driver does not exist",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
         }
         Vehicle vehicle = new Vehicle();
         vehicle.setVehicleType(vehicleDTO.getVehicleType());
@@ -79,7 +83,7 @@ public class VehicleController {
 
         Driver driver = driverService.findOne(id);
         if (driver == null) {
-            return new ResponseEntity<>("Driver does not exist",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
         }
         Vehicle vehicle = vehicleService.findOne(driver.getVehicle().getId());
 

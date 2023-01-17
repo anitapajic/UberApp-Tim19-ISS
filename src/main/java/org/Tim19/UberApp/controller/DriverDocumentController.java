@@ -43,7 +43,7 @@ public class    DriverDocumentController {
         List<DriverDocumentDTO> driverDocuments = new ArrayList<>();
 
         if (driver == null) {
-            return new ResponseEntity<>("Driver does not exist",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
         }
 
         for (DriverDocument d: documents) {

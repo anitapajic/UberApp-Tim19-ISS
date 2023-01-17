@@ -34,6 +34,7 @@ public class DriverController {
     public ResponseEntity<DriverDTO> createDriver(@RequestBody DriverDTO driverDTO) {
 
         Driver driver = new Driver();
+
         driver.setActive(true);
         driver.setBlocked(false);
         driver.setProfilePicture(driverDTO.getProfilePicture());
@@ -75,7 +76,10 @@ public class DriverController {
 
         // user must exist
         if (driver == null) {
-            return new ResponseEntity<>("Driver does not exist",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
+        }
+        if(id>9999 || id<0){
+            return new ResponseEntity<>("Invalid data. Bad Id format.", HttpStatus.BAD_REQUEST);
         }
 
             return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
@@ -91,7 +95,7 @@ public class DriverController {
         Driver driver = driverService.findOne(id);
 
         if (driver == null) {
-            return new ResponseEntity<>("Driver does not exist",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
         }
 
         driver.setBlocked(false);
@@ -115,7 +119,7 @@ public class DriverController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN','DRIVER')")
         @GetMapping(value = "/{id}/ride")
-        public ResponseEntity<Map<String, Object>> getAllRidesFromDriver(@PathVariable Integer id,
+        public ResponseEntity getAllRidesFromDriver(@PathVariable Integer id,
                                                                          @RequestParam(defaultValue = "0") Integer page,
                                                                          @RequestParam(defaultValue = "4") Integer size,
                                                                          @RequestParam(required = false) String sort,
@@ -125,6 +129,12 @@ public class DriverController {
             Pageable paging = PageRequest.of(page, size);
 
             Page<Ride> allRides = rideService.findByDriverId(id, paging);
+
+            Driver driver = driverService.findOne(id);
+
+            if (driver == null) {
+                return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
+            }
 
             Map<String, Object> response = new HashMap<>();
             response.put("totalCount", allRides.getTotalElements());
