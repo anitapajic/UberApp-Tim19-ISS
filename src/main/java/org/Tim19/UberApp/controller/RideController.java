@@ -53,7 +53,6 @@ public class RideController {
         List<String> statuses = new ArrayList<>();
         for (Ride ride : rides){
             statuses.add(ride.getStatus());
-            System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"+ride.getId());
         }
         if (statuses.contains("PENDING")){
             return new ResponseEntity<>("Cannot create a ride while you have one already pending!",  HttpStatus.BAD_REQUEST);
