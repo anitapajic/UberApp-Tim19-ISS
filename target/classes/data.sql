@@ -7,16 +7,20 @@ insert into vehicle (car_model, vehicle_type, license_number, passenger_seats, b
 insert into user (dtype, username, name, surname, profile_picture, telephone_number, address, password, active, blocked, vehicle_id, authorities) values
                                                                                                                                             ('Driver', 'tamara@gmail.com','tamara', 'dzambic','pic1', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', '1', 'DRIVER'),
                                                                                                                                             ('Passenger', 'anita@gmail.com','anita', 'pajic','pic2', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', null, 'PASSENGER'),
-                                                                                                                                            ('Passenger', 'aleksandra@gmail.com','aleksandra', 'filipic','pic3', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', null, 'PASSENGER'),
+                                                                                                                                            ('Passenger', 'aleksandra@gmail.com','aleksandra', 'filipic','pic3', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'false', 'false', null, 'PASSENGER'),
                                                                                                                                             ('Driver', 'anja@gmail.com','anja', 'petkovic','pic1', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', '2', 'DRIVER'),
                                                                                                                                             ('Driver', 'bane@gmail.com','Branislav', 'Stojkovic','pic1', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', '2', 'DRIVER'),
-                                                                                                                                            ('User', 'admin@gmail.com','admin', 'admin','pic1', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', null, 'ADMIN');
+                                                                                                                                            ('User', 'admin@gmail.com','admin', 'admin','pic1', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', null, 'ADMIN'),
+                                                                                                                                            ('Passenger', 'aleksandra123@gmail.com','aleksandra', 'filipic','pic3', '22232', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'false', 'false', null, 'PASSENGER');
 
 -- Activations
 insert into activation (creation_date, expiration_date, user_id) values
                                                                      ('2017-07-21T17:32:28Z','2023-07-21T17:32:28Z', 1),
                                                                      ('2017-07-21T17:32:28Z','2023-07-21T17:32:28Z', 2),
-                                                                     ('2017-07-21T17:32:28Z','2023-07-21T17:32:28Z', 3),
+                                                                     ('2017-07-21T17:32:28Z','2022-07-21T17:32:28Z', 3),
+                                                                     ('2017-07-21T17:32:28Z','2023-07-21T17:32:28Z', 7),
+                                                                     ('2017-07-21T17:32:28Z','2023-07-21T17:32:28Z', 5),
+                                                                     ('2017-07-21T17:32:28Z','2023-07-21T17:32:28Z', 6),
                                                                      ('2017-07-21T17:32:28Z','2023-07-21T17:32:28Z', 4);
 
 -- Location

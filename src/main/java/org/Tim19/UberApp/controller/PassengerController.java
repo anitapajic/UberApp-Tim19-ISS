@@ -36,7 +36,6 @@ public class PassengerController {
     private ActivationService activationService;
 
     //CREATE PASSENGER  /api/passenger
-    @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PostMapping(consumes = "application/json")
     public ResponseEntity createPassenger(@RequestBody PassengerDTO passengerDTO) throws MessagingException, UnsupportedEncodingException {
 
@@ -44,7 +43,16 @@ public class PassengerController {
 
         // if passenger already exist
         if (passengerService.findByEmail(passengerDTO.getUsername()) != null) {
-            return new ResponseEntity<>("User with that email already exists!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("User with that username already exists!", HttpStatus.BAD_REQUEST);
+        }
+
+        String name = passengerDTO.getName();
+
+        if(name == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if(name.length()>80){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         Passenger passenger = new Passenger();
@@ -95,23 +103,29 @@ public class PassengerController {
     @GetMapping(value = "/activate/{activationId}")
     public ResponseEntity activatePassengerAccount(@PathVariable Integer activationId) {
 
-        Passenger passenger = passengerService.findOne(activationId);
 
-        // passenger must exist
-        if (passenger == null) {
+        try{
+            Passenger passenger = passengerService.findOne(activationId);
+            Activation activation = activationService.findOne(activationId);
+
+            passenger.setActive(true);
+
+            passengerService.save(passenger);
+            activationService.save(activation);
+
+            if(activation.getExpirationDate().isBefore(LocalDateTime.now())){
+                return new ResponseEntity<>("Activation expired. Register again!", HttpStatus.BAD_REQUEST);
+            }
+
+            passenger.setActive(true);
+
+            passengerService.save(passenger);
+
+            return new ResponseEntity<>("Successful account activation!", HttpStatus.OK);
+        }
+        catch (NullPointerException ex){
             return new ResponseEntity<>("Activation with entered id does not exist!", HttpStatus.NOT_FOUND);
         }
-
-        Activation activation = activationService.findOne(activationId);
-        if(activation.getExpirationDate().isBefore(LocalDateTime.now())){
-            return new ResponseEntity<>("Activation expired. Register again!", HttpStatus.BAD_REQUEST);
-        }
-
-        passenger.setActive(true);
-
-        passengerService.save(passenger);
-
-        return new ResponseEntity<>("Successful account activation!", HttpStatus.FOUND);
     }
 
 
@@ -120,14 +134,14 @@ public class PassengerController {
     @GetMapping(value = "/{id}")
     public ResponseEntity getPassenger(@PathVariable Integer id) {
 
-        Passenger passenger = passengerService.findOne(id);
-
-        // passenger must exist
-        if (passenger == null) {
+        try{
+            Passenger passenger = passengerService.findOne(id);
+            return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
+        }
+        catch (NullPointerException ex){
             return new ResponseEntity<>("Passenger does not exist!", HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
     }
 
     //UPDATE EXISTING PASSENGER /api/passenger/{id}
@@ -135,25 +149,37 @@ public class PassengerController {
     @PutMapping(value = "/{id}", consumes = "application/json")
     public ResponseEntity updatePassenger(@PathVariable Integer id, @RequestBody PassengerDTO passengerDTO) {
 
-        // a passenger must exist
-        Passenger passenger = passengerService.findOne(id);
+        try{
+            Passenger passenger = passengerService.findOne(id);
 
-        if (passenger == null) {
+            String name = passengerDTO.getName();
+
+            if(name == null){
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            if(name.length()>80){
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
+
+            passenger.setActive(true);
+            passenger.setBlocked(false);
+            passenger.setProfilePicture(passengerDTO.getProfilePicture());
+            passenger.setTelephoneNumber(passengerDTO.getTelephoneNumber());
+            passenger.setAddress(passengerDTO.getAddress());
+            passenger.setUsername(passengerDTO.getUsername());
+            passenger.setName(passengerDTO.getName());
+            passenger.setSurname(passengerDTO.getSurname());
+            passenger.setPassword(passengerDTO.getPassword());
+
+            //passengerService.save(passenger);
+            return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
+        }
+        catch (NullPointerException ex){
             return new ResponseEntity<>("Passenger does not exist!", HttpStatus.NOT_FOUND);
         }
 
-        passenger.setActive(true);
-        passenger.setBlocked(false);
-        passenger.setProfilePicture(passengerDTO.getProfilePicture());
-        passenger.setTelephoneNumber(passengerDTO.getTelephoneNumber());
-        passenger.setAddress(passengerDTO.getAddress());
-        passenger.setUsername(passengerDTO.getUsername());
-        passenger.setName(passengerDTO.getName());
-        passenger.setSurname(passengerDTO.getSurname());
-        passenger.setPassword(passengerDTO.getPassword());
 
-        //passengerService.save(passenger);
-        return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
     }
 
     //PASSENGER RIDES  /api/passenger/{id}/ride
@@ -166,20 +192,21 @@ public class PassengerController {
                                                            @RequestParam(required = false) String  from,
                                                            @RequestParam(required = false) String  to){
 
-        Passenger passenger = passengerService.findOne(id);
+        try{
+            Passenger passenger = passengerService.findOne(id);
 
-        if (passenger == null) {
+            Pageable paging = PageRequest.of(page, size);
+            Page<Ride> allRides = rideService.findByPassengerId(id, paging);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("totalCount", allRides.getTotalElements());
+            response.put("results", allRides.getContent());
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (NullPointerException ex){
             return new ResponseEntity<>("Passenger does not exist!", HttpStatus.NOT_FOUND);
         }
-
-        Pageable paging = PageRequest.of(page, size);
-        Page<Ride> allRides = rideService.findByPassengerId(id, paging);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("totalCount", allRides.getTotalElements());
-        response.put("results", allRides.getContent());
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
