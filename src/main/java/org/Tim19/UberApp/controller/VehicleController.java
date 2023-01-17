@@ -24,15 +24,19 @@ public class VehicleController {
     //VEHICLE OF THE DRIVER  /api/driver/{id}/vehicle
     @PreAuthorize("hasAnyAuthority('ADMIN', 'DRIVER')")
     @GetMapping(value="/driver/{id}/vehicle")
-    public ResponseEntity<VehicleDTO> getVehicle(@PathVariable Integer id) {
+    public ResponseEntity getVehicle(@PathVariable Integer id) {
 
         Driver driver = driverService.findOne(id);
         Integer vehicleID = driver.getVehicle().getId();
         Vehicle vehicle = vehicleService.findOne(vehicleID);
 
         if (vehicle == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Vehicle does not exist",HttpStatus.NOT_FOUND);
         }
+        if (driver.getVehicle() == null) {
+            return new ResponseEntity<>("Vehicle is not assigned!",HttpStatus.BAD_REQUEST);
+        }
+
         VehicleDTO vehicleDTO = new VehicleDTO(vehicle);
         vehicleDTO.setDriverId(id);
 
@@ -43,9 +47,12 @@ public class VehicleController {
     //ADD VEHICLE TO THE DRIVER  /api/driver/{id}/vehicle
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping(value="/driver/{id}/vehicle", consumes = "application/json")
-    public ResponseEntity<VehicleDTO> saveVehicle(@PathVariable Integer id, @RequestBody VehicleDTO vehicleDTO) {
+    public ResponseEntity saveVehicle(@PathVariable Integer id, @RequestBody VehicleDTO vehicleDTO) {
 
         Driver driver = driverService.findOne(id);
+        if (driver == null) {
+            return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
+        }
         Vehicle vehicle = new Vehicle();
         vehicle.setVehicleType(vehicleDTO.getVehicleType());
         vehicle.setCarModel(vehicleDTO.getModel());
@@ -68,9 +75,12 @@ public class VehicleController {
     //CHANGE THE VEHICLE OF THE DRIVER  /api/driver/{id}/vehicle
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PutMapping(value="/driver/{id}/vehicle",consumes = "application/json")
-    public ResponseEntity<VehicleDTO> updateVehicle(@PathVariable Integer id,@RequestBody VehicleDTO vehicleDTO) {
+    public ResponseEntity updateVehicle(@PathVariable Integer id,@RequestBody VehicleDTO vehicleDTO) {
 
         Driver driver = driverService.findOne(id);
+        if (driver == null) {
+            return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
+        }
         Vehicle vehicle = vehicleService.findOne(driver.getVehicle().getId());
 
         vehicle.setVehicleType(vehicleDTO.getVehicleType());
