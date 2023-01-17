@@ -95,7 +95,7 @@ public class RideService {
         return time;
     }
 
-    public Double calculatePrice(VehicleType vehicleType, Double kilometres){
+    public Double calculatePrice(VehicleType vehicleType, Double kilometres, Boolean babyTransport, Boolean petTransport){
 
         Double price = 0.0;
         if(vehicleType.equals(VehicleType.STANDARDNO)){
@@ -107,6 +107,11 @@ public class RideService {
         else if(vehicleType.equals(VehicleType.LUKSUZNO)){
             price = 170 + 100*kilometres;
         }
+        if(babyTransport)
+            price += 50;
+        if(petTransport)
+            price += 50;
+
         return price;
     }
 

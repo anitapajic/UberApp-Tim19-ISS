@@ -71,7 +71,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.exceptionHandling().authenticationEntryPoint(this.unauthorizedHandler);
 
         http.authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers("/api/user/login", "/api/user/logout", "/h2-console/**","/api/passenger", "/api/passenger/activate/**", "/api/user/**/resetPassword").permitAll()
+                .antMatchers("/api/user/login", "/api/user/logout", "/h2-console/**","/api/passenger", "/api/passenger/activate/**", "/api/unregisteredUser", "/api/user/**/resetPassword").permitAll()
                 .anyRequest().authenticated().and()
                 .cors().and()
                 .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
