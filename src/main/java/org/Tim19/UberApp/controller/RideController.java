@@ -53,7 +53,6 @@ public class RideController {
         List<String> statuses = new ArrayList<>();
         for (Ride ride : rides){
             statuses.add(ride.getStatus());
-            System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"+ride.getId());
         }
         if (statuses.contains("PENDING")){
             return new ResponseEntity<>("Cannot create a ride while you have one already pending!",  HttpStatus.BAD_REQUEST);
@@ -149,8 +148,7 @@ public class RideController {
     public ResponseEntity getRide(@PathVariable Integer id) {
 
 
-        String regex = "[0-9]{0,4}";
-        if(!regex.matches(String.valueOf(id))){
+        if(id>9999 || id<0){
             return new ResponseEntity<>("Invalid data. Bad Id format.", HttpStatus.BAD_REQUEST);
         }
 
