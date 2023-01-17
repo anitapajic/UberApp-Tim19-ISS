@@ -72,7 +72,7 @@ public class RideController {
         Float lat1 = coordinates.get(2);
         Float lat2 = coordinates.get(3);
 
-        ride.setTotalCost(rideService.calculatePrice(rideDTO.getVehicleType(), rideService.calculateKilometres(long1, long2, lat1, lat2)));
+        ride.setTotalCost(rideService.calculatePrice(rideDTO.getVehicleType(), rideService.calculateKilometres(long1, long2, lat1, lat2), rideDTO.isBabyTransport(), rideDTO.isPetTransport()));
         ride.setLocations(rideDTO.getLocations());
         ride.setEstimatedTimeInMinutes(rideService.calculateTravelTime(rideService.calculateKilometres(long1, long2, lat1, lat2)));
         ride.setStatus("PENDING");
