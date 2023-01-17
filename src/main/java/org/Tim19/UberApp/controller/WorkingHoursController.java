@@ -49,13 +49,13 @@ public class WorkingHoursController {
     }
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping(value = "/{id}/working-hour",consumes = "application/json")
-    public ResponseEntity<WorkingHoursDTO> postDriversWH(@PathVariable Integer id,
+    public ResponseEntity postDriversWH(@PathVariable Integer id,
                                                          @RequestBody WorkingHoursDTO workingHoursDTO){
 
         WorkingHours workingHours = new WorkingHours();
         Driver driver = driverService.findOne(id);
         if (driver == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Driver does not exist",HttpStatus.NOT_FOUND);
         }
 
         workingHours.setStartD(workingHoursDTO.getStart());
@@ -74,12 +74,12 @@ public class WorkingHoursController {
     }
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PutMapping(value = "/working-hour/{wh_id}",consumes = "application/json")
-    public ResponseEntity<WorkingHoursDTO> chaneWHDetails(@PathVariable Integer wh_id,
+    public ResponseEntity chaneWHDetails(@PathVariable Integer wh_id,
                                                           @RequestBody WorkingHoursDTO update){
 
         WorkingHours workingHours = workingHoursService.findOne(wh_id);
         if (workingHours == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Working hours do not exist",HttpStatus.BAD_REQUEST);
         }
 
         workingHours.setStartD(update.getStart());

@@ -69,13 +69,13 @@ public class DriverController {
     //DONE
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping(value = "/{id}")
-    public ResponseEntity<DriverDTO> getDriver(@PathVariable Integer id) {
+    public ResponseEntity getDriver(@PathVariable Integer id) {
 
         Driver driver = driverService.findOne(id);
 
         // user must exist
         if (driver == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Driver does not exist",HttpStatus.NOT_FOUND);
         }
 
             return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
@@ -85,13 +85,13 @@ public class DriverController {
     //DONE
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PutMapping(value= "/{id}" ,consumes = "application/json")
-    public ResponseEntity<DriverDTO> updateDriver(@PathVariable Integer id, @RequestBody DriverDTO driverDTO) {
+    public ResponseEntity updateDriver(@PathVariable Integer id, @RequestBody DriverDTO driverDTO) {
 
         // a driver must exist
         Driver driver = driverService.findOne(id);
 
         if (driver == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Driver does not exist",HttpStatus.NOT_FOUND);
         }
 
         driver.setBlocked(false);
