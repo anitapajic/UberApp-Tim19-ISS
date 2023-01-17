@@ -149,8 +149,7 @@ public class RideController {
     public ResponseEntity getRide(@PathVariable Integer id) {
 
 
-        String regex = "[0-9]{0,4}";
-        if(!regex.matches(String.valueOf(id))){
+        if(id>9999 || id<0){
             return new ResponseEntity<>("Invalid data. Bad Id format.", HttpStatus.BAD_REQUEST);
         }
 
