@@ -1,6 +1,5 @@
 package org.Tim19.UberApp.controller;
 
-import org.Tim19.UberApp.dto.PaginatedData.VehiclePaginated2DTO;
 import org.Tim19.UberApp.dto.VehicleDTO;
 import org.Tim19.UberApp.model.Driver;
 import org.Tim19.UberApp.model.Vehicle;
@@ -11,9 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashSet;
-import java.util.Optional;
 
 
 @RestController
@@ -26,7 +22,7 @@ public class VehicleController {
     private DriverService driverService;
 
     //VEHICLE OF THE DRIVER  /api/driver/{id}/vehicle
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DRIVER')")
     @GetMapping(value="/driver/{id}/vehicle")
     public ResponseEntity getVehicle(@PathVariable Integer id) {
 
