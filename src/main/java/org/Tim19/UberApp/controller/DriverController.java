@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -35,6 +37,19 @@ public class DriverController {
 
         Driver driver = new Driver();
 
+        Driver d = driverService.findByEmail(driverDTO.getUsername());
+        if(d != null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if(driverDTO.getName() == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        }
+        if(driverDTO.getName().length() > 80){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        }
+
         driver.setActive(true);
         driver.setBlocked(false);
         driver.setProfilePicture(driverDTO.getProfilePicture());
@@ -43,7 +58,10 @@ public class DriverController {
         driver.setUsername(driverDTO.getUsername());
         driver.setName(driverDTO.getName());
         driver.setSurname(driverDTO.getSurname());
-        driver.setPassword(driverDTO.getPassword());
+
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        driver.setPassword(passwordEncoder.encode(driverDTO.getPassword()));
+        driver.setAuthorities("DRIVER");
 
         driver = driverService.save(driver);
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
@@ -97,6 +115,14 @@ public class DriverController {
         if (driver == null) {
             return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
         }
+        if(driverDTO.getProfilePicture() == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        }
+        if(driverDTO.getName().length() > 80){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        }
 
         driver.setBlocked(false);
         driver.setActive(true);
@@ -109,7 +135,7 @@ public class DriverController {
         driver.setUsername(driverDTO.getUsername());
         driver.setName(driverDTO.getName());
         driver.setSurname(driverDTO.getSurname());
-        driver.setPassword(driverDTO.getPassword());
+        //driver.setPassword(driverDTO.getPassword());
 
         driver = driverService.save(driver);
 

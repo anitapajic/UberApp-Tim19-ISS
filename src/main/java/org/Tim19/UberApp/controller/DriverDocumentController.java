@@ -57,29 +57,37 @@ public class    DriverDocumentController {
     //DELETING DRIVERS DOCUMENTS /api/driver/{id}/documents  (documentId)
     @PreAuthorize("hasAnyAuthority('ADMIN','DRIVER')")
     @DeleteMapping(value = "/document/{id}")
-    public ResponseEntity<Void> deleteDriverDocument(@PathVariable Integer id) {
+    public ResponseEntity deleteDriverDocument(@PathVariable Integer id) {
 
         DriverDocument driverDocument = driverDocumentService.findOne(id);
 
-        if (driverDocument != null) {
+        if (driverDocument == null) {
+            return new ResponseEntity<>("Document does not exist!",HttpStatus.NOT_FOUND);
+        }
+
             driverDocumentService.remove(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+
     }
 
     //ADDING NEW DRIVER DOCUMENTS  /api/driver/{id}/documents  (driverId)
     @PreAuthorize("hasAnyAuthority('ADMIN','DRIVER')")
     @PostMapping(value = "/{id}/documents",consumes = "application/json")
-    public ResponseEntity<DriverDocumentDTO> createDriverDocuments(@PathVariable Integer id, @RequestBody DriverDocumentDTO driverDocumentDTO) {
+    public ResponseEntity createDriverDocuments(@PathVariable Integer id, @RequestBody DriverDocumentDTO driverDocumentDTO) {
 
         DriverDocument driverDocument = new DriverDocument();
         Driver driver = driverService.findOne(id);
         if (driver == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
         }
+        if(driverDocumentDTO.getDocumentImage() == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
+        }
+        if(driverDocumentDTO.getName().length() > 80){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        }
         driverDocument.setName(driverDocumentDTO.getName());
         driverDocument.setDocumentImage(driverDocumentDTO.getDocumentImage());
         driverDocument.setDriver(driver);

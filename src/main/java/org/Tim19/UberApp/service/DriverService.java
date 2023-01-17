@@ -15,7 +15,7 @@ public class DriverService {
     @Autowired
     private DriverRepository driverRepository;
 
-    public Driver findOne(Integer id){return driverRepository.findById(id).orElseGet(null);}
+    public Driver findOne(Integer id){return driverRepository.findById(id).orElse(null);}
 
     public List<Driver> findAll(){return driverRepository.findAll();}
 
@@ -26,7 +26,7 @@ public class DriverService {
     public void remove(Integer id){
         driverRepository.deleteById(id);}
 
-    public Driver findByEmail(String email){return driverRepository.findOneByUsername(email);}
+    public Driver findByEmail(String email){return driverRepository.findOneByUsername(email).orElse(null);}
 
     public List<Driver> findByNameAndSurnameAllIgnoringCase(String firstname, String lastname){
         return driverRepository.findByNameAndSurnameAllIgnoringCase(firstname, lastname);

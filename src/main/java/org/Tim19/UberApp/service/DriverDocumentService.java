@@ -36,5 +36,5 @@ public class DriverDocumentService {
         return driverDocumentRepository.findDriverDocument(id);
         }
 
-    public DriverDocument findOne(Integer id){return driverDocumentRepository.findById(id).orElseGet(null);}
+    public DriverDocument findOne(Integer id){return driverDocumentRepository.findById(id).orElse(null);}
 }

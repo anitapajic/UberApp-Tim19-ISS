@@ -31,12 +31,8 @@ public class VehicleController {
     public ResponseEntity getVehicle(@PathVariable Integer id) {
 
         Driver driver = driverService.findOne(id);
-        Integer vehicleID = driver.getVehicle().getId();
-        Vehicle vehicle = vehicleService.findOne(vehicleID);
+        Vehicle vehicle = driver.getVehicle();
 
-        if (vehicle == null) {
-            return new ResponseEntity<>("Vehicle does not exist",HttpStatus.NOT_FOUND);
-        }
         if (driver.getVehicle() == null) {
             return new ResponseEntity<>("Vehicle is not assigned!",HttpStatus.BAD_REQUEST);
         }
