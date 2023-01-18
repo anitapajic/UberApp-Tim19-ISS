@@ -28,11 +28,14 @@ public class FavoriteRouteController {
     private UserService userService;
 
     //CREATING A FAVORITE ROUTE  /api/ride/favorites
-    @PreAuthorize("hasAnyAuthority('PASSENGER')")
+    @PreAuthorize("hasAnyAuthority('PASSENGER', 'ADMIN')")
     @PostMapping(consumes = "application/json",
                 value="/favorites")
     public ResponseEntity createFavoriteRoute(@RequestBody CreateFavoriteRouteBodyPaginatedDTO favRouteDTO) {
 
+        if(favRouteDTO.getBabyTransport()==null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         FavoriteRoute favoriteRoute = new FavoriteRoute();
         favoriteRoute.setFavoriteName(favRouteDTO.getFavoriteName());
         favoriteRoute.setLocations(favRouteDTO.getLocations());
@@ -58,21 +61,22 @@ public class FavoriteRouteController {
         return new ResponseEntity<>(new FavoriteRouteDTO(favoriteRoute), HttpStatus.CREATED);
     }
 
-    //FAVORITE LOCATIONS  /api/ride/favorites
+    //FAVORITE LOCATIONS  /api/ride/favorites{passengerId}
     @GetMapping(value="/favorites/{passengerId}")
-    @PreAuthorize("hasAnyAuthority('PASSENGER')")
+    @PreAuthorize("hasAnyAuthority('PASSENGER', 'ADMIN')")
     public ResponseEntity getFavoriteRoutes(@PathVariable Integer passengerId) {
 
-        Passenger passenger = passengerService.findOne(passengerId);
+        try{
+            Passenger passenger = passengerService.findOne(passengerId);
 
-        if (passenger == null) {
+            Set<FavoriteRoute> routes = passenger.getFavourite();
+
+
+            return new ResponseEntity<>(routes,HttpStatus.OK);
+        }
+        catch (NullPointerException ex){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        Set<FavoriteRoute> routes = passenger.getFavourite();
-
-
-        return new ResponseEntity<>(routes,HttpStatus.OK);
     }
 
     //DELETING PASSENGERS FAVORITE ROUTES /api/ride/favorites/{id}

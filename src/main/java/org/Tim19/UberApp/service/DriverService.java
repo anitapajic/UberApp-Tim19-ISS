@@ -15,7 +15,7 @@ public class DriverService {
     @Autowired
     private DriverRepository driverRepository;
 
-    public Driver findOne(Integer id){return driverRepository.findById(id).orElseGet(null);}
+    public Driver findOne(Integer id){return driverRepository.findById(id).orElse(null);}
 
     public List<Driver> findAll(){return driverRepository.findAll();}
 
