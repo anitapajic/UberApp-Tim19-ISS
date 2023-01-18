@@ -1,6 +1,5 @@
 package org.Tim19.UberApp.model;
 
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -11,7 +10,6 @@ import java.util.Set;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 public class Ride {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,21 +67,23 @@ public class Ride {
     private VehicleType vehicleType;
 
 
-        public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Integer estimatedTimeInMinutes, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType, Set<Rejection> rejection) {
+    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengers, Set<Path> locations, Integer estimatedTimeInMinutes, Set<Review> reviews, Set<Rejection> rejection, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
         this.totalCost = totalCost;
         this.driver = driver;
+        this.passengers = passengers;
+        this.locations = locations;
         this.estimatedTimeInMinutes = estimatedTimeInMinutes;
+        this.reviews = reviews;
+        this.rejection = rejection;
         this.status = status;
         this.panic = panic;
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
         this.vehicleType = vehicleType;
-        this.rejection = rejection;
     }
-
 
     public Integer getId() {
         return id;

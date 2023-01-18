@@ -1,6 +1,5 @@
 package org.Tim19.UberApp.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.Tim19.UberApp.model.*;
@@ -30,8 +29,8 @@ public class RideDTO {
     private boolean babyTransport;
     private boolean petTransport;
     private String status;
-    @JsonIgnore
-    private Set<Path> paths;
+
+    private Set<Path> locations;
 
     private Set<Rejection> rejections;
 
@@ -49,7 +48,7 @@ public class RideDTO {
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
         this.status = status;
-        this.paths = paths;
+        this.locations = paths;
         this.rejections = rejections;
     }
 

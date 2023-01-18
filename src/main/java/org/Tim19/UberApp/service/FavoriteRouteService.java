@@ -39,5 +39,5 @@ public class FavoriteRouteService {
 
         return routes;
     }
-    public FavoriteRoute findOne(Integer id){return favoriteRouteRepository.findById(id).orElseGet(null);}
+    public FavoriteRoute findOne(Integer id){return favoriteRouteRepository.findById(id).orElse(null);}
 }
