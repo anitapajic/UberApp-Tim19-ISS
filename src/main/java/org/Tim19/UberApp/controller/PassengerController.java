@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
@@ -38,8 +40,6 @@ public class PassengerController {
     //CREATE PASSENGER  /api/passenger
     @PostMapping(consumes = "application/json")
     public ResponseEntity createPassenger(@RequestBody PassengerDTO passengerDTO) throws MessagingException, UnsupportedEncodingException {
-
-
 
         // if passenger already exist
         if (passengerService.findByEmail(passengerDTO.getUsername()) != null) {
@@ -65,7 +65,8 @@ public class PassengerController {
         passenger.setUsername(passengerDTO.getUsername());
         passenger.setName(passengerDTO.getName());
         passenger.setSurname(passengerDTO.getSurname());
-        passenger.setPassword(passengerDTO.getPassword());
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        passenger.setPassword(passwordEncoder.encode(passengerDTO.getPassword()));
         passenger.setAuthorities("PASSENGER");
 
         passenger = passengerService.save(passenger);
@@ -99,7 +100,6 @@ public class PassengerController {
     }
 
     //ACTIVATE PASSENGER ACCOUNT  /api/passenger/activate/activationId
-    @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @GetMapping(value = "/activate/{activationId}")
     public ResponseEntity activatePassengerAccount(@PathVariable Integer activationId) {
 
