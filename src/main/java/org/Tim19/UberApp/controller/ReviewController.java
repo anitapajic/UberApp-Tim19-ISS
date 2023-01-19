@@ -33,19 +33,18 @@ public class ReviewController {
     @PostMapping(value = "/{rideId}/vehicle")
     public ResponseEntity postVehicleReview(@PathVariable Integer rideId, @RequestBody ReviewDTO reviewDTO){
 
-        Optional<Ride> ride = rideService.findOneById(rideId);
-        if(ride.isEmpty()){
+        Ride ride = rideService.findOneById(rideId);
+        if(ride == null){
             return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
         }
-
-        reviewDTO.setVehicle(ride.get().getDriver().getVehicle().getId());
+        reviewDTO.setVehicle(ride.getDriver().getVehicle().getId());
         reviewDTO.setRide(rideId);
         reviewDTO = reviewService.saveVehicle(reviewDTO);
 
         return new ResponseEntity<>(reviewDTO, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PASSENGER')")
     @GetMapping(value = "/vehicle/{id}")
     public ResponseEntity getVehicleReviews(@PathVariable Integer id){
         Vehicle vehicle = vehicleService.findOne(id);
@@ -68,17 +67,17 @@ public class ReviewController {
     @PostMapping(value ="/{rideId}/driver" )
     public ResponseEntity postDriverReview(@PathVariable Integer rideId, @RequestBody ReviewDTO reviewDTO){
 
-        Optional<Ride> ride = rideService.findOneById(rideId);
-        if(ride.isEmpty()){
+        Ride ride = rideService.findOneById(rideId);
+        if(ride == null){
             return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
         }
-        reviewDTO.setDriver(ride.get().getDriver().getId());
+        reviewDTO.setDriver(ride.getDriver().getId());
         reviewDTO.setRide(rideId);
         reviewDTO = reviewService.saveDriver(reviewDTO);
 
         return new ResponseEntity<>(reviewDTO, HttpStatus.OK);
     }
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PASSENGER')")
     @GetMapping(value = "/driver/{id}")
     public ResponseEntity getDriverReviews(@PathVariable Integer id){
         User driver = userService.findOneById(id);
@@ -97,12 +96,12 @@ public class ReviewController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PASSENGER')")
     @GetMapping(value = "{rideId}")
     public ResponseEntity getRideReviews(@PathVariable Integer rideId){
 
-        Optional<Ride> ride = rideService.findOneById(rideId);
-        if(ride.isEmpty()){
+        Ride ride = rideService.findOneById(rideId);
+        if(ride == null){
             return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
         }
 
