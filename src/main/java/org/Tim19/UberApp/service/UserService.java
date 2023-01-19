@@ -42,8 +42,8 @@ public class UserService {
         return userRepository.findOneById(id);
     }
 
-    public Optional<User> findOneByUsername(String username){
-        return this.userRepository.findOneByUsername(username);
+    public User findOneByUsername(String username){
+        return this.userRepository.findOneByUsername(username).orElse(null);
     }
     public User findOneUserByUsername(String username){
         return this.userRepository.findOneUserByUsername(username);

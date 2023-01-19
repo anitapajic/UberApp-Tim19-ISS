@@ -24,7 +24,7 @@ public class RideService {
     private DriverService driverService;
 
 
-    public Optional<Ride> findOneById(Integer id){return rideRepository.findById(id);}
+    public Ride findOneById(Integer id){return rideRepository.findById(id).orElse(null);}
 
     public Ride findOneRideById(Integer id){
         return rideRepository.findOneRideById(id);
@@ -116,6 +116,8 @@ public class RideService {
         return price;
     }
 
+
+
 //    private void findRideReviewsAndRejections(Set<Ride> rides){
 //        for (Ride r: rides) {
 //            Set<Review> reviews = reviewRepository.findAllByRideId(r.getId());
@@ -125,5 +127,12 @@ public class RideService {
 //        }
 //
 //    }
+        public Integer checkAllByUserId(Integer id){
+            Set<Ride> rides = rideRepository.findAllByDriverId(id);
+            if (rides.isEmpty()){
+                rides = rideRepository.findAllByPassengersId(id);
+            }
+            return rides.size();
+}
 
 }

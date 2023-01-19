@@ -1,16 +1,13 @@
 package org.Tim19.UberApp.controller;
 
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import org.Tim19.UberApp.configuration.WebSecurityConfiguration;
-import org.Tim19.UberApp.dto.LoginDTO;
 import org.Tim19.UberApp.dto.MessageDTO;
 import org.Tim19.UberApp.dto.NoteDTO;
 import org.Tim19.UberApp.dto.ResetPasswordDTO;
-import org.Tim19.UberApp.exceptions.BadRequestException;
-import org.Tim19.UberApp.model.*;
+import org.Tim19.UberApp.model.Note;
+import org.Tim19.UberApp.model.ResetCode;
+import org.Tim19.UberApp.model.Ride;
+import org.Tim19.UberApp.model.User;
 import org.Tim19.UberApp.service.MessageService;
 import org.Tim19.UberApp.service.NoteService;
 import org.Tim19.UberApp.service.RideService;
@@ -25,9 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
@@ -66,12 +60,16 @@ public class UserController {
     public ResponseEntity changePassword(@PathVariable Integer id, @RequestBody ResetPasswordDTO resetPasswordDTO){
         User user = userService.findOneById(id);
         if( user == null){
-            return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
         }
-
+        if( resetPasswordDTO.getNewPassword() == null){
+            return new ResponseEntity<>("Current password is not matching", HttpStatus.BAD_REQUEST);
+        }
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         if (!passwordEncoder.matches(resetPasswordDTO.getOldPassword(), user.getPassword())){
-            return new ResponseEntity<>("Current password is not matching", HttpStatus.BAD_REQUEST);
+            Map<String, String> resp = new HashMap<>();
+            resp.put("message", "Current password is not matching!");
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
         user.setPassword(passwordEncoder.encode(resetPasswordDTO.getNewPassword()));
         userService.save(user);
@@ -81,16 +79,16 @@ public class UserController {
 
     //RESET PASSWORD OF A USER /api/user/{id}/resetPassword
     @GetMapping(value = "/{id}/resetPassword")
-    public ResponseEntity getResetPassword(@RequestParam String username) throws MessagingException, UnsupportedEncodingException {
-
-        Optional<User> user = userService.findOneByUsername(username);
-        if (user.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity getResetPassword(@PathVariable Integer id, @RequestParam String username) throws MessagingException, UnsupportedEncodingException {
+        // User user = userService.findOneById(id);
+        User user= userService.findOneByUsername(username);
+        if (user == null) {
+            return new ResponseEntity<>("User does not exist!",HttpStatus.NOT_FOUND);
         }
         Integer code = this.randInt();
-        this.sendResetCode(code, username);
+        this.sendResetCode(code, user.getUsername());
 
-        ResetCode rc = new ResetCode(code, username, LocalDateTime.now());
+        ResetCode rc = new ResetCode(code, user.getUsername(), LocalDateTime.now());
 
         this.userService.save(rc);
         return new ResponseEntity<>("Code successfully sent.",HttpStatus.NO_CONTENT);
@@ -102,8 +100,6 @@ public class UserController {
 
         String mailContent = "<p>Dear,"+ username +" </p>";
         mailContent +="<p>Your code is:" + code + "</p>";
-//        mailContent +="<p>Please click the link below to change your password:</p>";
-//        mailContent +="<h3><a href=\"" + "http://localhost:4200/reset-code\">CHANGE PASSWORD</a></h3>";
         mailContent +="<p>Thank you<br>TAAXI Team</p>";
 
         MimeMessage message = mailSender.createMimeMessage();
@@ -125,31 +121,35 @@ public class UserController {
 
     //CHANGE PASSWORD OF A USER /api/user/{id}/resetPassword
     @PutMapping(value = "/{id}/resetPassword")
-    public ResponseEntity resetPassword( @RequestBody ResetPasswordDTO resetPasswordDTO){
+    public ResponseEntity resetPassword(@PathVariable Integer id, @RequestBody ResetPasswordDTO resetPasswordDTO){
 
-        Optional<User> u = userService.findOneByUsername(resetPasswordDTO.getUsername());
-        if(u.isEmpty()){
+        // User user = userService.findOneById(id);
+        User user = userService.findOneByUsername(resetPasswordDTO.getUsername());
+        if(user == null){
             return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
         }
 
-        User user = u.get();
-        ResetCode rc = this.userService.findCode(resetPasswordDTO.getUsername());
+        ResetCode resetCode = this.userService.findCode(user.getUsername());
 
 
-        if (checkCode(rc, resetPasswordDTO)){
+        if (checkCode(resetCode, resetPasswordDTO)){
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             user.setPassword(passwordEncoder.encode(resetPasswordDTO.getNewPassword()));
             userService.save(user);
-            userService.delete(rc);
+            userService.delete(resetCode);
             return new ResponseEntity<>("Password successfully changed!", HttpStatus.OK);
         }
+        Map<String, String> resp = new HashMap<>();
+        resp.put("message", "Code is expired or not correct!");
 
-        return new ResponseEntity<>("Code is expired or not correct!", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
 
     }
 
     private Boolean checkCode(ResetCode resetCode, ResetPasswordDTO resetPassword){
-
+        if (resetCode == null){
+            return false;
+        }
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime codeExp = resetCode.getDate().plusMinutes(15);
 
@@ -159,7 +159,7 @@ public class UserController {
         }
 
         else return resetCode.getUsername().equals(resetPassword.getUsername())
-                    && resetCode.getCode().equals(resetPassword.getCode());
+                && resetCode.getCode().equals(resetPassword.getCode());
     }
 
     //RIDES OF THE USER  /api/user/{id}/ride
@@ -168,19 +168,28 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity getAllRides(@PathVariable Integer id,
-                                                           @RequestParam(defaultValue = "0") Integer page,
-                                                           @RequestParam(defaultValue = "4") Integer size,
-                                                           @RequestParam(required = false) String sort,
-                                                           @RequestParam(required = false) String  from,
-                                                           @RequestParam(required = false) String  to){
+                                      @RequestParam(defaultValue = "0") Integer page,
+                                      @RequestParam(defaultValue = "4") Integer size,
+                                      @RequestParam(required = false) String sort,
+                                      @RequestParam(required = false) String  from,
+                                      @RequestParam(required = false) String  to){
 
         Pageable paging = PageRequest.of(page, size);
-
-        Page<Ride> allRides = rideService.findByUserId(id, paging);
         Map<String, Object> response = new HashMap<>();
 
+        Integer hasRides = rideService.checkAllByUserId(id);
+        if (hasRides == 0){
+            return new ResponseEntity<>("User does not exist!",HttpStatus.NOT_FOUND);
+        }
+        if(hasRides/size < page){
+            response.put("results", false);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        }
+
+        Page<Ride> allRides = rideService.findByUserId(id, paging);
+
         if (allRides.isEmpty()){
-            return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
         }
         response.put("totalCount", allRides.getTotalElements());
         response.put("results", allRides.getContent());
@@ -221,7 +230,7 @@ public class UserController {
         List<MessageDTO> messages = messageService.findAllByUserId(id);
 
         if (messages.isEmpty()){
-            return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
         }
 
         Map<String, Object> response = new HashMap<>();
@@ -242,11 +251,16 @@ public class UserController {
         if (binding.hasErrors()) {
             return new ResponseEntity<>(binding.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
         }
+        if(messageDTO.getText() == null && messageDTO.getReceiverId() == null && messageDTO.getType() == null){
+            return new ResponseEntity<>( HttpStatus.BAD_REQUEST);
+
+        }
+        String text = messageDTO.getText();
         messageDTO.setSenderId(id);
         messageDTO = messageService.save(messageDTO);
 
-        if (messageDTO.getText() == null){
-            return new ResponseEntity<>("User/Receiver/Ride does not exist", HttpStatus.NOT_FOUND);
+        if (messageDTO.getText() != text){
+            return new ResponseEntity<>(messageDTO.getText(), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(messageDTO, HttpStatus.OK);
     }
@@ -260,18 +274,23 @@ public class UserController {
 
         // a user must exist
         User user = userService.findOneById(id);
+        HashMap<String, String> resp = new HashMap<>();
 
         if (user == null) {
-            return new ResponseEntity<>("User does not exist!",HttpStatus.NOT_FOUND);
+            resp.put("message", "User does not exist!");
+            return new ResponseEntity<>(resp,HttpStatus.NOT_FOUND);
         }
         if (user.getBlocked()){
-            return new ResponseEntity<>(" User already blocked!",HttpStatus.BAD_REQUEST);
+            resp.put("message", "User already blocked!");
+            return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
         }
 
         user.setBlocked(true);
 
         userService.save(user);
-        return new ResponseEntity<>("User is successfully blocked",HttpStatus.NO_CONTENT);
+        resp.put("message", "User is successfully blocked");
+
+        return new ResponseEntity<>(resp,HttpStatus.NO_CONTENT);
     }
 
     //UNBLOCKING USER  /api/user/{id}/unblock
@@ -280,31 +299,39 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity unblockUser(@PathVariable Integer id) {
+        HashMap<String, String> resp = new HashMap<>();
 
         // a user must exist
         User user = userService.findOneById(id);
 
         if (user == null) {
-            return new ResponseEntity<>("User does not exist!",HttpStatus.NOT_FOUND);
+            resp.put("message", "User does not exist!");
+            return new ResponseEntity<>(resp,HttpStatus.NOT_FOUND);
         }
         if (!user.getBlocked()){
-            return new ResponseEntity<>(" User is not blocked!",HttpStatus.BAD_REQUEST);
-        }
+            resp.put("message", "User is not blocked!");
+            return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);        }
 
         user.setBlocked(false);
 
         userService.save(user);
-        return new ResponseEntity<>("User is successfully unblocked",HttpStatus.NO_CONTENT);
-    }
+        resp.put("message", "User is successfully unblocked");
+
+        return new ResponseEntity<>(resp,HttpStatus.NO_CONTENT);    }
 
     //NOTE CREATING  /api/user/{id}/note
     @GetMapping(
             value = "/{id}/note",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority('DRIVER', 'PASSENGER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity getUserNotes(@PathVariable Integer id){
 
         List<Note> notes = noteService.findAllByUserId(id);
+        if(notes.isEmpty()){
+            return new ResponseEntity<>("User does not exist!",HttpStatus.NOT_FOUND);
+
+        }
+
         Set<NoteDTO> noteDTOS = new HashSet<>();
 
         for (Note n: notes) {
@@ -323,7 +350,7 @@ public class UserController {
     @PostMapping(
             value = "/{id}/note",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority('DRIVER', 'PASSENGER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity postUserNote(@PathVariable Integer id, @RequestBody NoteDTO noteDTO, BindingResult binding){
         if (binding.hasErrors()) {
             return new ResponseEntity<>(binding.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
@@ -331,10 +358,15 @@ public class UserController {
         NoteDTO note = noteDTO;
         note.setUserId(id);
         note.setDate(LocalDateTime.now());
+        if(note.getMessage() == null){
+            return new ResponseEntity<>( HttpStatus.BAD_REQUEST);
+
+        }
+
         note = noteService.save(noteDTO);
 
         if (note.getMessage() == null){
-            return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(note, HttpStatus.OK);
     }
