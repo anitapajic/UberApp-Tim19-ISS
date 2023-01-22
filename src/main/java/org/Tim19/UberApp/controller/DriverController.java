@@ -51,7 +51,7 @@ public class DriverController {
 
     //GETTING PAGINATED DRIVER DATA  /api/driver
     //DONE
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+   // @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllDrivers(@RequestParam(defaultValue = "0") Integer page,
                                                              @RequestParam(defaultValue = "4") Integer size) {

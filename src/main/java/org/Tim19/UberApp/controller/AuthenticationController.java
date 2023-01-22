@@ -5,6 +5,7 @@ import org.Tim19.UberApp.dto.TokenDTO;
 import org.Tim19.UberApp.exceptions.BadRequestException;
 import org.Tim19.UberApp.security.TokenUtils;
 import org.Tim19.UberApp.service.UserDetailsServiceImpl;
+import org.Tim19.UberApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +16,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -30,17 +32,22 @@ public class AuthenticationController {
 
     private UserDetailsServiceImpl userDetailsService;
 
+    private UserService userService;
+
     private TokenUtils tokenUtils;
 
     @Autowired
     public AuthenticationController(
             AuthenticationManager authenticationManager,
             UserDetailsServiceImpl userDetailsService,
+            UserService userService,
             TokenUtils tokenUtils
+
     ) {
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.tokenUtils = tokenUtils;
+        this.userService = userService;
     }
 
 
@@ -64,8 +71,12 @@ public class AuthenticationController {
         try {
             TokenDTO token = new TokenDTO();
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(login.getUsername());
+
             String tokenValue = this.tokenUtils.generateToken(userDetails);
             token.setToken(tokenValue);
+
+            Integer id = this.userService.findIdByUsername(login.getUsername());
+            token.setId(id);
 
             Authentication authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);

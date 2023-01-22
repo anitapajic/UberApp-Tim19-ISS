@@ -3,10 +3,13 @@ package org.Tim19.UberApp.dto;
 public class TokenDTO {
     private String token;
 
+    private Integer id;
+
     public TokenDTO() {}
 
-    public TokenDTO(String token) {
+    public TokenDTO(String token, Integer id) {
         this.token = token;
+        this.id = id;
     }
 
     public String getToken() {
@@ -17,4 +20,11 @@ public class TokenDTO {
         this.token = token;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }

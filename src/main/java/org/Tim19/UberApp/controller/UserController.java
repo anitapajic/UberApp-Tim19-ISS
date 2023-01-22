@@ -218,6 +218,18 @@ public class UserController {
     }
 
 
+    //GETTING USER DETAILS  /api/user/{id}
+    @GetMapping(
+            value = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @PreAuthorize("hasAnyAuthority('DRIVER', 'PASSENGER', 'ADMIN')")
+    public ResponseEntity getUsers( @PathVariable Integer id){
+
+        User user = userService.findOneById(id);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
     //USER MESSAGES  /api/user/{id}/message
     @GetMapping(
             value = "/{id}/message",
