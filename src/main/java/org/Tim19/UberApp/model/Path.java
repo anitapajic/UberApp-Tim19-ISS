@@ -28,4 +28,13 @@ public class Path {
         this.departure = departure;
         this.destination = destination;
     }
+
+    @Override
+    public String toString() {
+        return "Path{" +
+                "id=" + id +
+                ", departure=" + departure +
+                ", destination=" + destination +
+                '}';
+    }
 }

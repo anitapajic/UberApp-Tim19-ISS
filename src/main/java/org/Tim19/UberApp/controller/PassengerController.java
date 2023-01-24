@@ -193,14 +193,14 @@ public class PassengerController {
                                                            @RequestParam(defaultValue = "0") Integer page,
                                                            @RequestParam(defaultValue = "4") Integer size,
                                                            @RequestParam(required = false) String sort,
-                                                           @RequestParam(required = false) String  from,
-                                                           @RequestParam(required = false) String  to){
+                                                           @RequestParam(required = false) String  startDate,
+                                                           @RequestParam(required = false) String  endDate){
 
         try{
             Passenger passenger = passengerService.findOne(id);
 
             Pageable paging = PageRequest.of(page, size);
-            Page<Ride> allRides = rideService.findByPassengerId(id, paging);
+            Page<Ride> allRides = rideService.findByPassengerId(id, startDate, endDate, paging);
 
             Map<String, Object> response = new HashMap<>();
             response.put("totalCount", allRides.getTotalElements());
