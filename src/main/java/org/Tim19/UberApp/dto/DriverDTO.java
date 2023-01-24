@@ -15,9 +15,9 @@ public class DriverDTO extends UserDTO{
 //    private Set<Ride> rides = new HashSet<Ride>();
     @JsonIgnore
     private Set<DriverDocument> documents = new HashSet<>();
-    private Vehicle vehicle;
+    private Integer vehicle;
 
-    public DriverDTO(Integer id, String firstname, String lastname, String profilePicture, String telephoneNumber, String email, String address, String password, Boolean active, Boolean blocked, Vehicle vehicle) {
+    public DriverDTO(Integer id, String firstname, String lastname, String profilePicture, String telephoneNumber, String email, String address, String password, Boolean active, Boolean blocked, Integer vehicle) {
         super(id, email, firstname, lastname, profilePicture, telephoneNumber, address, password, active, blocked);
         //this.documents = documents;
         this.vehicle = vehicle;
@@ -25,7 +25,7 @@ public class DriverDTO extends UserDTO{
     public DriverDTO() {}
 
     public DriverDTO(Driver driver){
-        this(driver.getId(), driver.getName(), driver.getSurname(), driver.getProfilePicture(), driver.getTelephoneNumber(), driver.getUsername(), driver.getAddress(), driver.getPassword(), driver.getActive(), driver.getBlocked(), driver.getVehicle());
+        this(driver.getId(), driver.getName(), driver.getSurname(), driver.getProfilePicture(), driver.getTelephoneNumber(), driver.getUsername(), driver.getAddress(), driver.getPassword(), driver.getActive(), driver.getBlocked(), driver.getVehicle().getId());
     }
 
 //    public Set<Ride> getRides() {
@@ -36,7 +36,7 @@ public class DriverDTO extends UserDTO{
         return documents;
     }
 
-    public Vehicle getVehicle() {
+    public Integer getVehicle() {
         return vehicle;
     }
 }
