@@ -85,65 +85,6 @@ public class DriverController {
             return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
         }
 
-    //UPDATE EXISTING DRIVER  /api/driver/{id}
-    //DONE
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    @PutMapping(value= "/{id}" ,consumes = "application/json")
-    public ResponseEntity updateDriver(@PathVariable Integer id, @RequestBody DriverDTO driverDTO) {
-
-        // a driver must exist
-        Driver driver = driverService.findOne(id);
-
-        if (driver == null) {
-            return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
-        }
-
-        driver.setBlocked(false);
-        driver.setActive(true);
-        //driver.setDocuments(driverDTO.getDocuments());
-        //driver.setRides(driverDTO.getRides());
-       // driver.setVehicle(driverDTO.getVehicle());
-        driver.setTelephoneNumber(driverDTO.getTelephoneNumber());
-        driver.setAddress(driverDTO.getAddress());
-        driver.setUsername(driverDTO.getUsername());
-        driver.setName(driverDTO.getName());
-        driver.setSurname(driverDTO.getSurname());
-
-
-
-        //TODO: odvojen kontroler za update slike
-        //za promenu sifre v postoji u User contolleru
-        driver.setProfilePicture(driver.getProfilePicture());
-        driver.setPassword(driver.getPassword());
-
-        driver = driverService.save(driver);
-
-        return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
-    }
-
-
-    @PreAuthorize("hasAnyAuthority('DRIVER')")
-    @PostMapping(value= "update/{id}")
-    public ResponseEntity requestUpdateDriver(@PathVariable Integer id, @RequestBody UpdateDriver updateDriver) {
-
-        // a driver must exist
-        Driver driver = driverService.findOne(id);
-
-        if (driver == null) {
-            return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
-        }
-        driver.setTelephoneNumber(updateDriver.getTelephoneNumber());
-        driver.setAddress(updateDriver.getAddress());
-        driver.setUsername(updateDriver.getUsername());
-        driver.setName(updateDriver.getName());
-        driver.setSurname(updateDriver.getSurname());
-
-
-        UpdateDriver update = driverService.requestUpdateDriver(new UpdateDriver(driver));
-
-        return new ResponseEntity<>(update, HttpStatus.OK);
-    }
-
     @PreAuthorize("hasAnyAuthority('ADMIN','DRIVER')")
         @GetMapping(value = "/{id}/ride")
         public ResponseEntity getAllRidesFromDriver(@PathVariable Integer id,

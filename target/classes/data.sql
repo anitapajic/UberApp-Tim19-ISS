@@ -7,7 +7,7 @@ insert into vehicle (car_model, vehicle_type, license_number, passenger_seats, b
 insert into user (dtype, username, name, surname, profile_picture, telephone_number, address, password, active, blocked, vehicle_id, authorities) values
                                                                                                                                             ('Driver', 'tamara@gmail.com','Tamara', 'Dzambic','pic1', '0645638986', 'Brace Ribnikar 17, Novi Sad', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', '1', 'DRIVER'),
                                                                                                                                             ('Passenger', 'anita@gmail.com','Anita', 'Pajic','pic2', '0669024480', 'Strumicka 6, Novi Sad', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', null, 'PASSENGER'),
-                                                                                                                                            ('Passenger', 'aleksandra@gmail.com','Aleksandra', 'Filipic','pic3', '0655157604', 'Mise Dimitrijevica 41, Novi Sad', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'false', 'false', null, 'PASSENGER'),
+                                                                                                                                            ('Passenger', 'aleksandra@gmail.com','Aleksandra', 'Filipic','pic3', '0655157604', 'Mise Dimitrijevica 41, Novi Sad', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', null, 'PASSENGER'),
                                                                                                                                             ('Driver', 'anja@gmail.com','Anja', 'Petkovic','pic1', '0663487556', 'Strumicka 6, Novi Sad', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', '2', 'DRIVER'),
                                                                                                                                             ('Driver', 'bane@gmail.com','Branislav', 'Stojkovic','pic1', '0629008875', 'Narodnog Fronta 55, Novi Sad', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', '2', 'DRIVER'),
                                                                                                                                             ('User', 'admin@gmail.com','admin', 'admin','pic1', '066021661', 'ADMIN 12, Novi Sad', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', null, 'ADMIN'),
@@ -33,7 +33,8 @@ insert into location (address, latitude, longitude) values
 insert into path (departure_id, destination_id) values
                                                     (1,2),
                                                     (1,3),
-                                                    (2,3);
+                                                    (2,3),
+                                                    (2,1);
 
 insert into favorite_route(favorite_name, scheduled_time, vehicle_type, baby_transport, pet_transport) values ('Kuca-Posao', '2017-07-21T17:32:28Z', 0, false, false),
                                                                                                         ('Kuca-Faks', '2017-07-21T17:32:28Z', 0, false, false),
@@ -61,12 +62,14 @@ insert into ride (start_time, end_time, total_cost, driver_id, estimated_time_in
 insert into ride_paths (ride_id, paths_id) values
                                                (1,1),
                                                (2,2),
-                                               (3,3);
+                                               (3,3),
+                                               (4,4);
 
 -- Passenger rides
 insert into passenger_ride (ride_id, passenger_id) values(1, 3),
-                                                         (2, 3);
-                                                         --(3, 3);
+                                                         (2, 3),
+                                                         (3, 3),(3, 2),
+                                                         (4, 2);
 
 -- Rejections
 

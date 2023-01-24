@@ -33,6 +33,18 @@ public class DriverService {
     public UpdateDriver requestUpdateDriver(UpdateDriver driver){
         return updateDriverRepository.save(driver);
     }
+    public List<UpdateDriver> getAllRequests(){
+        return updateDriverRepository.findAll();
+    }
+
+    public UpdateDriver getRequestById(Integer id){
+        return updateDriverRepository.findById(id).orElse(null);
+    }
+
+    public void delete(UpdateDriver updateDriver){
+        updateDriverRepository.delete(updateDriver);
+    }
+
 
 
     

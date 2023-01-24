@@ -19,10 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping(value="/api/ride")
@@ -163,6 +160,24 @@ public class RideController {
             Ride ride = rideService.findOneRideById(id);
 
             return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
+        }
+        catch (NullPointerException ex){
+            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @GetMapping()
+    public ResponseEntity getAllRides() {
+
+        try{
+
+            List<Ride> allRides = rideService.findAll();
+            Map<String, Object> response = new HashMap<>();
+            response.put("totalCount", allRides.size());
+            response.put("results", allRides);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
         catch (NullPointerException ex){
             return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
