@@ -85,38 +85,6 @@ public class DriverController {
             return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
         }
 
-    //UPDATE EXISTING DRIVER  /api/driver/{id}
-    //DONE
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    @PutMapping(value= "/{id}" ,consumes = "application/json")
-    public ResponseEntity updateDriver(@PathVariable Integer id, @RequestBody DriverDTO driverDTO) {
-
-        // a driver must exist
-        Driver driver = driverService.findOne(id);
-
-        if (driver == null) {
-            return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
-        }
-
-        driver.setBlocked(false);
-        driver.setActive(true);
-        //driver.setDocuments(driverDTO.getDocuments());
-        //driver.setRides(driverDTO.getRides());
-        driver.setVehicle(driverDTO.getVehicle());
-        driver.setProfilePicture(driverDTO.getProfilePicture());
-        driver.setTelephoneNumber(driverDTO.getTelephoneNumber());
-        driver.setAddress(driverDTO.getAddress());
-        driver.setUsername(driverDTO.getUsername());
-        driver.setName(driverDTO.getName());
-        driver.setSurname(driverDTO.getSurname());
-        driver.setPassword(driverDTO.getPassword());
-
-        driver = driverService.save(driver);
-
-        return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
-    }
-
-
     @PreAuthorize("hasAnyAuthority('ADMIN','DRIVER')")
         @GetMapping(value = "/{id}/ride")
         public ResponseEntity getAllRidesFromDriver(@PathVariable Integer id,

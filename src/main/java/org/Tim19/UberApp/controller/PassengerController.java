@@ -164,15 +164,19 @@ public class PassengerController {
 
             passenger.setActive(true);
             passenger.setBlocked(false);
-            passenger.setProfilePicture(passengerDTO.getProfilePicture());
             passenger.setTelephoneNumber(passengerDTO.getTelephoneNumber());
             passenger.setAddress(passengerDTO.getAddress());
             passenger.setUsername(passengerDTO.getUsername());
             passenger.setName(passengerDTO.getName());
             passenger.setSurname(passengerDTO.getSurname());
-            passenger.setPassword(passengerDTO.getPassword());
 
-            //passengerService.save(passenger);
+
+            //TODO: odvojen kontroler za update slike
+            //za promenu sifre v postoji u User contolleru
+            passenger.setPassword(passenger.getPassword());
+            passenger.setProfilePicture(passenger.getProfilePicture());
+
+            passengerService.save(passenger);
             return new ResponseEntity<>(new PassengerDTO(passenger), HttpStatus.OK);
         }
         catch (NullPointerException ex){
