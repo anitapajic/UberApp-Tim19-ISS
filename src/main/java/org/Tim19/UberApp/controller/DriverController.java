@@ -5,6 +5,7 @@ import org.Tim19.UberApp.dto.PaginatedData.*;
 import org.Tim19.UberApp.model.*;
 import org.Tim19.UberApp.service.DriverService;
 import org.Tim19.UberApp.service.RideService;
+import org.Tim19.UberApp.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -27,11 +30,14 @@ public class DriverController {
     @Autowired
     private RideService rideService;
 
+    @Autowired
+    private VehicleService vehicleService;
+
     //CREATE DRIVER  /api/driver
     //DONE
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<DriverDTO> createDriver(@RequestBody DriverDTO driverDTO) {
+    public ResponseEntity createDriver(@RequestBody DriverDTO driverDTO) {
 
         Driver driver = new Driver();
 
@@ -43,8 +49,15 @@ public class DriverController {
         driver.setUsername(driverDTO.getUsername());
         driver.setName(driverDTO.getName());
         driver.setSurname(driverDTO.getSurname());
-        driver.setPassword(driverDTO.getPassword());
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+        driver.setPassword(passwordEncoder.encode(driverDTO.getPassword()));
+        Vehicle vehicle = vehicleService.findOne(driverDTO.getVehicle());
+        if(vehicle == null){
+            return new ResponseEntity<>("Vehicle does not exist", HttpStatus.BAD_REQUEST);
+        }
+        driver.setVehicle(vehicle);
+        driver.setAuthorities("DRIVER");
         driver = driverService.save(driver);
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }

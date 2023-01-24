@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping(value = "/api")
@@ -41,6 +43,16 @@ public class VehicleController {
         vehicleDTO.setDriverId(id);
 
         return new ResponseEntity<>(vehicleDTO, HttpStatus.OK);
+
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @GetMapping(value="/driver/vehicles")
+    public ResponseEntity getAllVehicle() {
+        
+        List<Vehicle> vehicles = vehicleService.findAll();
+
+        return new ResponseEntity<>(vehicles, HttpStatus.OK);
 
     }
 
