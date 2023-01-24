@@ -360,27 +360,21 @@ public class UserController {
 
     //GETTING NOTES FOR THE USER  /api/user/{id}/note
     @PostMapping(
-            value = "/{id}/note",
+            value = "/note",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity postUserNote(@PathVariable Integer id, @RequestBody NoteDTO noteDTO, BindingResult binding){
+    public ResponseEntity postUserNote(@RequestBody NoteDTO noteDTO, BindingResult binding){
         if (binding.hasErrors()) {
             return new ResponseEntity<>(binding.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
         }
-        NoteDTO note = noteDTO;
-        note.setUserId(id);
-        note.setDate(LocalDateTime.now());
-        if(note.getMessage() == null){
-            return new ResponseEntity<>( HttpStatus.BAD_REQUEST);
 
-        }
+        noteDTO = noteService.save(noteDTO);
 
-        note = noteService.save(noteDTO);
-
-        if (note.getMessage() == null){
+        if (noteDTO == null){
             return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(note, HttpStatus.OK);
+        return new ResponseEntity<>(noteDTO, HttpStatus.OK);
     }
+
 
 }
