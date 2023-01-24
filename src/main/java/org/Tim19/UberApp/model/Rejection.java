@@ -29,4 +29,15 @@ public class Rejection {
     @JsonIgnore
     @ManyToOne
     private Ride ride;
+
+
+    @Override
+    public String toString() {
+        return "Rejection{" +
+                "id=" + id +
+                ", user=" + user +
+                ", reason='" + reason + '\'' +
+                ", timeOfRejection=" + timeOfRejection +
+                '}';
+    }
 }

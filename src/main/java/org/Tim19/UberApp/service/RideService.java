@@ -1,5 +1,6 @@
 package org.Tim19.UberApp.service;
 
+import org.Tim19.UberApp.dto.RideHistoryFilterDTO;
 import org.Tim19.UberApp.model.Driver;
 import org.Tim19.UberApp.model.Ride;
 import org.Tim19.UberApp.model.VehicleType;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -30,7 +33,25 @@ public class RideService {
         return rideRepository.findOneRideById(id);
     }
 
-    public List<Ride> findAll(){return rideRepository.findAll();}
+    public List<Ride> findAllFilter(RideHistoryFilterDTO filter){
+        List<Ride> rides;
+        if( filter.getStartDate() != null && filter.getEndDate() != null){
+            rides = rideRepository.findAllInDateRange(filter.getStartDate(), filter.getEndDate());
+        }
+        else {
+            rides = rideRepository.findAll();
+        }
+        System.out.println(rides.get(0));
+
+        if(filter.getDriverId() != null){
+            rides.removeIf(ride -> !Objects.equals(ride.getDriver().getId(), filter.getDriverId()));
+        }
+        if(filter.getKeyword() != null){
+            rides.removeIf(ride -> !ride.toString().contains(filter.getKeyword()));
+        }
+
+        return rides;
+    }
 
     public Page<Ride> findAll(Pageable page){return rideRepository.findAll(page);}
 
@@ -47,18 +68,28 @@ public class RideService {
         return rides;
     }
 
-    public Page<Ride> findByPassengerId(Integer id, Pageable pageable){
-        Page<Ride> rides = rideRepository.findAllByPassengersId(id, pageable);
+    public Page<Ride> findByPassengerId(Integer id, String from, String to, Pageable pageable){
+
+        Page<Ride> rides;
+        if(!from.equals("") && !to.equals(""))
+            rides = rideRepository.findAllByPassengersIdFilter(id, LocalDateTime.parse(from), LocalDateTime.parse(to), pageable);
+        else
+            rides = rideRepository.findAllByPassengersId(id, pageable);;
 
         return rides;
+
     }
     public Set<Ride> findAllByPassengerId(Integer id){
         Set<Ride> rides = rideRepository.findAllByPassengersId(id);
 
         return rides;
     }
-    public Page<Ride> findByDriverId(Integer id, Pageable pageable){
-        Page<Ride> rides = rideRepository.findAllByDriverId(id, pageable);
+    public Page<Ride> findByDriverId(Integer id, String from, String to, Pageable pageable){
+        Page<Ride> rides;
+        if(!from.equals("") && !to.equals(""))
+            rides = rideRepository.findAllByDriverIdFilter(id, LocalDateTime.parse(from), LocalDateTime.parse(to), pageable);
+        else
+            rides = rideRepository.findAllByDriverId(id, pageable);
 
         return rides;
     }

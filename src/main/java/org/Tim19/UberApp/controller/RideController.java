@@ -4,6 +4,7 @@ import org.Tim19.UberApp.dto.PaginatedData.CreateRideBodyPaginatedDTO;
 import org.Tim19.UberApp.dto.PaginatedData.PanicPaginatedDTO;
 import org.Tim19.UberApp.dto.PaginatedData.UserPanicPaginatedDTO;
 import org.Tim19.UberApp.dto.RideDTO;
+import org.Tim19.UberApp.dto.RideHistoryFilterDTO;
 import org.Tim19.UberApp.model.*;
 import org.Tim19.UberApp.security.SecurityUser;
 import org.Tim19.UberApp.service.DriverService;
@@ -167,12 +168,11 @@ public class RideController {
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    @GetMapping()
-    public ResponseEntity getAllRides() {
-
+    @PostMapping(value = "/all")
+    public ResponseEntity getAllRides(@RequestBody RideHistoryFilterDTO filterDTO) {
+        System.out.println(filterDTO + " 1234");
         try{
-
-            List<Ride> allRides = rideService.findAll();
+            List<Ride> allRides = rideService.findAllFilter(filterDTO);
             Map<String, Object> response = new HashMap<>();
             response.put("totalCount", allRides.size());
             response.put("results", allRides);
