@@ -4,12 +4,14 @@ public class TokenDTO {
     private String token;
 
     private Integer id;
+    private String role;
 
     public TokenDTO() {}
 
-    public TokenDTO(String token, Integer id) {
+    public TokenDTO(String token, Integer id, String role) {
         this.token = token;
         this.id = id;
+        this.role = role;
     }
 
     public String getToken() {
@@ -26,5 +28,13 @@ public class TokenDTO {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getRole() {
+        return role;
     }
 }
