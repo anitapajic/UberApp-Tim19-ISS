@@ -80,6 +80,7 @@ public class AuthenticationController {
 
             }
             token.setId(user.getId());
+            token.setRole(user.getAuthorities());
 
             Authentication authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
