@@ -26,10 +26,4 @@ public class LocationDTO {
         this.longitude = longitude;
     }
 
-    public LocationDTO(Location location) {
-        this.id = location.getId();
-        this.address = location.getAddress();
-        this.latitude = location.getLatitude();
-        this.longitude = location.getLongitude();
-    }
 }

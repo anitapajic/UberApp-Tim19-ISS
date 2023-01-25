@@ -63,7 +63,6 @@ public class AuthenticationController {
         }
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(auth + "bbbb");
         if (!(auth instanceof AnonymousAuthenticationToken)) {
             throw new BadRequestException("Unauthorized!");
         }
@@ -71,7 +70,6 @@ public class AuthenticationController {
         try {
             TokenDTO token = new TokenDTO();
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(login.getUsername());
-            System.out.println(userDetails+ "cccc");
 
             String tokenValue = this.tokenUtils.generateToken(userDetails);
             token.setToken(tokenValue);
@@ -84,7 +82,6 @@ public class AuthenticationController {
             token.setId(user.getId());
 
             Authentication authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword()));
-            System.out.println(authentication + "aaaaaa");
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             return new ResponseEntity<>(token, HttpStatus.OK);
