@@ -41,7 +41,7 @@ public class DriverController {
 
         Driver driver = new Driver();
 
-        driver.setActive(true);
+        driver.setActive(false);
         driver.setBlocked(false);
         driver.setProfilePicture(driverDTO.getProfilePicture());
         driver.setTelephoneNumber(driverDTO.getTelephoneNumber());

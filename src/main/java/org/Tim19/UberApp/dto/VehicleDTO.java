@@ -19,6 +19,8 @@ public class VehicleDTO {
     private boolean petTransport;
 
     private LocationDTO currentLocation;
+    private boolean isDriverActive;
+
     private Set<Message> reviews = new HashSet<>();
 
 
@@ -117,4 +119,30 @@ public class VehicleDTO {
     public void setReviews(Set<Message> reviews) {
         this.reviews = reviews;
     }
+
+    public boolean isDriverActive() {
+        return isDriverActive;
+    }
+
+    public void setDriverActive(boolean driverActive) {
+        isDriverActive = driverActive;
+    }
+
+    @Override
+    public String toString() {
+        return "VehicleDTO{" +
+                "id=" + id +
+                ", driverId=" + driverId +
+                ", model='" + model + '\'' +
+                ", vehicleType=" + vehicleType +
+                ", licenseNumber='" + licenseNumber + '\'' +
+                ", passengerSeats=" + passengerSeats +
+                ", babyTransport=" + babyTransport +
+                ", petTransport=" + petTransport +
+                ", currentLocation=" + currentLocation +
+                ", isDriverActive=" + isDriverActive +
+                ", reviews=" + reviews +
+                '}';
+    }
+
 }

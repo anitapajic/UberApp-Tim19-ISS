@@ -2,6 +2,7 @@ package org.Tim19.UberApp.controller;
 
 import org.Tim19.UberApp.dto.VehicleDTO;
 import org.Tim19.UberApp.model.Driver;
+import org.Tim19.UberApp.model.Location;
 import org.Tim19.UberApp.model.Vehicle;
 import org.Tim19.UberApp.service.DriverService;
 import org.Tim19.UberApp.service.VehicleService;
@@ -46,11 +47,11 @@ public class VehicleController {
 
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping(value="/driver/vehicles")
     public ResponseEntity getAllVehicle() {
         
-        List<Vehicle> vehicles = vehicleService.findAll();
+        List<VehicleDTO> vehicles = vehicleService.findAllVehicles();
 
         return new ResponseEntity<>(vehicles, HttpStatus.OK);
 
@@ -119,6 +120,26 @@ public class VehicleController {
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PostMapping(value="/vehicle", consumes = "application/json")
+    public ResponseEntity createVehicle(@RequestBody VehicleDTO vehicleDTO) {
+
+        Vehicle vehicle = new Vehicle();
+        vehicle.setVehicleType(vehicleDTO.getVehicleType());
+        vehicle.setCarModel(vehicleDTO.getModel());
+        vehicle.setLicenseNumber(vehicleDTO.getLicenseNumber());
+        vehicle.setPassengerSeats(vehicleDTO.getPassengerSeats());
+        vehicle.setBabyTransport(vehicleDTO.isBabyTransport());
+        vehicle.setPetTransport(vehicleDTO.isPetTransport());
+
+        vehicle = vehicleService.save(vehicle);
+
+        VehicleDTO response = new VehicleDTO(vehicle);
+        response.setCurrentLocation(vehicleDTO.getCurrentLocation());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
 }
 

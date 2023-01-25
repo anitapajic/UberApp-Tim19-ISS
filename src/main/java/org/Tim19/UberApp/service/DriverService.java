@@ -46,6 +46,9 @@ public class DriverService {
     }
 
 
+    public Driver isDriverActive(Integer vehicleId){
 
+        return driverRepository.findOneByVehicleId(vehicleId).orElse(null);
+    }
     
 }

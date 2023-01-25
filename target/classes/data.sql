@@ -1,7 +1,15 @@
+-- Location
+insert into location (address, latitude, longitude) values
+                                                        ('Stajaliste stanica', '45.264980', '19.830598'),
+                                                        ('Brace Ribnikar 17', ' 45.247567', '19.837351'),
+                                                        ('Strumicka 6', '45.239877', '19.849011'),
+                                                        ('Mise Dimitrijevica 43', '45.243911', '19.830894');
+
 -- Vehicle
-insert into vehicle (car_model, vehicle_type, license_number, passenger_seats, baby_transport, pet_transport) values
-                                                                                                                  ('audi', '0', 'NS 010 WQ', '4', 'true', 'false'),
-                                                                                                                  ('audi', '1', 'NS 011 WA', '4', 'true', 'true');
+insert into vehicle (car_model, vehicle_type, license_number, passenger_seats, baby_transport, pet_transport, location_id) values
+                                                                                                                  ('audi', '0', 'NS 010 WQ', '4', 'true', 'false', 2),
+                                                                                                                  ('audi', '1', 'NS 010 WS', '4', 'true', 'false', 3),
+                                                                                                                  ('audi', '2', 'NS 011 WA', '4', 'true', 'true', 4);
 
 -- User (Passenger, Driver)  password = test
 insert into user (dtype, username, name, surname, profile_picture, telephone_number, address, password, active, blocked, vehicle_id, authorities) values
@@ -9,7 +17,7 @@ insert into user (dtype, username, name, surname, profile_picture, telephone_num
                                                                                                                                             ('Passenger', 'anita@gmail.com','Anita', 'Pajic','pic2', '0669024480', 'Strumicka 6, Novi Sad', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', null, 'PASSENGER'),
                                                                                                                                             ('Passenger', 'aleksandra@gmail.com','Aleksandra', 'Filipic','pic3', '0655157604', 'Mise Dimitrijevica 41, Novi Sad', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', null, 'PASSENGER'),
                                                                                                                                             ('Driver', 'anja@gmail.com','Anja', 'Petkovic','pic1', '0663487556', 'Strumicka 6, Novi Sad', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', '2', 'DRIVER'),
-                                                                                                                                            ('Driver', 'bane@gmail.com','Branislav', 'Stojkovic','pic1', '0629008875', 'Narodnog Fronta 55, Novi Sad', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', '2', 'DRIVER'),
+                                                                                                                                            ('Driver', 'bane@gmail.com','Branislav', 'Stojkovic','pic1', '0629008875', 'Narodnog Fronta 55, Novi Sad', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'false', 'false', '3', 'DRIVER'),
                                                                                                                                             ('User', 'admin@gmail.com','admin', 'admin','pic1', '066021661', 'ADMIN 12, Novi Sad', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'true', 'false', null, 'ADMIN'),
                                                                                                                                             ('Passenger', 'aleksandra123@gmail.com','aleksandra', 'filipic','pic3', '0699945612', 'NS 12', '$2a$12$DUiRc0iWMEKTgzh6jpXpQOLs14XxmvyDdVkfBoTCwUlOy1JcXFrlC', 'false', 'false', null, 'PASSENGER');
 
@@ -23,18 +31,13 @@ insert into activation (creation_date, expiration_date, user_id) values
                                                                      ('2017-07-21T17:32:28Z','2023-07-21T17:32:28Z', 6),
                                                                      ('2017-07-21T17:32:28Z','2023-07-21T17:32:28Z', 4);
 
--- Location
-insert into location (address, latitude, longitude) values
-                                                        ('Brace Ribnikar 17', '45.2156', '85.4861'),
-                                                        ('Strumicka 6', '45.2156', '85.4861'),
-                                                        ('Mise Dimitrijevica 43', '45.2156', '85.4861');
 
 -- Path
 insert into path (departure_id, destination_id) values
-                                                    (1,2),
-                                                    (1,3),
+                                                    (3,2),
+                                                    (4,3),
                                                     (2,3),
-                                                    (2,1);
+                                                    (4,1);
 
 insert into favorite_route(favorite_name, scheduled_time, vehicle_type, baby_transport, pet_transport) values ('Kuca-Posao', '2017-07-21T17:32:28Z', 0, false, false),
                                                                                                         ('Kuca-Faks', '2017-07-21T17:32:28Z', 0, false, false),
