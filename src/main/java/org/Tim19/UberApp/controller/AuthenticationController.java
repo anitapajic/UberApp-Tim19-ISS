@@ -3,6 +3,7 @@ package org.Tim19.UberApp.controller;
 import org.Tim19.UberApp.dto.LoginDTO;
 import org.Tim19.UberApp.dto.TokenDTO;
 import org.Tim19.UberApp.exceptions.BadRequestException;
+import org.Tim19.UberApp.model.User;
 import org.Tim19.UberApp.security.TokenUtils;
 import org.Tim19.UberApp.service.UserDetailsServiceImpl;
 import org.Tim19.UberApp.service.UserService;
@@ -16,7 +17,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -75,8 +75,12 @@ public class AuthenticationController {
             String tokenValue = this.tokenUtils.generateToken(userDetails);
             token.setToken(tokenValue);
 
-            Integer id = this.userService.findIdByUsername(login.getUsername());
-            token.setId(id);
+            User user = this.userService.findIdByUsername(login.getUsername());
+            if(user.getBlocked()){
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            }
+            token.setId(user.getId());
 
             Authentication authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);

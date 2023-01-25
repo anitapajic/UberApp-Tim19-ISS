@@ -41,12 +41,9 @@ public class UserService {
         return this.userRepository.findOneByUsername(username).orElse(null);
     }
 
-    public Integer findIdByUsername(String username){
-        User user = this.userRepository.findOneByUsername(username).orElse(null);
-        if (user != null)
-            return user.getId();
+    public User findIdByUsername(String username){
+        return this.userRepository.findOneByUsername(username).orElse(null);
 
-        return null;
     }
     public User findOneUserByUsername(String username){
         return this.userRepository.findOneUserByUsername(username);
