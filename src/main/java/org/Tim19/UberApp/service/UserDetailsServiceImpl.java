@@ -21,7 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         User user = this.userRepository.findOneByUsername(username)
                 .orElseThrow(() -> new NotFoundException(String.format("User with username '%s' is not found!", username)));
-        if(!user.getActive()){
+        if(user.getBlocked()){
             return null;
         }
         return UserFactory.create(user);

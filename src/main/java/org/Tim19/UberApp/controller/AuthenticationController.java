@@ -63,7 +63,6 @@ public class AuthenticationController {
         }
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
         if (!(auth instanceof AnonymousAuthenticationToken)) {
             throw new BadRequestException("Unauthorized!");
         }

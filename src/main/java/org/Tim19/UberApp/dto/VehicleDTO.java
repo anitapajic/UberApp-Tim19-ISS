@@ -18,8 +18,8 @@ public class VehicleDTO {
     private boolean babyTransport;
     private boolean petTransport;
     private LocationDTO currentLocation;
+    private boolean isDriverActive;
 
-    private Boolean isDriverActive;
     private Set<Message> reviews = new HashSet<>();
 
 
@@ -119,11 +119,11 @@ public class VehicleDTO {
         this.reviews = reviews;
     }
 
-    public Boolean getDriverActive() {
+    public boolean isDriverActive() {
         return isDriverActive;
     }
 
-    public void setDriverActive(Boolean driverActive) {
+    public void setDriverActive(boolean driverActive) {
         isDriverActive = driverActive;
     }
 

@@ -1,17 +1,15 @@
-
 -- Location
 insert into location (address, latitude, longitude) values
-                                                        ('Brace Ribnikar 17', '45.2475603', '19.837355'),
-                                                        ('Strumicka 6', '45.239874', '19.849002'),
-                                                        ('Mise Dimitrijevica 43', '45.243813', '19.830821');
-
-
+                                                        ('Stajaliste stanica', '45.264980', '19.830598'),
+                                                        ('Brace Ribnikar 17', ' 45.247567', '19.837351'),
+                                                        ('Strumicka 6', '45.239877', '19.849011'),
+                                                        ('Mise Dimitrijevica 43', '45.243911', '19.830894');
 
 -- Vehicle
 insert into vehicle (car_model, vehicle_type, license_number, passenger_seats, baby_transport, pet_transport, location_id) values
-                                                                                                                  ('audi', '0', 'NS 010 WQ', '4', 'true', 'false', 1),
-                                                                                                                  ('audi', '1', 'NS 011 WA', '4', 'true', 'true', 2),
-                                                                                                                  ('audi', '2', 'NS 011 WS', '4', 'true', 'true', 3);
+                                                                                                                  ('audi', '0', 'NS 010 WQ', '4', 'true', 'false', 2),
+                                                                                                                  ('audi', '1', 'NS 010 WS', '4', 'true', 'false', 3),
+                                                                                                                  ('audi', '2', 'NS 011 WA', '4', 'true', 'true', 4);
 
 -- User (Passenger, Driver)  password = test
 insert into user (dtype, username, name, surname, profile_picture, telephone_number, address, password, active, blocked, vehicle_id, authorities) values
@@ -35,10 +33,10 @@ insert into activation (creation_date, expiration_date, user_id) values
 
 -- Path
 insert into path (departure_id, destination_id) values
-                                                    (1,2),
-                                                    (1,3),
+                                                    (3,2),
+                                                    (4,3),
                                                     (2,3),
-                                                    (2,1);
+                                                    (4,1);
 
 insert into favorite_route(favorite_name, scheduled_time, vehicle_type, baby_transport, pet_transport) values ('Kuca-Posao', '2017-07-21T17:32:28Z', 0, false, false),
                                                                                                         ('Kuca-Faks', '2017-07-21T17:32:28Z', 0, false, false),
