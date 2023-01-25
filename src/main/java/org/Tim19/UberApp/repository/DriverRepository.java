@@ -10,6 +10,7 @@ import java.util.List;
 public interface DriverRepository extends JpaRepository<Driver, Integer> {
 
     public Driver findOneByUsername(String email);
+    public Driver findOneByVehicleId(Integer id);
 
     public Page<Driver> findAll(Pageable pageable);
 
