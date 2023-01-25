@@ -17,8 +17,9 @@ public class VehicleDTO {
     private Integer passengerSeats;
     private boolean babyTransport;
     private boolean petTransport;
-
     private LocationDTO currentLocation;
+
+    private Boolean isDriverActive;
     private Set<Message> reviews = new HashSet<>();
 
 
@@ -38,7 +39,7 @@ public class VehicleDTO {
     public VehicleDTO() {}
 
     public VehicleDTO(Vehicle vehicle) {
-        this(vehicle.getId(), vehicle.getCarModel(),vehicle.getVehicleType(), vehicle.getLicenseNumber(), vehicle.getPassengerSeats(), vehicle.isBabyTransport(), vehicle.isPetTransport(), new LocationDTO());
+        this(vehicle.getId(), vehicle.getCarModel(),vehicle.getVehicleType(), vehicle.getLicenseNumber(), vehicle.getPassengerSeats(), vehicle.isBabyTransport(), vehicle.isPetTransport(), new LocationDTO(vehicle.getLocation()));
     }
 
 
@@ -116,5 +117,30 @@ public class VehicleDTO {
 
     public void setReviews(Set<Message> reviews) {
         this.reviews = reviews;
+    }
+
+    public Boolean getDriverActive() {
+        return isDriverActive;
+    }
+
+    public void setDriverActive(Boolean driverActive) {
+        isDriverActive = driverActive;
+    }
+
+    @Override
+    public String toString() {
+        return "VehicleDTO{" +
+                "id=" + id +
+                ", driverId=" + driverId +
+                ", model='" + model + '\'' +
+                ", vehicleType=" + vehicleType +
+                ", licenseNumber='" + licenseNumber + '\'' +
+                ", passengerSeats=" + passengerSeats +
+                ", babyTransport=" + babyTransport +
+                ", petTransport=" + petTransport +
+                ", currentLocation=" + currentLocation +
+                ", isDriverActive=" + isDriverActive +
+                ", reviews=" + reviews +
+                '}';
     }
 }

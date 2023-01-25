@@ -46,6 +46,10 @@ public class DriverService {
     }
 
 
+    public Boolean isDriverActive(Integer vehicleId){
+        Driver d = driverRepository.findOneByVehicleId(vehicleId);
 
+        return d.getActive();
+    }
     
 }
