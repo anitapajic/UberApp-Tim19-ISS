@@ -237,5 +237,27 @@ public class Ride {
     public  void removeRejection(Rejection rejection){
         this.rejection.remove(rejection);
     }
+
+    @Override
+    public String toString() {
+        return "Ride{" +
+                "id=" + id +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", totalCost=" + totalCost +
+                ", driver=" + driver.getName() + " " + driver.getSurname() +
+                ", locations=" + locations +
+                ", estimatedTimeInMinutes=" + estimatedTimeInMinutes +
+                ", reviews=" + reviews +
+                ", rejection=" + rejection +
+                ", status='" + status + '\'' +
+                ", panic=" + panic +
+                ", babyTransport=" + babyTransport +
+                ", petTransport=" + petTransport +
+                ", vehicleType=" + vehicleType +
+                '}';
+    }
+
+
 }
 

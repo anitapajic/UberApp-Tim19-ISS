@@ -104,18 +104,16 @@ public class DriverController {
                                                                          @RequestParam(defaultValue = "0") Integer page,
                                                                          @RequestParam(defaultValue = "4") Integer size,
                                                                          @RequestParam(required = false) String sort,
-                                                                         @RequestParam(required = false) String  from,
-                                                                         @RequestParam(required = false) String  to) {
+                                                                         @RequestParam(required = false) String  startDate,
+                                                                         @RequestParam(required = false) String  endDate) {
 
             Pageable paging = PageRequest.of(page, size);
-
-            Page<Ride> allRides = rideService.findByDriverId(id, paging);
-
             Driver driver = driverService.findOne(id);
 
             if (driver == null) {
                 return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
             }
+            Page<Ride> allRides = rideService.findByDriverId(id, startDate, endDate, paging);
 
             Map<String, Object> response = new HashMap<>();
             response.put("totalCount", allRides.getTotalElements());

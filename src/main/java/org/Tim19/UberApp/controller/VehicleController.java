@@ -9,6 +9,7 @@ import org.Tim19.UberApp.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,10 @@ public class VehicleController {
     private VehicleService vehicleService;
     @Autowired
     private DriverService driverService;
+    
+//    @Autowired
+//    private SimpMessagingTemplate simpMessagingTemplate;
+
 
     //VEHICLE OF THE DRIVER  /api/driver/{id}/vehicle
     @PreAuthorize("hasAnyAuthority('ADMIN', 'DRIVER')")
@@ -51,7 +56,7 @@ public class VehicleController {
     @GetMapping(value="/driver/vehicles")
     public ResponseEntity getAllVehicle() {
         
-        List<VehicleDTO> vehicles = vehicleService.findAllVehicles();
+        List<VehicleDTO> vehicles = vehicleService.findAll();
 
         return new ResponseEntity<>(vehicles, HttpStatus.OK);
 
@@ -116,7 +121,11 @@ public class VehicleController {
 
     //CHANGE LOCATION OF THE VEHICLE  /api/vehicle/{id}/location  (vehicleId)
     @PutMapping(value = "/vehicle/{id}/location")
-    public ResponseEntity<Void> changeVehicleLocation(){
+    public ResponseEntity<Void> changeVehicleLocation(@PathVariable Integer id, @RequestBody Location location){
+
+        Vehicle vehicle = vehicleService.findOne(id);
+        vehicle.setLocation(location);
+        //this.simpMessagingTemplate.convertAndSend("/map-updates", vehicle);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

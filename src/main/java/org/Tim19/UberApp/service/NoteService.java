@@ -7,6 +7,7 @@ import org.Tim19.UberApp.repository.NoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -16,17 +17,18 @@ public class NoteService {
     @Autowired
     UserService userService;
 
-    public List<Note> findAllByUserId(Integer id){return noteRepository.findAllByUserId(id);}
+    public List<Note> findAllByUserId(Integer id){return noteRepository.findAllByUserId(id).orElse(null);}
 
     public NoteDTO save(NoteDTO noteDTO){
         if (userService.findOneById(noteDTO.getUserId()) == null){
-            return new NoteDTO();
+            return null;
         }
         User user = userService.findOneById(noteDTO.getUserId());
 
         Note note = new Note();
         note.setText(noteDTO.getMessage());
         note.setUser(user);
+        note.setDate(LocalDateTime.now());
         note = noteRepository.save(note);
         return new NoteDTO(note);
     }

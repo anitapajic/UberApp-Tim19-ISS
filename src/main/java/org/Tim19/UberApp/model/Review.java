@@ -109,4 +109,13 @@ public class Review {
     public void setDriver(Driver driver) {
         this.driver = driver;
     }
+
+    @Override
+    public String toString() {
+        return "Review{" +
+                "id=" + id +
+                ", comment='" + comment + '\'' +
+                ", rating=" + rating +
+                '}';
+    }
 }

@@ -21,18 +21,16 @@ public class VehicleService {
 
     @Autowired
     private VehicleRepository vehicleRepository;
-
-    @Autowired
-    private LocationRepository locationRepository;
     @Autowired
     private DriverService driverService;
+    @Autowired
+    private LocationRepository locationRepository;
+
 
     public Vehicle findOne(Integer id){return vehicleRepository.findById(id).orElse(null);}
 
 
-    public List<Vehicle> findAll(){return vehicleRepository.findAll();}
-
-    public List<VehicleDTO> findAllVehicles(){
+    public List<VehicleDTO> findAll(){
         List<Vehicle> vehicles = vehicleRepository.findAll();
 
         List<VehicleDTO> vehicleDTOS = new ArrayList<>();

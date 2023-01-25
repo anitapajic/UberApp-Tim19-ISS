@@ -17,7 +17,6 @@ public class VehicleDTO {
     private Integer passengerSeats;
     private boolean babyTransport;
     private boolean petTransport;
-
     private LocationDTO currentLocation;
     private boolean isDriverActive;
 
@@ -40,7 +39,7 @@ public class VehicleDTO {
     public VehicleDTO() {}
 
     public VehicleDTO(Vehicle vehicle) {
-        this(vehicle.getId(), vehicle.getCarModel(),vehicle.getVehicleType(), vehicle.getLicenseNumber(), vehicle.getPassengerSeats(), vehicle.isBabyTransport(), vehicle.isPetTransport(), new LocationDTO());
+        this(vehicle.getId(), vehicle.getCarModel(),vehicle.getVehicleType(), vehicle.getLicenseNumber(), vehicle.getPassengerSeats(), vehicle.isBabyTransport(), vehicle.isPetTransport(), new LocationDTO(vehicle.getLocation()));
     }
 
 
@@ -144,5 +143,4 @@ public class VehicleDTO {
                 ", reviews=" + reviews +
                 '}';
     }
-
 }
