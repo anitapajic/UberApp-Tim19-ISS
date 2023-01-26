@@ -1,5 +1,6 @@
 package org.Tim19.UberApp.service;
 
+import org.Tim19.UberApp.dto.RideDTO;
 import org.Tim19.UberApp.dto.RideHistoryFilterDTO;
 import org.Tim19.UberApp.model.Driver;
 import org.Tim19.UberApp.model.Ride;
@@ -33,7 +34,7 @@ public class RideService {
         return rideRepository.findOneRideById(id);
     }
 
-    public List<Ride> findAllFilter(RideHistoryFilterDTO filter){
+    public List<RideDTO> findAllFilter(RideHistoryFilterDTO filter){
         List<Ride> rides;
         if( filter.getStartDate() != null && filter.getEndDate() != null){
             rides = rideRepository.findAllInDateRange(filter.getStartDate(), filter.getEndDate());
@@ -50,7 +51,14 @@ public class RideService {
             rides.removeIf(ride -> !ride.toString().contains(filter.getKeyword()));
         }
 
-        return rides;
+        List<RideDTO> rideDTOS = new ArrayList<>();
+        for(Ride r : rides){
+            RideDTO rDTO = new RideDTO(r);
+            rideDTOS.add(rDTO);
+        }
+
+
+        return rideDTOS;
     }
 
     public Page<Ride> findAll(Pageable page){return rideRepository.findAll(page);}
@@ -148,6 +156,15 @@ public class RideService {
     }
 
 
+    public List<RideDTO> getAllActiveRides() {
+        List<Ride> rs = this.rideRepository.findAllByStatus("STARTED");
+        List<RideDTO> rides = new ArrayList<>();
+        for(Ride r : rs){
+            RideDTO ride = new RideDTO(r);
+            rides.add(ride);
+        }
+        return rides;
+    }
 
 //    private void findRideReviewsAndRejections(Set<Ride> rides){
 //        for (Ride r: rides) {

@@ -25,8 +25,8 @@ public class VehicleController {
     @Autowired
     private DriverService driverService;
     
-//    @Autowired
-//    private SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
 
     //VEHICLE OF THE DRIVER  /api/driver/{id}/vehicle
@@ -125,7 +125,7 @@ public class VehicleController {
 
         Vehicle vehicle = vehicleService.findOne(id);
         vehicle.setLocation(location);
-        //this.simpMessagingTemplate.convertAndSend("/map-updates", vehicle);
+        this.simpMessagingTemplate.convertAndSend("/map-updates/update-vehicle-position", vehicle);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

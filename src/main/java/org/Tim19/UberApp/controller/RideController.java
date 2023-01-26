@@ -172,7 +172,7 @@ public class RideController {
     public ResponseEntity getAllRides(@RequestBody RideHistoryFilterDTO filterDTO) {
         System.out.println(filterDTO + " 1234");
         try{
-            List<Ride> allRides = rideService.findAllFilter(filterDTO);
+            List<RideDTO> allRides = rideService.findAllFilter(filterDTO);
             Map<String, Object> response = new HashMap<>();
             response.put("totalCount", allRides.size());
             response.put("results", allRides);
@@ -339,6 +339,17 @@ public class RideController {
         catch (NullPointerException ex){
             return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
         }
+    }
+
+
+    @GetMapping(
+            produces = "application/json",
+            value = "/active"
+    )
+    public ResponseEntity getAllActiveRides() {
+        List<RideDTO> rides = this.rideService.getAllActiveRides();
+
+        return new ResponseEntity<>(rides, HttpStatus.OK);
     }
 
 }

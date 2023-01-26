@@ -1,6 +1,7 @@
 package org.Tim19.UberApp.model;
 
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -66,8 +67,11 @@ public class Ride {
     @Column(name="vehicleType", nullable = true)
     private VehicleType vehicleType;
 
+//    @Type(type = "json")
+    @Column(columnDefinition = "json", name = "json")
+    private String routeJSON;
 
-    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengers, Set<Path> locations, Integer estimatedTimeInMinutes, Set<Review> reviews, Set<Rejection> rejection, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType) {
+    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengers, Set<Path> locations, Integer estimatedTimeInMinutes, Set<Review> reviews, Set<Rejection> rejection, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType, String routeJSON) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -83,6 +87,7 @@ public class Ride {
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
         this.vehicleType = vehicleType;
+        this.routeJSON = routeJSON;
     }
 
     public Integer getId() {
@@ -236,6 +241,14 @@ public class Ride {
 
     public  void removeRejection(Rejection rejection){
         this.rejection.remove(rejection);
+    }
+
+    public String getRouteJSON() {
+        return routeJSON;
+    }
+
+    public void setRouteJSON(String routeJSON) {
+        this.routeJSON = routeJSON;
     }
 
     @Override
