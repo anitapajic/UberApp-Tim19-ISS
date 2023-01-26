@@ -24,6 +24,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if(user.getBlocked()){
             return null;
         }
+        if(user.getAuthorities().equals("PASSENGER")  && !user.getActive()){
+            return null;
+        }
         return UserFactory.create(user);
     }
 }

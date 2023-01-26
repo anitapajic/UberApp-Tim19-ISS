@@ -71,7 +71,7 @@ public class RideService {
     public Page<Ride> findByPassengerId(Integer id, String from, String to, Pageable pageable){
 
         Page<Ride> rides;
-        if(!from.equals("") && !to.equals(""))
+        if(from != null && to != null)
             rides = rideRepository.findAllByPassengersIdFilter(id, LocalDateTime.parse(from), LocalDateTime.parse(to), pageable);
         else
             rides = rideRepository.findAllByPassengersId(id, pageable);;
@@ -86,7 +86,7 @@ public class RideService {
     }
     public Page<Ride> findByDriverId(Integer id, String from, String to, Pageable pageable){
         Page<Ride> rides;
-        if(!from.equals("") && !to.equals(""))
+        if(from != null && to != null)
             rides = rideRepository.findAllByDriverIdFilter(id, LocalDateTime.parse(from), LocalDateTime.parse(to), pageable);
         else
             rides = rideRepository.findAllByDriverId(id, pageable);
