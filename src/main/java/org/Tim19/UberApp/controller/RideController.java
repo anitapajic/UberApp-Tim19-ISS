@@ -41,7 +41,7 @@ public class RideController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-//    @PreAuthorize("hasAnyAuthority('PASSENGER')")
+    @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PostMapping(consumes = "application/json", value = "/create")
     public ResponseEntity create(@RequestBody RideDTO rideDTO) {
         Passenger passenger = passengerService.findByEmail("anita@gmail.com");

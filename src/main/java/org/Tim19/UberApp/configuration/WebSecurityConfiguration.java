@@ -73,7 +73,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers("/api/user/login", "/api/user/logout", "/h2-console/**", "/socket/**",
                          "/api/unregisteredUser", "/api/user/**/resetPassword", "/api/passenger","/api/passenger/activate/**",
-                         "/api/driver", "/api/driver/vehicles", "/api/ride/active", "/api/ride/create",
+                         "/api/driver", "/api/driver/vehicles", "/api/ride/active",
                         "/api/vehicle/location/**").permitAll()
                 .anyRequest().authenticated().and()
                 .cors().and()
