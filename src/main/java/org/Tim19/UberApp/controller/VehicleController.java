@@ -120,14 +120,15 @@ public class VehicleController {
 
 
     //CHANGE LOCATION OF THE VEHICLE  /api/vehicle/{id}/location  (vehicleId)
-    @PutMapping(value = "/vehicle/{id}/location")
-    public ResponseEntity<Void> changeVehicleLocation(@PathVariable Integer id, @RequestBody Location location){
-
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PutMapping(value = "/vehicle/location/{id}")
+    public ResponseEntity changeVehicleLocation(@PathVariable Integer id, @RequestBody Location location){
         Vehicle vehicle = vehicleService.findOne(id);
         vehicle.setLocation(location);
-        this.simpMessagingTemplate.convertAndSend("/map-updates/update-vehicle-position", vehicle);
+        vehicle = vehicleService.save(vehicle);
+       // this.simpMessagingTemplate.convertAndSend("/map-updates/update-vehicle-position", vehicle);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(vehicle, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
