@@ -12,12 +12,13 @@ import org.Tim19.UberApp.service.PassengerService;
 import org.Tim19.UberApp.service.RideService;
 import org.Tim19.UberApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -36,10 +37,37 @@ public class RideController {
     @Autowired
     private PassengerService passengerService;
 
-    //CREATING A RIDE  /api/ride
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+//    @PreAuthorize("hasAnyAuthority('PASSENGER')")
+    @PostMapping(consumes = "application/json", value = "/create")
+    public ResponseEntity create(@RequestBody RideDTO rideDTO) {
+        Passenger passenger = passengerService.findByEmail("anita@gmail.com");
+        Driver driver = rideService.findFreeDriver();
+        rideDTO.setDriver(driver);
+        rideDTO.setVehicle(driver.getVehicle());
+        rideDTO.addPassenger(passenger);
+        rideDTO.setId(10);
+        System.out.println(rideDTO);
+        this.simpMessagingTemplate.convertAndSend("/map-updates/new-ride", rideDTO);
+
+        return new ResponseEntity<>(rideDTO,HttpStatus.OK);
+    }
+
+
+
+
+
+
+        //CREATING A RIDE  /api/ride
     @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PostMapping(consumes = "application/json")
     public ResponseEntity createRide(@RequestBody CreateRideBodyPaginatedDTO rideDTO) {
+
+//        String response = http.get(f'https://routing.openstreetmap.de/routed-car/route/v1/driving/{self.departure[1]},{self.departure[0]};{self.destination[1]},{self.destination[0]}?geometries=geojson&overview=false&alternatives=true&steps=true')
+
 
         VehicleType vehicleType = rideDTO.getVehicleType();
         if(vehicleType == null){

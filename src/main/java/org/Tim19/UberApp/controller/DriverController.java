@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,7 +33,8 @@ public class DriverController {
 
     @Autowired
     private VehicleService vehicleService;
-
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
     //CREATE DRIVER  /api/driver
     //DONE
     @PreAuthorize("hasAnyAuthority('ADMIN')")
@@ -99,8 +101,8 @@ public class DriverController {
         }
 
     @PreAuthorize("hasAnyAuthority('ADMIN','DRIVER')")
-        @GetMapping(value = "/{id}/ride")
-        public ResponseEntity getAllRidesFromDriver(@PathVariable Integer id,
+    @GetMapping(value = "/{id}/ride")
+    public ResponseEntity getAllRidesFromDriver(@PathVariable Integer id,
                                                                          @RequestParam(defaultValue = "0") Integer page,
                                                                          @RequestParam(defaultValue = "4") Integer size,
                                                                          @RequestParam(required = false) String sort,
@@ -121,6 +123,24 @@ public class DriverController {
 
             return new ResponseEntity<>(response, HttpStatus.OK);
 
+    }
+
+
+    @PreAuthorize("hasAnyAuthority('DRIVER')")
+    @GetMapping(value = "/{id}/activity")
+    public ResponseEntity changeActivity(@PathVariable Integer id) {
+
+        Driver driver = driverService.findOne(id);
+
+        if (driver == null) {
+            return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
         }
+        driver.setActive(!driver.getActive());
+        driverService.save(driver);
+        this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", driver);
+
+        return new ResponseEntity<>(driver, HttpStatus.OK);
+
+    }
 }
 

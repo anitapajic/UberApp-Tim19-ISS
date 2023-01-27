@@ -107,7 +107,9 @@ public class RideDTO {
     public void setPassengers(Set<Passenger> passengers) {
         this.passengers = passengers;
     }
-
+    public void addPassenger(Passenger passenger) {
+        this.passengers.add(passenger);
+    }
     public Integer getEstimatedTimeInMinutes() {
         return estimatedTimeInMinutes;
     }
@@ -186,5 +188,27 @@ public class RideDTO {
 
     public void setRouteJSON(String routeJSON) {
         this.routeJSON = routeJSON;
+    }
+
+    @Override
+    public String toString() {
+        return "RideDTO{" +
+                "id=" + id +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", totalCost=" + totalCost +
+                ", driver=" + driver +
+                ", passengers=" + passengers +
+                ", estimatedTimeInMinutes=" + estimatedTimeInMinutes +
+                ", reviews=" + reviews +
+                ", vehicle=" + vehicle +
+                ", panic=" + panic +
+                ", babyTransport=" + babyTransport +
+                ", petTransport=" + petTransport +
+                ", status='" + status + '\'' +
+                ", locations=" + locations +
+                ", rejections=" + rejections +
+                ", routeJSON='" + routeJSON + '\'' +
+                '}';
     }
 }

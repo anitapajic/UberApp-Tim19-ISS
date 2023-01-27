@@ -126,7 +126,7 @@ public class VehicleController {
         Vehicle vehicle = vehicleService.findOne(id);
         vehicle.setLocation(location);
         vehicle = vehicleService.save(vehicle);
-       // this.simpMessagingTemplate.convertAndSend("/map-updates/update-vehicle-position", vehicle);
+        this.simpMessagingTemplate.convertAndSend("/map-updates/update-vehicle-position", vehicle);
 
         return new ResponseEntity<>(vehicle, HttpStatus.OK);
     }

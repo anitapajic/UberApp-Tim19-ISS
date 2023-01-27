@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -36,6 +37,8 @@ public class AuthenticationController {
 
     private TokenUtils tokenUtils;
 
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
     @Autowired
     public AuthenticationController(
             AuthenticationManager authenticationManager,
@@ -102,6 +105,7 @@ public class AuthenticationController {
 
         if (!(auth instanceof AnonymousAuthenticationToken)){
             SecurityContextHolder.clearContext();
+            this.simpMessagingTemplate.convertAndSend("/map-updates/delete-all-rides", "logout");
 
             return new ResponseEntity<>("You successfully logged out!", HttpStatus.OK);
         } else {
