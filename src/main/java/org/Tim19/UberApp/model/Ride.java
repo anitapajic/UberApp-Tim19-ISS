@@ -1,6 +1,7 @@
 package org.Tim19.UberApp.model;
 
 import lombok.NoArgsConstructor;
+import org.Tim19.UberApp.dto.RideDTO;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -88,6 +89,21 @@ public class Ride {
         this.petTransport = petTransport;
         this.vehicleType = vehicleType;
         this.routeJSON = routeJSON;
+    }
+
+    public Ride(RideDTO rideDTO){
+        this.driver = rideDTO.getDriver();
+        this.passengers = rideDTO.getPassengers();
+        this.locations = rideDTO.getLocations();
+        this.status = rideDTO.getStatus();
+        this.babyTransport = rideDTO.isBabyTransport();
+        this.petTransport = rideDTO.isPetTransport();
+        this.vehicleType = rideDTO.getVehicle().getVehicleType();
+        this.routeJSON = rideDTO.getRouteJSON();
+        this.totalCost = 250.0;
+        this.estimatedTimeInMinutes = 15;
+        this.panic = false;
+        this.startTime = LocalDateTime.now().plusMinutes(5);
     }
 
     public Integer getId() {

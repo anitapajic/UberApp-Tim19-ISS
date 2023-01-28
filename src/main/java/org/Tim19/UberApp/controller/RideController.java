@@ -44,16 +44,22 @@ public class RideController {
     @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PostMapping(consumes = "application/json", value = "/create")
     public ResponseEntity create(@RequestBody RideDTO rideDTO) {
-        Passenger passenger = passengerService.findByEmail("anita@gmail.com");
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityUser user = (SecurityUser) auth.getPrincipal();
+
+        Passenger passenger = passengerService.findByEmail(user.getUsername());
+        rideDTO.addPassenger(passenger);
+
         Driver driver = rideService.findFreeDriver();
         rideDTO.setDriver(driver);
         rideDTO.setVehicle(driver.getVehicle());
-        rideDTO.addPassenger(passenger);
-        rideDTO.setId(10);
-        System.out.println(rideDTO);
-        this.simpMessagingTemplate.convertAndSend("/map-updates/new-ride", rideDTO);
+        rideDTO.setStatus("PENDING");
+        Ride ride = rideService.save(new Ride(rideDTO));
+        System.out.println(ride);
+//        this.simpMessagingTemplate.convertAndSend("/map-updates/new-ride", rideDTO);
+        this.simpMessagingTemplate.convertAndSend("/map-updates/ask-driver", new RideDTO(ride));
 
-        return new ResponseEntity<>(rideDTO,HttpStatus.OK);
+        return new ResponseEntity<>(ride,HttpStatus.OK);
     }
 
 
@@ -66,7 +72,6 @@ public class RideController {
     @PostMapping(consumes = "application/json")
     public ResponseEntity createRide(@RequestBody CreateRideBodyPaginatedDTO rideDTO) {
 
-//        String response = http.get(f'https://routing.openstreetmap.de/routed-car/route/v1/driving/{self.departure[1]},{self.departure[0]};{self.destination[1]},{self.destination[0]}?geometries=geojson&overview=false&alternatives=true&steps=true')
 
 
         VehicleType vehicleType = rideDTO.getVehicleType();
@@ -274,7 +279,7 @@ public class RideController {
     }
 
     //START RIDE  /api/ride/{id}/start
-    @PreAuthorize("hasAnyAuthority('DRIVER')")
+    @PreAuthorize("hasAnyAuthority('DRIVER', 'PASSENGER')")
     @PutMapping(value="/{id}/start")
     public ResponseEntity startRide(@PathVariable Integer id) {
 
@@ -296,7 +301,7 @@ public class RideController {
     }
 
     //ACCEPT RIDE  /api/ride/{id}/accept
-    @PreAuthorize("hasAnyAuthority('DRIVER')")
+    @PreAuthorize("hasAnyAuthority('DRIVER', 'PASSENGER')")
     @PutMapping(value="/{id}/accept")
     public ResponseEntity acceptRide(@PathVariable Integer id) {
 
@@ -309,6 +314,7 @@ public class RideController {
 
             ride.setStatus("ACCEPTED");
             rideService.save(ride);
+            this.simpMessagingTemplate.convertAndSend("/map-updates/new-ride", new RideDTO(ride));
 
             return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
         }
@@ -318,7 +324,7 @@ public class RideController {
     }
 
     //END THE RIDE  /api/ride/{id}/end
-    @PreAuthorize("hasAnyAuthority('DRIVER')")
+    @PreAuthorize("hasAnyAuthority('DRIVER', 'PASSENGER')")
     @PutMapping(value="/{id}/end")
     public ResponseEntity endRide(@PathVariable Integer id) {
 
