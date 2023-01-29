@@ -57,8 +57,8 @@ insert into passenger_favorites (favorite_id, passenger_id) values
 insert into ride (start_time, end_time, total_cost, driver_id, estimated_time_in_minutes, status, panic, baby_transport, pet_transport, vehicle_type) values
                                                                                                                                                           ('2023-01-21T17:32:28Z', null, '250', 1, '7', 'STARTED', 'false', 'false', 'false', '0'),
                                                                                                                                                           ('2022-12-21T17:32:28Z', '2022-12-21T17:45:28Z', '250', 4, '7', 'PENDING', 'false', 'false', 'false', '0'),
-                                                                                                                                                          ('2022-12-22T17:32:28Z', '2022-12-22T17:46:28Z', '250', 1, '7', 'PENDING', 'false', 'false', 'false', '0'),
-                                                                                                                                                          ('2022-07-21T17:32:28Z', '2022-07-21T17:50:28Z', '250', 5, '7', 'PENDING', 'false', 'false', 'false', '0');
+                                                                                                                                                          ('2022-12-21T17:32:28Z', '2022-12-22T17:46:28Z', '250', 1, '7', 'PENDING', 'false', 'false', 'false', '0'),
+                                                                                                                                                          ('2022-12-25T17:32:28Z', '2022-07-21T17:50:28Z', '250', 5, '7', 'PENDING', 'false', 'false', 'false', '0');
 
 -- Ride paths
 insert into ride_paths (ride_id, paths_id) values
