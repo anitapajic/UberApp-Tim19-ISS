@@ -218,7 +218,7 @@ public class RideController {
                 return new ResponseEntity<>("Cannot cancel a ride that is not in status PENDING or STARTED!",
                         HttpStatus.BAD_REQUEST);
             }
-            
+
             this.simpMessagingTemplate.convertAndSend("/map-updates/declined-ride", new RideDTO(ride));
             ride.setStatus("CANCELED");
             rideService.save(ride);
@@ -360,12 +360,14 @@ public class RideController {
 
             rejection.setTimeOfRejection(LocalDateTime.now());
             rejection.setRide(ride);
-            rejection.setUser((User) ride.getPassengers().toArray()[0]);
+            rejection.setUser(ride.getDriver());
             ride.addRejection(rejection);
             ride.setStatus("REJECTED");
             rideService.save(ride);
 
             RideDTO rDTO = new RideDTO(ride);
+            this.simpMessagingTemplate.convertAndSend("/map-updates/declined-ride",rDTO);
+
             return new ResponseEntity<>(rDTO, HttpStatus.OK);
         }
         catch (NullPointerException ex){

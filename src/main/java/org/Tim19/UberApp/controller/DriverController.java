@@ -135,8 +135,10 @@ public class DriverController {
         if (driver == null) {
             return new ResponseEntity<>("Driver does not exist!",HttpStatus.NOT_FOUND);
         }
+
         driver.setActive(!driver.getActive());
         driverService.save(driver);
+
         this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", driver);
 
         return new ResponseEntity<>(driver, HttpStatus.OK);
