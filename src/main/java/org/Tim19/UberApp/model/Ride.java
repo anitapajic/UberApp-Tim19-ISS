@@ -6,7 +6,9 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -249,6 +251,20 @@ public class Ride {
 
     public  void removeRejection(Rejection rejection){
         this.rejection.remove(rejection);
+    }
+    public List<Float> getCoordinates(){
+        List<Float> coordinates = new ArrayList<>();
+        for (Path p: this.locations){
+            Float latitude1 = p.getDeparture().getLatitude();
+            Float longitude1 = p.getDeparture().getLongitude();
+            Float longitude2 = p.getDestination().getLongitude();
+            Float latitude2 = p.getDestination().getLatitude();
+            coordinates.add(longitude1);
+            coordinates.add(longitude2);
+            coordinates.add(latitude1);
+            coordinates.add(latitude2);
+        }
+        return coordinates;
     }
 
     public String getRouteJSON() {
