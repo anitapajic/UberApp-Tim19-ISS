@@ -252,19 +252,24 @@ public class Ride {
     public  void removeRejection(Rejection rejection){
         this.rejection.remove(rejection);
     }
-    public List<Float> getCoordinates(){
-        List<Float> coordinates = new ArrayList<>();
+
+
+    public Location getDeparture(){
+        Location departure = new Location();
         for (Path p: this.locations){
-            Float latitude1 = p.getDeparture().getLatitude();
-            Float longitude1 = p.getDeparture().getLongitude();
-            Float longitude2 = p.getDestination().getLongitude();
-            Float latitude2 = p.getDestination().getLatitude();
-            coordinates.add(longitude1);
-            coordinates.add(longitude2);
-            coordinates.add(latitude1);
-            coordinates.add(latitude2);
+            departure = p.getDeparture();
         }
-        return coordinates;
+
+        return departure;
+    }
+
+    public Location getDestination(){
+        Location destination = new Location();
+        for (Path p: this.locations){
+            destination = p.getDestination();
+        }
+
+        return destination;
     }
 
     public String getRouteJSON() {

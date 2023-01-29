@@ -29,6 +29,7 @@ public interface RideRepository extends JpaRepository<Ride,Integer> {
     public List<Ride> findAllInDateRange(LocalDateTime startDate, LocalDateTime endDate);
 
     List<Ride> findAllByStatus(String rideStatus);
+    Ride findOneByDriverIdAndStatus(Integer id, String rideStatus);
 
     public Page<Ride> findAllByPassengersId(Integer id, Pageable pageable);
     @Query(value = "select * from ride r, passenger_ride pr " +

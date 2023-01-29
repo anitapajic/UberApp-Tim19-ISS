@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -41,76 +42,17 @@ public class RideController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    @PreAuthorize("hasAnyAuthority('PASSENGER')")
-    @PostMapping(consumes = "application/json", value = "/create")
-    public ResponseEntity create(@RequestBody RideDTO rideDTO) {
-
-
-        RideDTO ride = rideService.create(rideDTO);
-        System.out.println(ride);
-        this.simpMessagingTemplate.convertAndSend("/map-updates/ask-driver", ride);
-
-        return new ResponseEntity<>(ride,HttpStatus.OK);
-    }
-
-
-
-
-
 
         //CREATING A RIDE  /api/ride
     @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PostMapping(consumes = "application/json")
-    public ResponseEntity createRide(@RequestBody CreateRideBodyPaginatedDTO rideDTO) {
+    public ResponseEntity createRide(@RequestBody RideDTO rideDTO) throws InterruptedException {
+        System.out.println(rideDTO.getRouteJSON());
+        HashMap<String, Object> rideTime = rideService.create(rideDTO);
+        this.simpMessagingTemplate.convertAndSend("/map-updates/ask-driver", rideTime.get("ride"));
+        System.out.println(rideTime.get("ride"));
 
-
-
-//        VehicleType vehicleType = rideDTO.getVehicleType();
-//        if(vehicleType == null){
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        }
-//
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        SecurityUser user = (SecurityUser) auth.getPrincipal();
-//
-//        Passenger passenger = passengerService.findByEmail(user.getUsername());
-//        Set<Ride> rides = rideService.findAllByPassengerId(passenger.getId());
-//        List<String> statuses = new ArrayList<>();
-//        for (Ride ride : rides){
-//            statuses.add(ride.getStatus());
-//        }
-//        if (statuses.contains("PENDING")){
-//            return new ResponseEntity<>("Cannot create a ride while you have one already pending!",  HttpStatus.BAD_REQUEST);
-//        }
-//
-//        Driver driver = rideService.findFreeDriver();
-//        Ride ride = new Ride();
-//
-//        ride.setPanic(false);
-//        ride.setDriver(driver);
-//        ride.setStartTime(LocalDateTime.now());
-//
-//        List<Float> coordinates = rideDTO.getCoordinates();
-//        Float long1 = coordinates.get(0);
-//        Float long2 = coordinates.get(1);
-//        Float lat1 = coordinates.get(2);
-//        Float lat2 = coordinates.get(3);
-//
-//        ride.setTotalCost(rideService.calculatePrice(rideDTO.getVehicleType(), rideService.calculateKilometres(long1, long2, lat1, lat2), rideDTO.isBabyTransport(), rideDTO.isPetTransport()));
-//        ride.setLocations(rideDTO.getLocations());
-//        ride.setEstimatedTimeInMinutes(rideService.calculateTravelTime(rideService.calculateKilometres(long1, long2, lat1, lat2)));
-//        ride.setStatus("PENDING");
-//        ride.setBabyTransport(rideDTO.isBabyTransport());
-//        ride.setPetTransport(rideDTO.isPetTransport());
-//        ride.setVehicleType(rideDTO.getVehicleType());
-//        for (Passenger p: rideDTO.getPassengers()) {
-//            Passenger p2 = (Passenger) userService.findOneById(p.getId());
-//            ride.addPassenger(p2);
-//        }
-//
-//        ride = rideService.save(ride);
-
-        return new ResponseEntity<>(rideDTO,  HttpStatus.CREATED);
+        return new ResponseEntity<>(rideTime.get("ride"),HttpStatus.OK);
     }
 
     //ACTIVE RIDE FOR DRIVER  /api/ride/driver/{driverId}/active
@@ -283,7 +225,7 @@ public class RideController {
             ride.setStatus("STARTED");
             ride.setStartTime(LocalDateTime.now());
             rideService.save(ride);
-
+            this.simpMessagingTemplate.convertAndSend("/map-updates/new-ride", new RideDTO(ride));
             return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
         }
         catch (NullPointerException ex){
@@ -305,8 +247,14 @@ public class RideController {
 
             ride.setStatus("ACCEPTED");
             rideService.save(ride);
-            this.simpMessagingTemplate.convertAndSend("/map-updates/new-ride", new RideDTO(ride));
-            ride.getDriver().setActive(false);
+            HashMap<String, Object> rideTime = new HashMap<>();
+            rideTime.put("ride", new RideDTO(ride));
+            rideTime.put("time", 5);
+            this.simpMessagingTemplate.convertAndSend("/map-updates/inform", rideTime);
+            Driver d = ride.getDriver();
+            d.setHasRide(true);
+            driverService.save(d);
+
             this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", ride.getDriver());
 
             return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
@@ -331,10 +279,14 @@ public class RideController {
             ride.setStatus("FINISHED");
             ride.setEndTime(ride.getStartTime().plusMinutes(ride.getEstimatedTimeInMinutes()));
             rideService.save(ride);
-
             this.simpMessagingTemplate.convertAndSend("/map-updates/end-ride", new RideDTO(ride));
-            ride.getDriver().setActive(true);
+
+            Driver d = ride.getDriver();
+            d.setHasRide(false);
+            driverService.save(d);
+
             this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", ride.getDriver());
+
 
             return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
         }
