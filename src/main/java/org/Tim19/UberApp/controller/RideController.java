@@ -44,20 +44,11 @@ public class RideController {
     @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PostMapping(consumes = "application/json", value = "/create")
     public ResponseEntity create(@RequestBody RideDTO rideDTO) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        SecurityUser user = (SecurityUser) auth.getPrincipal();
 
-        Passenger passenger = passengerService.findByEmail(user.getUsername());
-        rideDTO.addPassenger(passenger);
 
-        Driver driver = rideService.findFreeDriver();
-        rideDTO.setDriver(driver);
-        rideDTO.setVehicle(driver.getVehicle());
-        rideDTO.setStatus("PENDING");
-        Ride ride = rideService.save(new Ride(rideDTO));
+        RideDTO ride = rideService.create(rideDTO);
         System.out.println(ride);
-//        this.simpMessagingTemplate.convertAndSend("/map-updates/new-ride", rideDTO);
-        this.simpMessagingTemplate.convertAndSend("/map-updates/ask-driver", new RideDTO(ride));
+        this.simpMessagingTemplate.convertAndSend("/map-updates/ask-driver", ride);
 
         return new ResponseEntity<>(ride,HttpStatus.OK);
     }
@@ -74,54 +65,52 @@ public class RideController {
 
 
 
-        VehicleType vehicleType = rideDTO.getVehicleType();
-        if(vehicleType == null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+//        VehicleType vehicleType = rideDTO.getVehicleType();
+//        if(vehicleType == null){
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
+//
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        SecurityUser user = (SecurityUser) auth.getPrincipal();
+//
+//        Passenger passenger = passengerService.findByEmail(user.getUsername());
+//        Set<Ride> rides = rideService.findAllByPassengerId(passenger.getId());
+//        List<String> statuses = new ArrayList<>();
+//        for (Ride ride : rides){
+//            statuses.add(ride.getStatus());
+//        }
+//        if (statuses.contains("PENDING")){
+//            return new ResponseEntity<>("Cannot create a ride while you have one already pending!",  HttpStatus.BAD_REQUEST);
+//        }
+//
+//        Driver driver = rideService.findFreeDriver();
+//        Ride ride = new Ride();
+//
+//        ride.setPanic(false);
+//        ride.setDriver(driver);
+//        ride.setStartTime(LocalDateTime.now());
+//
+//        List<Float> coordinates = rideDTO.getCoordinates();
+//        Float long1 = coordinates.get(0);
+//        Float long2 = coordinates.get(1);
+//        Float lat1 = coordinates.get(2);
+//        Float lat2 = coordinates.get(3);
+//
+//        ride.setTotalCost(rideService.calculatePrice(rideDTO.getVehicleType(), rideService.calculateKilometres(long1, long2, lat1, lat2), rideDTO.isBabyTransport(), rideDTO.isPetTransport()));
+//        ride.setLocations(rideDTO.getLocations());
+//        ride.setEstimatedTimeInMinutes(rideService.calculateTravelTime(rideService.calculateKilometres(long1, long2, lat1, lat2)));
+//        ride.setStatus("PENDING");
+//        ride.setBabyTransport(rideDTO.isBabyTransport());
+//        ride.setPetTransport(rideDTO.isPetTransport());
+//        ride.setVehicleType(rideDTO.getVehicleType());
+//        for (Passenger p: rideDTO.getPassengers()) {
+//            Passenger p2 = (Passenger) userService.findOneById(p.getId());
+//            ride.addPassenger(p2);
+//        }
+//
+//        ride = rideService.save(ride);
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        SecurityUser user = (SecurityUser) auth.getPrincipal();
-
-        Passenger passenger = passengerService.findByEmail(user.getUsername());
-        System.out.println(passenger.getUsername());
-        Set<Ride> rides = rideService.findAllByPassengerId(passenger.getId());
-        System.out.println(passenger.getRides());
-        List<String> statuses = new ArrayList<>();
-        for (Ride ride : rides){
-            statuses.add(ride.getStatus());
-        }
-        if (statuses.contains("PENDING")){
-            return new ResponseEntity<>("Cannot create a ride while you have one already pending!",  HttpStatus.BAD_REQUEST);
-        }
-
-        Driver driver = rideService.findFreeDriver();
-        Ride ride = new Ride();
-
-        ride.setPanic(false);
-        ride.setDriver(driver);
-        ride.setStartTime(LocalDateTime.now());
-
-        List<Float> coordinates = rideDTO.getCoordinates();
-        Float long1 = coordinates.get(0);
-        Float long2 = coordinates.get(1);
-        Float lat1 = coordinates.get(2);
-        Float lat2 = coordinates.get(3);
-
-        ride.setTotalCost(rideService.calculatePrice(rideDTO.getVehicleType(), rideService.calculateKilometres(long1, long2, lat1, lat2), rideDTO.isBabyTransport(), rideDTO.isPetTransport()));
-        ride.setLocations(rideDTO.getLocations());
-        ride.setEstimatedTimeInMinutes(rideService.calculateTravelTime(rideService.calculateKilometres(long1, long2, lat1, lat2)));
-        ride.setStatus("PENDING");
-        ride.setBabyTransport(rideDTO.isBabyTransport());
-        ride.setPetTransport(rideDTO.isPetTransport());
-        ride.setVehicleType(rideDTO.getVehicleType());
-        for (Passenger p: rideDTO.getPassengers()) {
-            Passenger p2 = (Passenger) userService.findOneById(p.getId());
-            ride.addPassenger(p2);
-        }
-
-        ride = rideService.save(ride);
-
-        return new ResponseEntity<>(new RideDTO(ride),  HttpStatus.CREATED);
+        return new ResponseEntity<>(rideDTO,  HttpStatus.CREATED);
     }
 
     //ACTIVE RIDE FOR DRIVER  /api/ride/driver/{driverId}/active
@@ -229,7 +218,8 @@ public class RideController {
                 return new ResponseEntity<>("Cannot cancel a ride that is not in status PENDING or STARTED!",
                         HttpStatus.BAD_REQUEST);
             }
-
+            
+            this.simpMessagingTemplate.convertAndSend("/map-updates/declined-ride", new RideDTO(ride));
             ride.setStatus("CANCELED");
             rideService.save(ride);
 
@@ -279,18 +269,19 @@ public class RideController {
     }
 
     //START RIDE  /api/ride/{id}/start
-    @PreAuthorize("hasAnyAuthority('DRIVER', 'PASSENGER')")
+    @PreAuthorize("hasAnyAuthority('DRIVER')")
     @PutMapping(value="/{id}/start")
     public ResponseEntity startRide(@PathVariable Integer id) {
 
         try{
             Ride ride = rideService.findOneRideById(id);
 
-            if(!(ride.getStatus().equals("PENDING"))){
+            if(!(ride.getStatus().equals("ACCEPTED"))){
                 return new ResponseEntity<>("Cannot start a ride that is not in status ACCEPTED!", HttpStatus.BAD_REQUEST);
             }
 
             ride.setStatus("STARTED");
+            ride.setStartTime(LocalDateTime.now());
             rideService.save(ride);
 
             return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
@@ -301,7 +292,7 @@ public class RideController {
     }
 
     //ACCEPT RIDE  /api/ride/{id}/accept
-    @PreAuthorize("hasAnyAuthority('DRIVER', 'PASSENGER')")
+    @PreAuthorize("hasAnyAuthority('DRIVER')")
     @PutMapping(value="/{id}/accept")
     public ResponseEntity acceptRide(@PathVariable Integer id) {
 
@@ -315,6 +306,8 @@ public class RideController {
             ride.setStatus("ACCEPTED");
             rideService.save(ride);
             this.simpMessagingTemplate.convertAndSend("/map-updates/new-ride", new RideDTO(ride));
+            ride.getDriver().setActive(false);
+            this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", ride.getDriver());
 
             return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
         }
@@ -324,7 +317,7 @@ public class RideController {
     }
 
     //END THE RIDE  /api/ride/{id}/end
-    @PreAuthorize("hasAnyAuthority('DRIVER', 'PASSENGER')")
+    @PreAuthorize("hasAnyAuthority('DRIVER')")
     @PutMapping(value="/{id}/end")
     public ResponseEntity endRide(@PathVariable Integer id) {
 
@@ -332,11 +325,16 @@ public class RideController {
             Ride ride = rideService.findOneRideById(id);
 
             if(!(ride.getStatus().equals("STARTED"))){
-                return new ResponseEntity<>("Cannot en a ride that is not in status STARTED!", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Cannot end a ride that is not in status STARTED!", HttpStatus.BAD_REQUEST);
             }
 
             ride.setStatus("FINISHED");
+            ride.setEndTime(ride.getStartTime().plusMinutes(ride.getEstimatedTimeInMinutes()));
             rideService.save(ride);
+
+            this.simpMessagingTemplate.convertAndSend("/map-updates/end-ride", new RideDTO(ride));
+            ride.getDriver().setActive(true);
+            this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", ride.getDriver());
 
             return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
         }

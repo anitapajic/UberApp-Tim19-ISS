@@ -17,10 +17,10 @@ public class Ride {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name="startTime", nullable = false)
+    @Column(name="startTime")
     private LocalDateTime startTime;
 
-    @Column(name="endTime", nullable = true)
+    @Column(name="endTime")
     private LocalDateTime endTime;
 
     @Column(name="totalCost", nullable = false)
@@ -92,18 +92,10 @@ public class Ride {
     }
 
     public Ride(RideDTO rideDTO){
-        this.driver = rideDTO.getDriver();
-        this.passengers = rideDTO.getPassengers();
         this.locations = rideDTO.getLocations();
-        this.status = rideDTO.getStatus();
         this.babyTransport = rideDTO.isBabyTransport();
         this.petTransport = rideDTO.isPetTransport();
-        this.vehicleType = rideDTO.getVehicle().getVehicleType();
         this.routeJSON = rideDTO.getRouteJSON();
-        this.totalCost = 250.0;
-        this.estimatedTimeInMinutes = 15;
-        this.panic = false;
-        this.startTime = LocalDateTime.now().plusMinutes(5);
     }
 
     public Integer getId() {
