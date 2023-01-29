@@ -1,17 +1,23 @@
 package org.Tim19.UberApp.service;
 
+import org.Tim19.UberApp.dto.RideDTO;
 import org.Tim19.UberApp.dto.RideHistoryFilterDTO;
 import org.Tim19.UberApp.model.Driver;
+import org.Tim19.UberApp.model.Passenger;
 import org.Tim19.UberApp.model.Ride;
 import org.Tim19.UberApp.model.VehicleType;
 import org.Tim19.UberApp.repository.RejectionRepository;
 import org.Tim19.UberApp.repository.ReviewRepository;
 import org.Tim19.UberApp.repository.RideRepository;
+import org.Tim19.UberApp.security.SecurityUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -20,9 +26,7 @@ public class RideService {
     @Autowired
     private RideRepository rideRepository;
     @Autowired
-    private ReviewRepository reviewRepository;
-    @Autowired
-    private RejectionRepository rejectionRepository;
+    private PassengerService passengerService;
     @Autowired
     private DriverService driverService;
 
@@ -33,7 +37,7 @@ public class RideService {
         return rideRepository.findOneRideById(id);
     }
 
-    public List<Ride> findAllFilter(RideHistoryFilterDTO filter){
+    public List<RideDTO> findAllFilter(RideHistoryFilterDTO filter){
         List<Ride> rides;
         if( filter.getStartDate() != null && filter.getEndDate() != null){
             rides = rideRepository.findAllInDateRange(filter.getStartDate(), filter.getEndDate());
@@ -50,12 +54,50 @@ public class RideService {
             rides.removeIf(ride -> !ride.toString().contains(filter.getKeyword()));
         }
 
-        return rides;
+        List<RideDTO> rideDTOS = new ArrayList<>();
+        for(Ride r : rides){
+            RideDTO rDTO = new RideDTO(r);
+            rideDTOS.add(rDTO);
+        }
+
+
+        return rideDTOS;
     }
 
     public Page<Ride> findAll(Pageable page){return rideRepository.findAll(page);}
 
     public Ride save(Ride ride){return rideRepository.save(ride);}
+    public RideDTO create(RideDTO rideDTO){
+        Ride ride = new Ride(rideDTO);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityUser user = (SecurityUser) auth.getPrincipal();
+
+        Passenger passenger = passengerService.findByEmail(user.getUsername());
+        ride.addPassenger(passenger);
+
+        Driver driver = this.findFreeDriver();
+        ride.setDriver(driver);
+        ride.setVehicleType(driver.getVehicle().getVehicleType());
+        ride.setStatus("PENDING");
+        ride.setPanic(false);
+
+
+        List<Float> coordinates = rideDTO.getCoordinates();
+        Float long1 = coordinates.get(0);
+        Float long2 = coordinates.get(1);
+        Float lat1 = coordinates.get(2);
+        Float lat2 = coordinates.get(3);
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        Double cost = this.calculatePrice(ride.getVehicleType(), this.calculateKilometres(long1, long2, lat1, lat2));
+        ride.setTotalCost(Double.valueOf(df.format(cost)));
+        ride.setEstimatedTimeInMinutes(this.calculateTravelTime(this.calculateKilometres(long1, long2, lat1, lat2)));
+
+
+        ride = rideRepository.save(ride);
+        return new RideDTO(ride);
+    }
+
 
     public void remove(Integer id){rideRepository.deleteById(id);}
 
@@ -126,7 +168,7 @@ public class RideService {
         return time;
     }
 
-    public Double calculatePrice(VehicleType vehicleType, Double kilometres, Boolean babyTransport, Boolean petTransport){
+    public Double calculatePrice(VehicleType vehicleType, Double kilometres){
 
         Double price = 170.0;
         if(vehicleType.equals(VehicleType.STANDARDNO)){
@@ -138,16 +180,20 @@ public class RideService {
         else if(vehicleType.equals(VehicleType.LUKSUZNO)){
             price +=100*kilometres;
         }
-        if(babyTransport)
-            price += 50;
-        if(petTransport)
-            price += 50;
-
 
         return price;
     }
 
 
+    public List<RideDTO> getAllActiveRides() {
+        List<Ride> rs = this.rideRepository.findAllByStatus("STARTED");
+        List<RideDTO> rides = new ArrayList<>();
+        for(Ride r : rs){
+            RideDTO ride = new RideDTO(r);
+            rides.add(ride);
+        }
+        return rides;
+    }
 
 //    private void findRideReviewsAndRejections(Set<Ride> rides){
 //        for (Ride r: rides) {

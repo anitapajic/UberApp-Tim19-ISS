@@ -25,8 +25,8 @@ public class VehicleController {
     @Autowired
     private DriverService driverService;
     
-//    @Autowired
-//    private SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
 
     //VEHICLE OF THE DRIVER  /api/driver/{id}/vehicle
@@ -120,14 +120,15 @@ public class VehicleController {
 
 
     //CHANGE LOCATION OF THE VEHICLE  /api/vehicle/{id}/location  (vehicleId)
-    @PutMapping(value = "/vehicle/{id}/location")
-    public ResponseEntity<Void> changeVehicleLocation(@PathVariable Integer id, @RequestBody Location location){
-
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PutMapping(value = "/vehicle/location/{id}")
+    public ResponseEntity changeVehicleLocation(@PathVariable Integer id, @RequestBody Location location){
         Vehicle vehicle = vehicleService.findOne(id);
         vehicle.setLocation(location);
-        //this.simpMessagingTemplate.convertAndSend("/map-updates", vehicle);
+        vehicle = vehicleService.save(vehicle);
+        this.simpMessagingTemplate.convertAndSend("/map-updates/update-vehicle-position", vehicle);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(vehicle, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")

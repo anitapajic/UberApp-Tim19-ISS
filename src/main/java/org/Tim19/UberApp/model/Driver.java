@@ -22,7 +22,6 @@ public class Driver extends User{
             fetch = FetchType.LAZY, mappedBy = "driver")
     private Set<DriverDocument> documents = new HashSet<DriverDocument>();
 
-    @JsonIgnore
     @OneToOne
     @JoinColumn(name="vehicle_id")
     private Vehicle vehicle;

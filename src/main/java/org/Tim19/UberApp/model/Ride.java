@@ -1,6 +1,8 @@
 package org.Tim19.UberApp.model;
 
 import lombok.NoArgsConstructor;
+import org.Tim19.UberApp.dto.RideDTO;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,10 +19,10 @@ public class Ride {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name="startTime", nullable = false)
+    @Column(name="startTime")
     private LocalDateTime startTime;
 
-    @Column(name="endTime", nullable = true)
+    @Column(name="endTime")
     private LocalDateTime endTime;
 
     @Column(name="totalCost", nullable = false)
@@ -68,8 +70,11 @@ public class Ride {
     @Column(name="vehicleType", nullable = true)
     private VehicleType vehicleType;
 
+//    @Type(type = "json")
+    @Column(columnDefinition = "json", name = "json")
+    private String routeJSON;
 
-    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengers, Set<Path> locations, Integer estimatedTimeInMinutes, Set<Review> reviews, Set<Rejection> rejection, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType) {
+    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengers, Set<Path> locations, Integer estimatedTimeInMinutes, Set<Review> reviews, Set<Rejection> rejection, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType, String routeJSON) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -85,6 +90,14 @@ public class Ride {
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
         this.vehicleType = vehicleType;
+        this.routeJSON = routeJSON;
+    }
+
+    public Ride(RideDTO rideDTO){
+        this.locations = rideDTO.getLocations();
+        this.babyTransport = rideDTO.isBabyTransport();
+        this.petTransport = rideDTO.isPetTransport();
+        this.routeJSON = rideDTO.getRouteJSON();
     }
 
     public Integer getId() {
@@ -252,6 +265,14 @@ public class Ride {
             coordinates.add(latitude2);
         }
         return coordinates;
+    }
+
+    public String getRouteJSON() {
+        return routeJSON;
+    }
+
+    public void setRouteJSON(String routeJSON) {
+        this.routeJSON = routeJSON;
     }
 
     @Override

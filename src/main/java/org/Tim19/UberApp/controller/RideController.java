@@ -12,12 +12,13 @@ import org.Tim19.UberApp.service.PassengerService;
 import org.Tim19.UberApp.service.RideService;
 import org.Tim19.UberApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -36,59 +37,80 @@ public class RideController {
     @Autowired
     private PassengerService passengerService;
 
-    //CREATING A RIDE  /api/ride
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+    @PreAuthorize("hasAnyAuthority('PASSENGER')")
+    @PostMapping(consumes = "application/json", value = "/create")
+    public ResponseEntity create(@RequestBody RideDTO rideDTO) {
+
+
+        RideDTO ride = rideService.create(rideDTO);
+        System.out.println(ride);
+        this.simpMessagingTemplate.convertAndSend("/map-updates/ask-driver", ride);
+
+        return new ResponseEntity<>(ride,HttpStatus.OK);
+    }
+
+
+
+
+
+
+        //CREATING A RIDE  /api/ride
     @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PostMapping(consumes = "application/json")
     public ResponseEntity createRide(@RequestBody CreateRideBodyPaginatedDTO rideDTO) {
 
-        VehicleType vehicleType = rideDTO.getVehicleType();
-        if(vehicleType == null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        SecurityUser user = (SecurityUser) auth.getPrincipal();
 
-        Passenger passenger = passengerService.findByEmail(user.getUsername());
-        System.out.println(passenger.getUsername());
-        Set<Ride> rides = rideService.findAllByPassengerId(passenger.getId());
-        System.out.println(passenger.getRides());
-        List<String> statuses = new ArrayList<>();
-        for (Ride ride : rides){
-            statuses.add(ride.getStatus());
-        }
-        if (statuses.contains("PENDING")){
-            return new ResponseEntity<>("Cannot create a ride while you have one already pending!",  HttpStatus.BAD_REQUEST);
-        }
+//        VehicleType vehicleType = rideDTO.getVehicleType();
+//        if(vehicleType == null){
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
+//
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        SecurityUser user = (SecurityUser) auth.getPrincipal();
+//
+//        Passenger passenger = passengerService.findByEmail(user.getUsername());
+//        Set<Ride> rides = rideService.findAllByPassengerId(passenger.getId());
+//        List<String> statuses = new ArrayList<>();
+//        for (Ride ride : rides){
+//            statuses.add(ride.getStatus());
+//        }
+//        if (statuses.contains("PENDING")){
+//            return new ResponseEntity<>("Cannot create a ride while you have one already pending!",  HttpStatus.BAD_REQUEST);
+//        }
+//
+//        Driver driver = rideService.findFreeDriver();
+//        Ride ride = new Ride();
+//
+//        ride.setPanic(false);
+//        ride.setDriver(driver);
+//        ride.setStartTime(LocalDateTime.now());
+//
+//        List<Float> coordinates = rideDTO.getCoordinates();
+//        Float long1 = coordinates.get(0);
+//        Float long2 = coordinates.get(1);
+//        Float lat1 = coordinates.get(2);
+//        Float lat2 = coordinates.get(3);
+//
+//        ride.setTotalCost(rideService.calculatePrice(rideDTO.getVehicleType(), rideService.calculateKilometres(long1, long2, lat1, lat2), rideDTO.isBabyTransport(), rideDTO.isPetTransport()));
+//        ride.setLocations(rideDTO.getLocations());
+//        ride.setEstimatedTimeInMinutes(rideService.calculateTravelTime(rideService.calculateKilometres(long1, long2, lat1, lat2)));
+//        ride.setStatus("PENDING");
+//        ride.setBabyTransport(rideDTO.isBabyTransport());
+//        ride.setPetTransport(rideDTO.isPetTransport());
+//        ride.setVehicleType(rideDTO.getVehicleType());
+//        for (Passenger p: rideDTO.getPassengers()) {
+//            Passenger p2 = (Passenger) userService.findOneById(p.getId());
+//            ride.addPassenger(p2);
+//        }
+//
+//        ride = rideService.save(ride);
 
-        Driver driver = rideService.findFreeDriver();
-        Ride ride = new Ride();
-
-        ride.setPanic(false);
-        ride.setDriver(driver);
-        ride.setStartTime(LocalDateTime.now());
-
-        List<Float> coordinates = rideDTO.getCoordinates();
-        Float long1 = coordinates.get(0);
-        Float long2 = coordinates.get(1);
-        Float lat1 = coordinates.get(2);
-        Float lat2 = coordinates.get(3);
-
-        ride.setTotalCost(rideService.calculatePrice(rideDTO.getVehicleType(), rideService.calculateKilometres(long1, long2, lat1, lat2), rideDTO.isBabyTransport(), rideDTO.isPetTransport()));
-        ride.setLocations(rideDTO.getLocations());
-        ride.setEstimatedTimeInMinutes(rideService.calculateTravelTime(rideService.calculateKilometres(long1, long2, lat1, lat2)));
-        ride.setStatus("PENDING");
-        ride.setBabyTransport(rideDTO.isBabyTransport());
-        ride.setPetTransport(rideDTO.isPetTransport());
-        ride.setVehicleType(rideDTO.getVehicleType());
-        for (Passenger p: rideDTO.getPassengers()) {
-            Passenger p2 = (Passenger) userService.findOneById(p.getId());
-            ride.addPassenger(p2);
-        }
-
-        ride = rideService.save(ride);
-
-        return new ResponseEntity<>(new RideDTO(ride),  HttpStatus.CREATED);
+        return new ResponseEntity<>(rideDTO,  HttpStatus.CREATED);
     }
 
     //ACTIVE RIDE FOR DRIVER  /api/ride/driver/{driverId}/active
@@ -172,7 +194,7 @@ public class RideController {
     public ResponseEntity getAllRides(@RequestBody RideHistoryFilterDTO filterDTO) {
         System.out.println(filterDTO + " 1234");
         try{
-            List<Ride> allRides = rideService.findAllFilter(filterDTO);
+            List<RideDTO> allRides = rideService.findAllFilter(filterDTO);
             Map<String, Object> response = new HashMap<>();
             response.put("totalCount", allRides.size());
             response.put("results", allRides);
@@ -197,6 +219,7 @@ public class RideController {
                         HttpStatus.BAD_REQUEST);
             }
 
+            this.simpMessagingTemplate.convertAndSend("/map-updates/declined-ride", new RideDTO(ride));
             ride.setStatus("CANCELED");
             rideService.save(ride);
 
@@ -253,11 +276,12 @@ public class RideController {
         try{
             Ride ride = rideService.findOneRideById(id);
 
-            if(!(ride.getStatus().equals("PENDING"))){
+            if(!(ride.getStatus().equals("ACCEPTED"))){
                 return new ResponseEntity<>("Cannot start a ride that is not in status ACCEPTED!", HttpStatus.BAD_REQUEST);
             }
 
             ride.setStatus("STARTED");
+            ride.setStartTime(LocalDateTime.now());
             rideService.save(ride);
 
             return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
@@ -281,6 +305,9 @@ public class RideController {
 
             ride.setStatus("ACCEPTED");
             rideService.save(ride);
+            this.simpMessagingTemplate.convertAndSend("/map-updates/new-ride", new RideDTO(ride));
+            ride.getDriver().setActive(false);
+            this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", ride.getDriver());
 
             return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
         }
@@ -298,11 +325,16 @@ public class RideController {
             Ride ride = rideService.findOneRideById(id);
 
             if(!(ride.getStatus().equals("STARTED"))){
-                return new ResponseEntity<>("Cannot en a ride that is not in status STARTED!", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Cannot end a ride that is not in status STARTED!", HttpStatus.BAD_REQUEST);
             }
 
             ride.setStatus("FINISHED");
+            ride.setEndTime(ride.getStartTime().plusMinutes(ride.getEstimatedTimeInMinutes()));
             rideService.save(ride);
+
+            this.simpMessagingTemplate.convertAndSend("/map-updates/end-ride", new RideDTO(ride));
+            ride.getDriver().setActive(true);
+            this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", ride.getDriver());
 
             return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
         }
@@ -328,17 +360,30 @@ public class RideController {
 
             rejection.setTimeOfRejection(LocalDateTime.now());
             rejection.setRide(ride);
-            rejection.setUser((User) ride.getPassengers().toArray()[0]);
+            rejection.setUser(ride.getDriver());
             ride.addRejection(rejection);
             ride.setStatus("REJECTED");
             rideService.save(ride);
 
             RideDTO rDTO = new RideDTO(ride);
+            this.simpMessagingTemplate.convertAndSend("/map-updates/declined-ride",rDTO);
+
             return new ResponseEntity<>(rDTO, HttpStatus.OK);
         }
         catch (NullPointerException ex){
             return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
         }
+    }
+
+
+    @GetMapping(
+            produces = "application/json",
+            value = "/active"
+    )
+    public ResponseEntity getAllActiveRides() {
+        List<RideDTO> rides = this.rideService.getAllActiveRides();
+
+        return new ResponseEntity<>(rides, HttpStatus.OK);
     }
 
 }

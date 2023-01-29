@@ -31,7 +31,7 @@ public class UnregisteredUserController {
         Float lat2 = coordinates.get(3);
 
 
-        Double totalCost = rideService.calculatePrice(rideDTO.getVehicleType(), rideService.calculateKilometres(long1, long2, lat1, lat2), rideDTO.isBabyTransport(), rideDTO.isPetTransport());
+        Double totalCost = rideService.calculatePrice(rideDTO.getVehicleType(), rideService.calculateKilometres(long1, long2, lat1, lat2));
         Integer estimatedMinutes = rideService.calculateTravelTime(rideService.calculateKilometres(long1, long2, lat1, lat2));
 
 

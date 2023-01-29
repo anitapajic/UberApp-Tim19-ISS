@@ -4,6 +4,7 @@ import org.Tim19.UberApp.dto.LoginDTO;
 import org.Tim19.UberApp.dto.TokenDTO;
 import org.Tim19.UberApp.exceptions.BadRequestException;
 import org.Tim19.UberApp.model.User;
+import org.Tim19.UberApp.security.SecurityUser;
 import org.Tim19.UberApp.security.TokenUtils;
 import org.Tim19.UberApp.service.UserDetailsServiceImpl;
 import org.Tim19.UberApp.service.UserService;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -36,6 +38,8 @@ public class AuthenticationController {
 
     private TokenUtils tokenUtils;
 
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
     @Autowired
     public AuthenticationController(
             AuthenticationManager authenticationManager,
@@ -77,7 +81,11 @@ public class AuthenticationController {
             User user = this.userService.findIdByUsername(login.getUsername());
             if(user.getBlocked()){
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
+            }
+            if(user.getAuthorities().equals("DRIVER")){
+                user.setActive(true);
+                userService.save(user);
+                this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", user);
             }
             token.setId(user.getId());
             token.setRole(user.getAuthorities());
@@ -100,8 +108,18 @@ public class AuthenticationController {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+        SecurityUser sUser = (SecurityUser) auth.getPrincipal();
+        User user = this.userService.findIdByUsername(sUser.getUsername());
+
+        if(user.getAuthorities().equals("DRIVER")){
+            user.setActive(false);
+            userService.save(user);
+            this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", user);
+        }
+
         if (!(auth instanceof AnonymousAuthenticationToken)){
             SecurityContextHolder.clearContext();
+            this.simpMessagingTemplate.convertAndSend("/map-updates/delete-all-rides", "logout");
 
             return new ResponseEntity<>("You successfully logged out!", HttpStatus.OK);
         } else {

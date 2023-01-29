@@ -7,6 +7,7 @@ import org.Tim19.UberApp.repository.UserRepository;
 import org.Tim19.UberApp.security.SecurityUser;
 import org.Tim19.UberApp.security.UserFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
     @Override
     public UserDetails loadUserByUsername(String username) {
         User user = this.userRepository.findOneByUsername(username)

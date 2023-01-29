@@ -27,7 +27,7 @@ public class VehicleService {
     private LocationRepository locationRepository;
 
 
-    public Vehicle findOne(Integer id){return vehicleRepository.findById(id).orElse(null);}
+    public Vehicle findOne(Integer id){return vehicleRepository.findOneById(id).orElse(null);}
 
 
     public List<VehicleDTO> findAll(){
@@ -55,7 +55,9 @@ public class VehicleService {
     public Page<Vehicle> findAll(Pageable page){return vehicleRepository.findAll(page);}
 
     public Vehicle save(Vehicle vehicle){
-        vehicle.setLocation(locationRepository.findById(1).orElse(null));
+        if(vehicle.getLocation() == null){
+            vehicle.setLocation(locationRepository.findById(1).orElse(null));
+        }
 
         return vehicleRepository.save(vehicle);}
 
