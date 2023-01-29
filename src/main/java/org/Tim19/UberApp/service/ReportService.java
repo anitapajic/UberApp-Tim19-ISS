@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -184,44 +185,41 @@ public class ReportService {
         return ridesByDays;
     }
 
-    public HashMap<String, Integer> getNumOfDriverRidesFromDate(LocalDateTime from, LocalDateTime to, Integer driverId){
-            List<Ride> rides;
-            LocalDateTime from2 = from;
-            HashMap<String, Integer> ridesByDays = new HashMap<>();
-            for(int i = 0; i <7; i++){
-                ridesByDays.put(String.valueOf(LocalDate.of(from2.getYear(), from2.getMonthValue(), from2.getDayOfMonth())), 0);
-                from2 = from2.plusDays(1);
-            }
-            Integer value = 0;
-
-            if( from != null && to != null){
-                rides = rideRepository.findAllInDateRange(from, to);
-                for(Ride r: rides){
-                    if(r.getDriver().getId() == driverId){
-                        String key = String.valueOf(LocalDate.of(r.getStartTime().getYear(), r.getStartTime().getMonthValue(), r.getStartTime().getDayOfMonth()));
-                        value = 1;
-                        ridesByDays.put(key, ridesByDays.get(key) + value);
-                    }
-
-                }
-            }
-
-            return ridesByDays;
-    }
-
-    public HashMap<String, Integer> getNumOfPassengerRidesFromDate(LocalDateTime from, LocalDateTime to, Integer passengerId){
-        List<Ride> rides;
-        LocalDateTime from2 = from;
+    public HashMap<String, Integer> getNumOfDriverRidesFromDate(Integer driverId){
+        List<LocalDateTime> dates = new ArrayList<>();
+        for(Ride r : rideRepository.findAllByDriverId(driverId)){
+            dates.add(r.getStartTime());
+        }
         HashMap<String, Integer> ridesByDays = new HashMap<>();
-        for(int i = 0; i <7; i++){
-            ridesByDays.put(String.valueOf(LocalDate.of(from2.getYear(), from2.getMonthValue(), from2.getDayOfMonth())), 0);
-            from2 = from2.plusDays(1);
+        for(LocalDateTime date:dates){
+            ridesByDays.put(String.valueOf(LocalDate.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth())), 0);
+            date = date.plusDays(1);
         }
         Integer value = 0;
+        for(Ride r: rideRepository.findAllByDriverId(driverId)){
+                if(r.getDriver().getId().equals(driverId)){
+                    String key = String.valueOf(LocalDate.of(r.getStartTime().getYear(), r.getStartTime().getMonthValue(), r.getStartTime().getDayOfMonth()));
+                    value = 1;
+                    ridesByDays.put(key, ridesByDays.get(key) + value);
+                }
 
-        if( from != null && to != null){
-            rides = rideRepository.findAllInDateRange(from, to);
-            for(Ride r: rides){
+        }
+
+        return ridesByDays;
+    }
+
+    public HashMap<String, Integer> getNumOfPassengerRidesFromDate(Integer passengerId){
+        List<LocalDateTime> dates = new ArrayList<>();
+        for(Ride r : rideRepository.findAllByPassengersId(passengerId)){
+            dates.add(r.getStartTime());
+        }
+        HashMap<String, Integer> ridesByDays = new HashMap<>();
+        for(LocalDateTime date:dates){
+            ridesByDays.put(String.valueOf(LocalDate.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth())), 0);
+            date = date.plusDays(1);
+        }
+        Integer value = 0;
+            for(Ride r: rideRepository.findAllByPassengersId(passengerId)){
                 for(Passenger p : r.getPassengers()){
                     if(p.getId().equals(passengerId)){
                         String key = String.valueOf(LocalDate.of(r.getStartTime().getYear(), r.getStartTime().getMonthValue(), r.getStartTime().getDayOfMonth()));
@@ -230,7 +228,6 @@ public class ReportService {
                     }
                 }
             }
-        }
 
         return ridesByDays;
     }
