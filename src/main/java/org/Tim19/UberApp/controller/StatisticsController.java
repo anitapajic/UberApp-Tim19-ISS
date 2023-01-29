@@ -1,5 +1,6 @@
 package org.Tim19.UberApp.controller;
 
+import org.Tim19.UberApp.dto.FilterRidesFromDatesDTO;
 import org.Tim19.UberApp.dto.RideHistoryFilterDTO;
 import org.Tim19.UberApp.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,14 @@ public class StatisticsController {
             Double income = reportService.getTotalIncome();
             return new ResponseEntity<>(income, HttpStatus.OK);
     }
+    //TOTAL TODAYS INCOME  api/statistics/todaysIncome
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @GetMapping(value = "/todaysIncome")
+    public ResponseEntity<Double> getTodaysIncome() {
+
+        Double income = reportService.getTodaysIncome();
+        return new ResponseEntity<>(income, HttpStatus.OK);
+    }
 
     //TOTAL INCOME FROM DATES api/statistics/date/totalIncome
     @PreAuthorize("hasAnyAuthority('ADMIN')")
@@ -45,12 +54,32 @@ public class StatisticsController {
         return new ResponseEntity<>(income, HttpStatus.OK);
     }
 
+    //TOTAL DRIVER INCOME DROM DATES api/statistics/date/driverIncome/{driverId}
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DRIVER')")
+    @PostMapping(value = "/date/driverIncome/{driverId}")
+    public ResponseEntity<HashMap<String, Double>> getTotalDriverIncomeFromDates(@RequestBody RideHistoryFilterDTO filter,
+                                                                            @PathVariable Integer driverId) {
+
+        HashMap<String, Double> income = reportService.getDriverIncomeFromDates(filter.getStartDate(), filter.getEndDate(), driverId);
+        return new ResponseEntity<>(income, HttpStatus.OK);
+    }
+
     //TOTAL PASSENGER OUTCOME  api/statistics/passengerOutcome/{passengerId}
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PASSENGER')")
     @GetMapping(value = "/passengerOutcome/{passengerId}")
-    public ResponseEntity<Double> getTotalPassengerOutcome(@PathVariable Integer passengerId) {
+    public ResponseEntity<Double> getTotalPassengerOutcomeFromDates(@PathVariable Integer passengerId) {
 
         Double outcome = reportService.getTotalOutcomeFromOnePassenger(passengerId);
+        return new ResponseEntity<>(outcome, HttpStatus.OK);
+    }
+
+    //TOTAL PASSENGER OUTCOME DROM DATES api/statistics/date/passengerOutcome/{passengerId}
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PASSENGER')")
+    @PostMapping(value = "/date/passengerOutcome/{passengerId}")
+    public ResponseEntity<HashMap<String, Double>> getTotalPassengerOutcome(@RequestBody RideHistoryFilterDTO filter,
+                                                           @PathVariable Integer passengerId) {
+
+        HashMap<String, Double> outcome = reportService.getPassengerOutcomeFromDates(filter.getStartDate(), filter.getEndDate(), passengerId);
         return new ResponseEntity<>(outcome, HttpStatus.OK);
     }
 
@@ -74,6 +103,16 @@ public class StatisticsController {
         return new ResponseEntity<>(total, HttpStatus.OK);
     }
 
+    //TOTAL DRIVER RIDES FROM DATES api/statistics/date/rides/{passengerId}
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DRIVER')")
+    @PostMapping(value = "/date/rides/{driverId}")
+    public ResponseEntity<HashMap<String,Integer>> getDriverRidesFromDates(@PathVariable Integer driverId,
+                                                                              @RequestBody FilterRidesFromDatesDTO filter) {
+
+        HashMap<String, Integer> rides = reportService.getNumOfDriverRidesFromDate(filter.getStartDateRides(), filter.getEndDateRides(), driverId);
+        return new ResponseEntity<>(rides, HttpStatus.OK);
+    }
+
     //TOTAL NUMBER OF RIDES FROM ONE PASSENGER api/statistics/driverRides/{driverId}
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PASSENGER')")
     @GetMapping(value = "/driverRides/{passengerId}")
@@ -84,5 +123,33 @@ public class StatisticsController {
         return new ResponseEntity<>(total, HttpStatus.OK);
     }
 
+    //TOTAL PASSENGER RIDES FROM DATES api/statistics/date/rides/{passengerId}
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PostMapping(value = "/date/rides/{passengerId}")
+    public ResponseEntity<HashMap<String,Integer>> getPassengerRidesFromDates(@PathVariable Integer passengerId,
+            @RequestBody FilterRidesFromDatesDTO filter) {
+
+        HashMap<String, Integer> rides = reportService.getNumOfPassengerRidesFromDate(filter.getStartDateRides(), filter.getEndDateRides(), passengerId);
+        return new ResponseEntity<>(rides, HttpStatus.OK);
+    }
+
+    //TOTAL RIDES FROM DATES api/statistics/date/rides
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PostMapping(value = "/date/rides")
+    public ResponseEntity<HashMap<String,Integer>> getRidesFromDates(@RequestBody FilterRidesFromDatesDTO filter) {
+
+        HashMap<String, Integer> rides = reportService.getRidesFromDates(filter.getStartDateRides(), filter.getEndDateRides());
+        return new ResponseEntity<>(rides, HttpStatus.OK);
+    }
+
+    //TOTAL NUMBER OFKILOMETRES api/statistics/km
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @GetMapping(value = "/km")
+    public ResponseEntity<Double> getNumberOfKilometres() {
+
+        Double total = reportService.getNumOfKm();
+        Double total2 = (double) Math.round(total);
+        return new ResponseEntity<>(total2, HttpStatus.OK);
+    }
 
 }
