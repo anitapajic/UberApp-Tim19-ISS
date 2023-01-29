@@ -245,4 +245,29 @@ public class ReportService {
         }
         return km;
     }
+
+    public Double driverNumOfKm(Integer driverId){
+        Double km = 0.0;
+        for(Ride r : rideRepository.findAllByDriverId(driverId)){
+            List<Float> coordinates = r.getCoordinates();
+            Float long1 = coordinates.get(0);
+            Float long2 = coordinates.get(1);
+            Float lat1 = coordinates.get(2);
+            Float lat2 = coordinates.get(3);
+            km += rideService.calculateKilometres(long1, long2, lat1, lat2);
+        }
+        return km;
+    }
+    public Double passengerNumOfKm(Integer passengerId){
+        Double km = 0.0;
+        for(Ride r : rideRepository.findAllByPassengersId(passengerId)){
+            List<Float> coordinates = r.getCoordinates();
+            Float long1 = coordinates.get(0);
+            Float long2 = coordinates.get(1);
+            Float lat1 = coordinates.get(2);
+            Float lat2 = coordinates.get(3);
+            km += rideService.calculateKilometres(long1, long2, lat1, lat2);
+        }
+        return km;
+    }
 }

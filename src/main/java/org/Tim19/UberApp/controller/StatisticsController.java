@@ -53,7 +53,7 @@ public class StatisticsController {
         return new ResponseEntity<>(rides, HttpStatus.OK);
     }
 
-    //TOTAL NUMBER OFKILOMETRES api/statistics/km
+    //TOTAL NUMBER OF KILOMETRES api/statistics/km
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping(value = "/km")
     public ResponseEntity<Double> getNumberOfKilometres() {
@@ -115,6 +115,18 @@ public class StatisticsController {
         return new ResponseEntity<>(total, HttpStatus.OK);
     }
 
+    //TOTAL NUMBER OF KILOMETRES FROM ONE DRIVER api/statistics/driverKm/{driverId}
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DRIVER')")
+    @GetMapping(value = "/driverKm/{driverId}")
+    public ResponseEntity<Double> getDriverNumOfKm(@PathVariable Integer driverId) {
+
+        Double total = reportService.driverNumOfKm(driverId);
+        Double total2 = (double) Math.round(total);
+
+        return new ResponseEntity<>(total2, HttpStatus.OK);
+    }
+
+
     //=============================================
     //PASSENGER
     //=============================================
@@ -158,6 +170,15 @@ public class StatisticsController {
         return new ResponseEntity<>(rides, HttpStatus.OK);
     }
 
+    //TOTAL NUMBER OF KILOMETRES FROM ONE PASSENGER api/statistics/passengerKm/{passengerId}
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PASSENGER')")
+    @GetMapping(value = "/passengerKm/{passengerId}")
+    public ResponseEntity<Double> getPassengerNumOfKm(@PathVariable Integer passengerId) {
 
+        Double total = reportService.passengerNumOfKm(passengerId);
+        Double total2 = (double) Math.round(total);
+
+        return new ResponseEntity<>(total2, HttpStatus.OK);
+    }
 
 }
