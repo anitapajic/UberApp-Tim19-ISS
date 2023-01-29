@@ -64,7 +64,7 @@ public class RideService {
     public Page<Ride> findAll(Pageable page){return rideRepository.findAll(page);}
 
     public Ride save(Ride ride){return rideRepository.save(ride);}
-    public HashMap<String, Object> create(RideDTO rideDTO){
+    public RideDTO create(RideDTO rideDTO){
         Ride ride = new Ride(rideDTO);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         SecurityUser user = (SecurityUser) auth.getPrincipal();
@@ -76,6 +76,10 @@ public class RideService {
         Driver driver = (Driver) driverTime.get("driver");
         ride.setDriver(driver);
         ride.setVehicleType(driver.getVehicle().getVehicleType());
+
+
+        Integer min = (Integer) driverTime.get("time");
+        ride.setStartTime(LocalDateTime.now().plusMinutes(min));
 
         ride.setStatus("PENDING");
         ride.setPanic(false);
@@ -89,10 +93,7 @@ public class RideService {
 
         ride = rideRepository.save(ride);
 
-        HashMap<String, Object> response = new HashMap<>();
-        response.put("ride", new RideDTO(ride));
-        response.put("time", driverTime.get("time"));
-        return response;
+        return new RideDTO(ride);
     }
 
 

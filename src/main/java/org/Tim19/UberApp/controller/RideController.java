@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @RestController
@@ -47,12 +48,11 @@ public class RideController {
     @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PostMapping(consumes = "application/json")
     public ResponseEntity createRide(@RequestBody RideDTO rideDTO) throws InterruptedException {
-        System.out.println(rideDTO.getRouteJSON());
-        HashMap<String, Object> rideTime = rideService.create(rideDTO);
-        this.simpMessagingTemplate.convertAndSend("/map-updates/ask-driver", rideTime.get("ride"));
-        System.out.println(rideTime.get("ride"));
+        rideDTO = rideService.create(rideDTO);
+        this.simpMessagingTemplate.convertAndSend("/map-updates/ask-driver", rideDTO);
 
-        return new ResponseEntity<>(rideTime.get("ride"),HttpStatus.OK);
+
+        return new ResponseEntity<>(rideDTO,HttpStatus.OK);
     }
 
     //ACTIVE RIDE FOR DRIVER  /api/ride/driver/{driverId}/active
@@ -156,7 +156,7 @@ public class RideController {
         try{
             Ride ride = rideService.findOneRideById(id);
 
-            if(!(ride.getStatus().equals("STARTED") || ride.getStatus().equals("PENDING"))){
+            if(!(ride.getStatus().equals("ACCEPTED") || ride.getStatus().equals("PENDING"))){
                 return new ResponseEntity<>("Cannot cancel a ride that is not in status PENDING or STARTED!",
                         HttpStatus.BAD_REQUEST);
             }
@@ -249,7 +249,10 @@ public class RideController {
             rideService.save(ride);
             HashMap<String, Object> rideTime = new HashMap<>();
             rideTime.put("ride", new RideDTO(ride));
-            rideTime.put("time", 5);
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime start = ride.getStartTime();
+
+            rideTime.put("time",Math.toIntExact(ChronoUnit.MINUTES.between(now, start)));
             this.simpMessagingTemplate.convertAndSend("/map-updates/inform", rideTime);
             Driver d = ride.getDriver();
             d.setHasRide(true);
