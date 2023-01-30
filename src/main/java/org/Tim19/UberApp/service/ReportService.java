@@ -236,12 +236,12 @@ public class ReportService {
         Double km = 0.0;
         List<Ride> rides = rideRepository.findAll();
         for(Ride r : rides){
-            List<Float> coordinates = r.getCoordinates();
+            List<Float> coordinates = rideService.getCoordinates(r.getLocations());
             Float long1 = coordinates.get(0);
             Float long2 = coordinates.get(1);
             Float lat1 = coordinates.get(2);
             Float lat2 = coordinates.get(3);
-            km += rideService.calculateKilometres(long1, long2, lat1, lat2);
+            //km += rideService.calculateKilometres(long1, long2, lat1, lat2);
         }
         return km;
     }
@@ -249,7 +249,7 @@ public class ReportService {
     public Double driverNumOfKm(Integer driverId){
         Double km = 0.0;
         for(Ride r : rideRepository.findAllByDriverId(driverId)){
-            List<Float> coordinates = r.getCoordinates();
+            List<Float> coordinates = rideService.getCoordinates(r.getLocations());
             Float long1 = coordinates.get(0);
             Float long2 = coordinates.get(1);
             Float lat1 = coordinates.get(2);
@@ -261,7 +261,7 @@ public class ReportService {
     public Double passengerNumOfKm(Integer passengerId){
         Double km = 0.0;
         for(Ride r : rideRepository.findAllByPassengersId(passengerId)){
-            List<Float> coordinates = r.getCoordinates();
+            List<Float> coordinates = rideService.getCoordinates(r.getLocations());
             Float long1 = coordinates.get(0);
             Float long2 = coordinates.get(1);
             Float lat1 = coordinates.get(2);

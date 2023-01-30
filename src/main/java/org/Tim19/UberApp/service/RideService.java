@@ -1,11 +1,11 @@
 package org.Tim19.UberApp.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.Tim19.UberApp.dto.RideDTO;
 import org.Tim19.UberApp.dto.RideHistoryFilterDTO;
-import org.Tim19.UberApp.model.Driver;
-import org.Tim19.UberApp.model.Passenger;
-import org.Tim19.UberApp.model.Ride;
-import org.Tim19.UberApp.model.VehicleType;
+import org.Tim19.UberApp.model.*;
 import org.Tim19.UberApp.repository.RejectionRepository;
 import org.Tim19.UberApp.repository.ReviewRepository;
 import org.Tim19.UberApp.repository.RideRepository;
@@ -13,12 +13,16 @@ import org.Tim19.UberApp.security.SecurityUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -29,6 +33,8 @@ public class RideService {
     private PassengerService passengerService;
     @Autowired
     private DriverService driverService;
+    @Autowired
+    private RestTemplate restTemplate;
 
 
     public Ride findOneById(Integer id){return rideRepository.findById(id).orElse(null);}
@@ -45,7 +51,6 @@ public class RideService {
         else {
             rides = rideRepository.findAll();
         }
-        System.out.println(rides.get(0));
 
         if(filter.getDriverId() != null){
             rides.removeIf(ride -> !Objects.equals(ride.getDriver().getId(), filter.getDriverId()));
@@ -67,37 +72,66 @@ public class RideService {
     public Page<Ride> findAll(Pageable page){return rideRepository.findAll(page);}
 
     public Ride save(Ride ride){return rideRepository.save(ride);}
+    public void saveStep(Integer rideId){
+        Ride ride = this.findOneById(rideId);
+        ride.setStep(ride.getStep()+1);
+        save(ride);
+    }
     public RideDTO create(RideDTO rideDTO){
         Ride ride = new Ride(rideDTO);
+        ride.setStep(0);
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         SecurityUser user = (SecurityUser) auth.getPrincipal();
 
         Passenger passenger = passengerService.findByEmail(user.getUsername());
         ride.addPassenger(passenger);
 
-        Driver driver = this.findFreeDriver();
+        HashMap<String, Object> driverTime = this.findAvailableDriver(ride);
+        Driver driver = (Driver) driverTime.get("driver");
         ride.setDriver(driver);
         ride.setVehicleType(driver.getVehicle().getVehicleType());
+
+
+        Integer min = (Integer) driverTime.get("time");
+        ride.setStartTime(LocalDateTime.now().plusMinutes(min));
+
         ride.setStatus("PENDING");
         ride.setPanic(false);
 
-
-        List<Float> coordinates = rideDTO.getCoordinates();
-        Float long1 = coordinates.get(0);
-        Float long2 = coordinates.get(1);
-        Float lat1 = coordinates.get(2);
-        Float lat2 = coordinates.get(3);
+        Double distance = calculateDistanceKm(ride.getDeparture(), ride.getDestination());
 
         DecimalFormat df = new DecimalFormat("#.##");
-        Double cost = this.calculatePrice(ride.getVehicleType(), this.calculateKilometres(long1, long2, lat1, lat2));
+        Double cost = this.calculatePrice(ride.getVehicleType(), distance);
         ride.setTotalCost(Double.valueOf(df.format(cost)));
-        ride.setEstimatedTimeInMinutes(this.calculateTravelTime(this.calculateKilometres(long1, long2, lat1, lat2)));
-
+        ride.setEstimatedTimeInMinutes(this.travelTimeInMinutes(distance));
 
         ride = rideRepository.save(ride);
+
         return new RideDTO(ride);
     }
 
+    public Location findNextLocation(Location departure, Location destination) throws JsonProcessingException {
+        String url = "http://router.project-osrm.org/route/v1/driving/" + departure.getLongitude() + "," + departure.getLatitude() + ";" + destination.getLongitude() + "," + destination.getLatitude() + "?geometries=geojson&overview=false&alternatives=true&steps=true";
+
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(response.getBody());
+            JsonNode step = root.path("routes").get(0).path("legs").get(0).path("steps").get(1);
+            if(step == null){
+                return null;
+            }
+            Float nextStepLon = step.path("maneuver").path("location").get(0).floatValue();
+            Float nextStepLat = step.path("maneuver").path("location").get(1).floatValue();
+            Location nextLocation = new Location();
+            nextLocation.setLatitude(nextStepLat);
+            nextLocation.setLongitude(nextStepLon);
+            return nextLocation;
+        }
+        System.out.println("neka greska");
+        return null;
+    }
 
     public void remove(Integer id){rideRepository.deleteById(id);}
 
@@ -136,6 +170,82 @@ public class RideService {
         return rides;
     }
 
+    public HashMap<String, Object> findAvailableDriver(Ride ride){
+
+        Driver choosenDriver = new Driver();
+        Integer minTime = Integer.MAX_VALUE;
+        //TODO : findAllWithVehicleType
+        List<Driver> drivers = driverService.findAll();
+        for(Driver d : drivers){
+            if(isWorking(d) && !isWorkingToMuch(d)){
+                Integer whenIsAvailable = whenIsAvailable(d);
+                Integer timeToArive = timeToArrive(d, ride.getDeparture());
+                if((whenIsAvailable + timeToArive) < minTime){
+                    minTime = whenIsAvailable + timeToArive;
+                    choosenDriver = d;
+                }
+            }
+        }
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("driver", choosenDriver);
+        response.put("time", minTime);
+        return response;
+    }
+    private boolean isWorking(Driver driver){
+        return driver.getActive();
+    }
+
+    private boolean isWorkingToMuch(Driver driver){
+        //TODO: proveri da li radi preko 8 h
+        return false;
+    }
+
+    private Integer whenIsAvailable(Driver driver){
+        if(driver.getHasRide()){
+            LocalDateTime now = LocalDateTime.now();
+            Ride currentRide = findActiveRideByDriverId(driver.getId());
+            LocalDateTime endTime = currentRide.getStartTime().plusMinutes(currentRide.getEstimatedTimeInMinutes());
+            return Math.toIntExact(ChronoUnit.MINUTES.between(now, endTime));
+        }
+        return 0;
+    }
+
+    private Integer timeToArrive(Driver driver, Location nextRideDeparture){
+        Location startLocation = driver.getVehicle().getLocation();
+
+        if(driver.getHasRide()){
+            Ride currentRide = findActiveRideByDriverId(driver.getId());
+            startLocation = currentRide.getDestination();
+        }
+
+        Location endLocation = nextRideDeparture;
+
+        Double distance = calculateDistanceKm(startLocation, endLocation);
+        return travelTimeInMinutes(distance);
+    }
+
+    public Double calculateDistanceKm(Location startLocation, Location endLocation){
+        Float startLat = startLocation.getLatitude();
+        Float startLng = startLocation.getLongitude();
+        Float endLat = endLocation.getLatitude();
+        Float endLng = endLocation.getLongitude();
+
+
+        final int R = 6371;
+        double latDistance = Math.toRadians(endLat - startLat);
+        double lonDistance = Math.toRadians(endLng - startLng);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(startLng)) * Math.cos(Math.toRadians(endLng))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    public Integer travelTimeInMinutes(Double distance){
+        Double averageSpeed = 40.0;
+        return (int) (distance/averageSpeed*60) + 4;
+    }
+
     public Driver findFreeDriver(){
         List<Driver> freeDrivers = new ArrayList<>();
         for (Driver driver: driverService.findAll()) {
@@ -158,6 +268,7 @@ public class RideService {
         return freeDriver;
     }
 
+
     public Double calculateKilometres(Float long1, Float long2, Float lat1, Float lat2){
         Double distance = Math.sqrt(Math.pow((lat1 - lat2), 2) + Math.pow((long1 - long2), 2));
         return distance * 150;
@@ -168,17 +279,33 @@ public class RideService {
         return time;
     }
 
+    public List<Float> getCoordinates(Set<Path> locations){
+        List<Float> coordinates = new ArrayList<>();
+        for (Path p: locations){
+            Float latitude1 = p.getDeparture().getLatitude();
+            Float longitude1 = p.getDeparture().getLongitude();
+            Float longitude2 = p.getDestination().getLongitude();
+            Float latitude2 = p.getDestination().getLatitude();
+            coordinates.add(longitude1);
+            coordinates.add(longitude2);
+            coordinates.add(latitude1);
+            coordinates.add(latitude2);
+        }
+        return coordinates;
+    }
+
+
     public Double calculatePrice(VehicleType vehicleType, Double kilometres){
 
-        Double price = 170.0;
+        Double price = 120 * kilometres;
         if(vehicleType.equals(VehicleType.STANDARDNO)){
-            price += 70*kilometres;
+            price += 70;
         }
         else if(vehicleType.equals(VehicleType.KOMBI)){
-            price += 50*kilometres;
+            price += 50;
         }
         else if(vehicleType.equals(VehicleType.LUKSUZNO)){
-            price +=100*kilometres;
+            price +=100;
         }
 
         return price;
@@ -193,6 +320,20 @@ public class RideService {
             rides.add(ride);
         }
         return rides;
+    }
+
+    public List<RideDTO> getAllAcceptedRides() {
+        List<Ride> rs = this.rideRepository.findAllByStatus("ACCEPTED");
+        List<RideDTO> rides = new ArrayList<>();
+        for(Ride r : rs){
+            RideDTO ride = new RideDTO(r);
+            rides.add(ride);
+        }
+        return rides;
+    }
+
+    public Ride findActiveRideByDriverId(Integer id){
+        return this.rideRepository.findOneByDriverIdAndStatus(id, "STARTED");
     }
 
 //    private void findRideReviewsAndRejections(Set<Ride> rides){

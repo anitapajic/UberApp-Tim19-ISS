@@ -26,11 +26,14 @@ public class Driver extends User{
     @JoinColumn(name="vehicle_id")
     private Vehicle vehicle;
 
-    public Driver(Integer id, String email, String name, String surname, String profilePicture, String telephoneNumber, String address, String password, Boolean active, Boolean blocked, Set<Ride> rides, Set<DriverDocument> documents, Vehicle vehicle, String authorities) {
+    private Boolean hasRide;
+
+    public Driver(Integer id, String email, String name, String surname, String profilePicture, String telephoneNumber, String address, String password, Boolean active, Boolean blocked, Set<Ride> rides, Set<DriverDocument> documents, Vehicle vehicle, String authorities, Boolean hasRide) {
         super(id, email, name, surname, profilePicture, telephoneNumber, address, password, active, blocked, authorities);
         this.rides = rides;
         this.documents = documents;
         this.vehicle = vehicle;
+        this.hasRide = false;
     }
 
     public void addDocument(DriverDocument document){
@@ -70,5 +73,13 @@ public class Driver extends User{
 
     public void setVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;
+    }
+
+    public Boolean getHasRide() {
+        return hasRide;
+    }
+
+    public void setHasRide(Boolean hasRide) {
+        this.hasRide = hasRide;
     }
 }

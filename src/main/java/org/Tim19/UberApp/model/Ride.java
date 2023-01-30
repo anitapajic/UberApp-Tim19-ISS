@@ -70,11 +70,14 @@ public class Ride {
     @Column(name="vehicleType", nullable = true)
     private VehicleType vehicleType;
 
-//    @Type(type = "json")
-    @Column(columnDefinition = "json", name = "json")
+    @Column(name = "json", columnDefinition = "text")
+    @Lob
     private String routeJSON;
 
-    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengers, Set<Path> locations, Integer estimatedTimeInMinutes, Set<Review> reviews, Set<Rejection> rejection, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType, String routeJSON) {
+    @Column(name = "step")
+    private Integer step;
+
+    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengers, Set<Path> locations, Integer estimatedTimeInMinutes, Set<Review> reviews, Set<Rejection> rejection, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType, String routeJSON, Integer step) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -91,6 +94,7 @@ public class Ride {
         this.petTransport = petTransport;
         this.vehicleType = vehicleType;
         this.routeJSON = routeJSON;
+        this.step = step;
     }
 
     public Ride(RideDTO rideDTO){
@@ -98,6 +102,7 @@ public class Ride {
         this.babyTransport = rideDTO.isBabyTransport();
         this.petTransport = rideDTO.isPetTransport();
         this.routeJSON = rideDTO.getRouteJSON();
+        this.step = rideDTO.getStep();
     }
 
     public Integer getId() {
@@ -252,19 +257,24 @@ public class Ride {
     public  void removeRejection(Rejection rejection){
         this.rejection.remove(rejection);
     }
-    public List<Float> getCoordinates(){
-        List<Float> coordinates = new ArrayList<>();
+
+
+    public Location getDeparture(){
+        Location departure = new Location();
         for (Path p: this.locations){
-            Float latitude1 = p.getDeparture().getLatitude();
-            Float longitude1 = p.getDeparture().getLongitude();
-            Float longitude2 = p.getDestination().getLongitude();
-            Float latitude2 = p.getDestination().getLatitude();
-            coordinates.add(longitude1);
-            coordinates.add(longitude2);
-            coordinates.add(latitude1);
-            coordinates.add(latitude2);
+            departure = p.getDeparture();
         }
-        return coordinates;
+
+        return departure;
+    }
+
+    public Location getDestination(){
+        Location destination = new Location();
+        for (Path p: this.locations){
+            destination = p.getDestination();
+        }
+
+        return destination;
     }
 
     public String getRouteJSON() {
@@ -273,6 +283,14 @@ public class Ride {
 
     public void setRouteJSON(String routeJSON) {
         this.routeJSON = routeJSON;
+    }
+
+    public Integer getStep() {
+        return step;
+    }
+
+    public void setStep(Integer step) {
+        this.step = step;
     }
 
     @Override
