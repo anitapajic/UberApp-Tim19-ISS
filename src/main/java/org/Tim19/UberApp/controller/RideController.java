@@ -208,6 +208,8 @@ public class RideController {
 
             this.simpMessagingTemplate.convertAndSend("/map-updates/panic", panicSocket);
 
+            endRide(ride.getId());
+
             return new ResponseEntity<>(panic, HttpStatus.OK);
         }
         catch (NullPointerException ex){
