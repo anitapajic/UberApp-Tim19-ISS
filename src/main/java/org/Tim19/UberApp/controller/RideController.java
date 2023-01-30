@@ -1,5 +1,9 @@
 package org.Tim19.UberApp.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.Tim19.UberApp.dto.PaginatedData.PanicPaginatedDTO;
 import org.Tim19.UberApp.dto.PaginatedData.UserPanicDTO;
 import org.Tim19.UberApp.dto.PaginatedData.UserPanicPaginatedDTO;
@@ -8,19 +12,20 @@ import org.Tim19.UberApp.dto.RideDTO;
 import org.Tim19.UberApp.dto.RideHistoryFilterDTO;
 import org.Tim19.UberApp.model.*;
 import org.Tim19.UberApp.security.SecurityUser;
-import org.Tim19.UberApp.service.DriverService;
-import org.Tim19.UberApp.service.PassengerService;
-import org.Tim19.UberApp.service.RideService;
-import org.Tim19.UberApp.service.UserService;
+import org.Tim19.UberApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import javax.transaction.Transactional;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -39,9 +44,12 @@ public class RideController {
     @Autowired
     private PassengerService passengerService;
 
+    @Autowired
+    private VehicleController vehicleController;
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+
 
 
         //CREATING A RIDE  /api/ride
@@ -134,7 +142,6 @@ public class RideController {
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping(value = "/all")
     public ResponseEntity getAllRides(@RequestBody RideHistoryFilterDTO filterDTO) {
-        System.out.println(filterDTO + " 1234");
         try{
             List<RideDTO> allRides = rideService.findAllFilter(filterDTO);
             Map<String, Object> response = new HashMap<>();
@@ -232,6 +239,7 @@ public class RideController {
             ride.setStatus("STARTED");
             ride.setStartTime(LocalDateTime.now());
             rideService.save(ride);
+
             this.simpMessagingTemplate.convertAndSend("/map-updates/new-ride", new RideDTO(ride));
             return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
         }
@@ -239,6 +247,7 @@ public class RideController {
             return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
         }
     }
+
 
     //ACCEPT RIDE  /api/ride/{id}/accept
     @PreAuthorize("hasAnyAuthority('DRIVER')")
@@ -346,6 +355,48 @@ public class RideController {
         List<RideDTO> rides = this.rideService.getAllActiveRides();
 
         return new ResponseEntity<>(rides, HttpStatus.OK);
+    }
+
+    @Scheduled(initialDelay = 1000, fixedRate = 5000)
+    public void simulate() throws JsonProcessingException {
+        updateActiveRideVehiclePosition(this.rideService.getAllActiveRides());
+        updateAcceptedRideVehiclePosition(this.rideService.getAllAcceptedRides());
+        notifyPassenger();
+    }
+
+    @Transactional
+    void updateActiveRideVehiclePosition(List<RideDTO> rides) throws JsonProcessingException {
+        for(RideDTO ride : rides){
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(ride.getRouteJSON());
+            JsonNode step = root.path("routes").get(0).path("legs").get(0).path("steps").get(ride.getStep());
+            if(step == null){
+                endRide(ride.getId());
+            }
+            rideService.saveStep(ride.getId());
+
+            Location nextLocation = new Location();
+            nextLocation.setLatitude(step.path("maneuver").path("location").get(1).floatValue());
+            nextLocation.setLongitude(step.path("maneuver").path("location").get(0).floatValue());
+            vehicleController.changeVehicleLocation(ride.getVehicle().getId(), nextLocation);
+        }
+    }
+
+    @Transactional
+    void updateAcceptedRideVehiclePosition(List<RideDTO> rides) throws JsonProcessingException {
+        for(RideDTO ride : rides){
+            Location nextLocation = rideService.findNextLocation(ride.getVehicle().getLocation(), ride.getDeparture());
+            if(nextLocation == null){
+                return;
+            }
+            System.out.println(nextLocation);
+            vehicleController.changeVehicleLocation(ride.getVehicle().getId(), nextLocation);
+
+        }
+    }
+
+    void notifyPassenger(){
+        this.simpMessagingTemplate.convertAndSend("/map-updates/change-time", "");
     }
 
 }

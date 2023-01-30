@@ -70,11 +70,14 @@ public class Ride {
     @Column(name="vehicleType", nullable = true)
     private VehicleType vehicleType;
 
-//    @Type(type = "json")
-    @Column(columnDefinition = "json", name = "json")
+    @Column(name = "json", columnDefinition = "text")
+    @Lob
     private String routeJSON;
 
-    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengers, Set<Path> locations, Integer estimatedTimeInMinutes, Set<Review> reviews, Set<Rejection> rejection, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType, String routeJSON) {
+    @Column(name = "step")
+    private Integer step;
+
+    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengers, Set<Path> locations, Integer estimatedTimeInMinutes, Set<Review> reviews, Set<Rejection> rejection, String status, boolean panic, boolean babyTransport, boolean petTransport, VehicleType vehicleType, String routeJSON, Integer step) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -91,6 +94,7 @@ public class Ride {
         this.petTransport = petTransport;
         this.vehicleType = vehicleType;
         this.routeJSON = routeJSON;
+        this.step = step;
     }
 
     public Ride(RideDTO rideDTO){
@@ -98,6 +102,7 @@ public class Ride {
         this.babyTransport = rideDTO.isBabyTransport();
         this.petTransport = rideDTO.isPetTransport();
         this.routeJSON = rideDTO.getRouteJSON();
+        this.step = rideDTO.getStep();
     }
 
     public Integer getId() {
@@ -278,6 +283,14 @@ public class Ride {
 
     public void setRouteJSON(String routeJSON) {
         this.routeJSON = routeJSON;
+    }
+
+    public Integer getStep() {
+        return step;
+    }
+
+    public void setStep(Integer step) {
+        this.step = step;
     }
 
     @Override

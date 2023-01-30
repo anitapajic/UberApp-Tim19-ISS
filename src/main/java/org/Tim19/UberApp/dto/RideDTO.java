@@ -37,8 +37,9 @@ public class RideDTO {
 
     private String routeJSON;
 
+    private Integer step;
 
-    public RideDTO(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengersDTO, Integer estimatedTimeInMinutes, Vehicle vehicle, Boolean panic, boolean babyTransport, boolean petTransport, String status, Set<Path> paths, Set<Rejection> rejections, String routeJSON) {
+    public RideDTO(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengersDTO, Integer estimatedTimeInMinutes, Vehicle vehicle, Boolean panic, boolean babyTransport, boolean petTransport, String status, Set<Path> paths, Set<Rejection> rejections, String routeJSON, Integer step) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -54,11 +55,12 @@ public class RideDTO {
         this.locations = paths;
         this.rejections = rejections;
         this.routeJSON = routeJSON;
+        this.step = step;
     }
 
 
     public RideDTO(Ride ride) {
-        this(ride.getId(), ride.getStartTime(), ride.getEndTime(), ride.getTotalCost(), ride.getDriver(), ride.getPassengers(), ride.getEstimatedTimeInMinutes(), ride.getDriver().getVehicle(), ride.isPanic(), ride.isBabyTransport(), ride.isPetTransport(), ride.getStatus(), ride.getLocations(), ride.getRejection(), ride.getRouteJSON());
+        this(ride.getId(), ride.getStartTime(), ride.getEndTime(), ride.getTotalCost(), ride.getDriver(), ride.getPassengers(), ride.getEstimatedTimeInMinutes(), ride.getDriver().getVehicle(), ride.isPanic(), ride.isBabyTransport(), ride.isPetTransport(), ride.getStatus(), ride.getLocations(), ride.getRejection(), ride.getRouteJSON(), ride.getStep());
     }
 
 
@@ -175,7 +177,14 @@ public class RideDTO {
     public void setLocations(Set<Path> locations) {
         this.locations = locations;
     }
+    public Location getDeparture(){
+        Location departure = new Location();
+        for (Path p: this.locations){
+            departure = p.getDeparture();
+        }
 
+        return departure;
+    }
     public Set<Rejection> getRejections() {
         return rejections;
     }
@@ -192,6 +201,13 @@ public class RideDTO {
         this.routeJSON = routeJSON;
     }
 
+    public Integer getStep() {
+        return step;
+    }
+
+    public void setStep(Integer step) {
+        this.step = step;
+    }
 
     public List<Float> getCoordinates(){
         List<Float> coordinates = new ArrayList<>();

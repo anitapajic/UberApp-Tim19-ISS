@@ -1,5 +1,8 @@
 package org.Tim19.UberApp.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.Tim19.UberApp.dto.RideDTO;
 import org.Tim19.UberApp.dto.RideHistoryFilterDTO;
 import org.Tim19.UberApp.model.*;
@@ -10,9 +13,12 @@ import org.Tim19.UberApp.security.SecurityUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
@@ -27,6 +33,8 @@ public class RideService {
     private PassengerService passengerService;
     @Autowired
     private DriverService driverService;
+    @Autowired
+    private RestTemplate restTemplate;
 
 
     public Ride findOneById(Integer id){return rideRepository.findById(id).orElse(null);}
@@ -64,8 +72,15 @@ public class RideService {
     public Page<Ride> findAll(Pageable page){return rideRepository.findAll(page);}
 
     public Ride save(Ride ride){return rideRepository.save(ride);}
+    public void saveStep(Integer rideId){
+        Ride ride = this.findOneById(rideId);
+        ride.setStep(ride.getStep()+1);
+        save(ride);
+    }
     public RideDTO create(RideDTO rideDTO){
         Ride ride = new Ride(rideDTO);
+        ride.setStep(0);
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         SecurityUser user = (SecurityUser) auth.getPrincipal();
 
@@ -96,6 +111,27 @@ public class RideService {
         return new RideDTO(ride);
     }
 
+    public Location findNextLocation(Location departure, Location destination) throws JsonProcessingException {
+        String url = "http://router.project-osrm.org/route/v1/driving/" + departure.getLongitude() + "," + departure.getLatitude() + ";" + destination.getLongitude() + "," + destination.getLatitude() + "?geometries=geojson&overview=false&alternatives=true&steps=true";
+
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(response.getBody());
+            JsonNode step = root.path("routes").get(0).path("legs").get(0).path("steps").get(1);
+            if(step == null){
+                return null;
+            }
+            Float nextStepLon = step.path("maneuver").path("location").get(0).floatValue();
+            Float nextStepLat = step.path("maneuver").path("location").get(1).floatValue();
+            Location nextLocation = new Location();
+            nextLocation.setLatitude(nextStepLat);
+            nextLocation.setLongitude(nextStepLon);
+            return nextLocation;
+        }
+        System.out.println("neka greska");
+        return null;
+    }
 
     public void remove(Integer id){rideRepository.deleteById(id);}
 
@@ -207,7 +243,7 @@ public class RideService {
 
     public Integer travelTimeInMinutes(Double distance){
         Double averageSpeed = 40.0;
-        return (int) (distance/averageSpeed*60);
+        return (int) (distance/averageSpeed*60) + 4;
     }
 
     public Driver findFreeDriver(){
@@ -278,6 +314,16 @@ public class RideService {
 
     public List<RideDTO> getAllActiveRides() {
         List<Ride> rs = this.rideRepository.findAllByStatus("STARTED");
+        List<RideDTO> rides = new ArrayList<>();
+        for(Ride r : rs){
+            RideDTO ride = new RideDTO(r);
+            rides.add(ride);
+        }
+        return rides;
+    }
+
+    public List<RideDTO> getAllAcceptedRides() {
+        List<Ride> rs = this.rideRepository.findAllByStatus("ACCEPTED");
         List<RideDTO> rides = new ArrayList<>();
         for(Ride r : rs){
             RideDTO ride = new RideDTO(r);
