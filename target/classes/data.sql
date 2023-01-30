@@ -49,9 +49,9 @@ insert into favorites_paths(favorite_id, paths_id) values (1,1),
 -- Passenger favourite paths
 
 insert into passenger_favorites (favorite_id, passenger_id) values
-                                                             (1, 2),
-                                                             (2, 2),
-                                                             (3, 3);
+                                                                (1, 2),
+                                                                (2, 2),
+                                                                (3, 3);
 
 -- Rides
 insert into ride (start_time, end_time, total_cost, driver_id, estimated_time_in_minutes, status, panic, baby_transport, pet_transport, vehicle_type, json) values
