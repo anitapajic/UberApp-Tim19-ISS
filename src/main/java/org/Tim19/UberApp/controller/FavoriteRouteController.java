@@ -10,6 +10,7 @@ import org.Tim19.UberApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,8 @@ public class FavoriteRouteController {
     private PassengerService passengerService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     //CREATING A FAVORITE ROUTE  /api/ride/favorites
     @PreAuthorize("hasAnyAuthority('PASSENGER', 'ADMIN')")
@@ -33,6 +36,7 @@ public class FavoriteRouteController {
                 value="/favorites")
     public ResponseEntity createFavoriteRoute(@RequestBody CreateFavoriteRouteBodyPaginatedDTO favRouteDTO) {
 
+        System.out.println(favRouteDTO);
         if(favRouteDTO.getBabyTransport()==null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -47,6 +51,7 @@ public class FavoriteRouteController {
         for (Passenger p: favRouteDTO.getPassengers()) {
             Passenger p2 = (Passenger) userService.findOneById(p.getId());
             favoriteRoute.addPassenger(p2);
+            p2.addFavourite(favoriteRoute);
             currentPassenger = p2;
         }
 
@@ -57,7 +62,7 @@ public class FavoriteRouteController {
         }
 
         favoriteRouteService.save(favoriteRoute);
-
+        this.simpMessagingTemplate.convertAndSend("/map-updates/new-favorite-route", favoriteRoute);
         return new ResponseEntity<>(new FavoriteRouteDTO(favoriteRoute), HttpStatus.CREATED);
     }
 
@@ -68,7 +73,7 @@ public class FavoriteRouteController {
 
         try{
             Passenger passenger = passengerService.findOne(passengerId);
-
+            System.out.println(passenger.getFavourite());
             Set<FavoriteRoute> routes = passenger.getFavourite();
 
 
