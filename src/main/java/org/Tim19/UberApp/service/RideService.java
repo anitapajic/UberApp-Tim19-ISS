@@ -101,9 +101,9 @@ public class RideService {
 
         Double distance = calculateDistanceKm(ride.getDeparture(), ride.getDestination());
 
-        DecimalFormat df = new DecimalFormat("#.##");
+        //DecimalFormat df = new DecimalFormat("#.##");
         Double cost = this.calculatePrice(ride.getVehicleType(), distance);
-        ride.setTotalCost(Double.valueOf(df.format(cost)));
+        ride.setTotalCost((double)Math.round(cost));
         ride.setEstimatedTimeInMinutes(this.travelTimeInMinutes(distance));
 
         ride = rideRepository.save(ride);
