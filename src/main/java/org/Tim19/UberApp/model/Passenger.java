@@ -25,8 +25,8 @@ public class Passenger extends User{
     @ManyToMany(cascade = {CascadeType.MERGE,CascadeType.DETACH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "passenger_favorites",
-            joinColumns = @JoinColumn(name = "favorite_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id")
+            joinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "favorite_id", referencedColumnName = "id")
     )
     private Set<FavoriteRoute> favourite = new HashSet<>();
 
@@ -56,6 +56,9 @@ public class Passenger extends User{
         return favourite;
     }
 
+    public void addFavourite(FavoriteRoute favourite) {
+        this.favourite.add(favourite);
+    }
     public void setFavourite(Set<FavoriteRoute> favourite) {
         this.favourite = favourite;
     }
