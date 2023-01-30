@@ -1,8 +1,9 @@
 package org.Tim19.UberApp.controller;
 
-import org.Tim19.UberApp.dto.PaginatedData.CreateRideBodyPaginatedDTO;
 import org.Tim19.UberApp.dto.PaginatedData.PanicPaginatedDTO;
+import org.Tim19.UberApp.dto.PaginatedData.UserPanicDTO;
 import org.Tim19.UberApp.dto.PaginatedData.UserPanicPaginatedDTO;
+import org.Tim19.UberApp.dto.PanicSocketDTO;
 import org.Tim19.UberApp.dto.RideDTO;
 import org.Tim19.UberApp.dto.RideHistoryFilterDTO;
 import org.Tim19.UberApp.model.*;
@@ -12,15 +13,14 @@ import org.Tim19.UberApp.service.PassengerService;
 import org.Tim19.UberApp.service.RideService;
 import org.Tim19.UberApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -202,6 +202,11 @@ public class RideController {
             panic.setRide(ride);
             panic.setUser(user2);
             panic.setTime(LocalDateTime.now());
+            UserPanicDTO user3 = new UserPanicDTO(user2.getName(), user2.getSurname());
+
+            PanicSocketDTO panicSocket = new PanicSocketDTO(panic.getId(), panic.getReason(), panic.getTime(), user3);
+
+            this.simpMessagingTemplate.convertAndSend("/map-updates/panic", panicSocket);
 
             return new ResponseEntity<>(panic, HttpStatus.OK);
         }
