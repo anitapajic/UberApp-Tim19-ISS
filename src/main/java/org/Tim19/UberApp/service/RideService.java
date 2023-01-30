@@ -137,7 +137,7 @@ public class RideService {
     public HashMap<String, Object> findAvailableDriver(Ride ride){
 
         Driver choosenDriver = new Driver();
-        Integer minTime = 60;
+        Integer minTime = Integer.MAX_VALUE;
         //TODO : findAllWithVehicleType
         List<Driver> drivers = driverService.findAll();
         for(Driver d : drivers){
