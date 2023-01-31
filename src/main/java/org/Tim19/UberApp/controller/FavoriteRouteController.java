@@ -93,6 +93,7 @@ public class FavoriteRouteController {
 
         if (favoriteRoute != null) {
             favoriteRouteService.remove(id);
+            this.simpMessagingTemplate.convertAndSend("/map-updates/delete-favorite-route", favoriteRoute);
             return new ResponseEntity<>("Successful deletion of favorite location!", HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity<>("Favorite location does not exist!", HttpStatus.NOT_FOUND);

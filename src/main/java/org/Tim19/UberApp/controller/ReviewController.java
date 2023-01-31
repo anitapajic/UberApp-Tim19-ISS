@@ -2,6 +2,7 @@ package org.Tim19.UberApp.controller;
 
 import org.Tim19.UberApp.dto.PaginatedData.UserPaginatedDTO;
 import org.Tim19.UberApp.dto.ReviewDTO;
+import org.Tim19.UberApp.dto.RideDTO;
 import org.Tim19.UberApp.model.*;
 import org.Tim19.UberApp.service.ReviewService;
 import org.Tim19.UberApp.service.RideService;
@@ -10,6 +11,7 @@ import org.Tim19.UberApp.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +30,9 @@ public class ReviewController {
     private VehicleService vehicleService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
 
     @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PostMapping(value = "/{rideId}/vehicle")
@@ -64,7 +69,7 @@ public class ReviewController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PreAuthorize("hasAnyAuthority('PASSENGER')")
-    @PostMapping(value ="/{rideId}/driver" )
+    @PostMapping(value ="/{rideId}" )
     public ResponseEntity postDriverReview(@PathVariable Integer rideId, @RequestBody ReviewDTO reviewDTO){
 
         Ride ride = rideService.findOneById(rideId);
@@ -75,6 +80,7 @@ public class ReviewController {
         reviewDTO.setRide(rideId);
         reviewDTO = reviewService.saveDriver(reviewDTO);
 
+        this.simpMessagingTemplate.convertAndSend("/map-updates/review", reviewDTO);
         return new ResponseEntity<>(reviewDTO, HttpStatus.OK);
     }
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PASSENGER')")

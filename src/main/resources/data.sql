@@ -81,8 +81,8 @@ insert into rejection (reason, time_of_rejection, ride_id, user_id) values
 -- Reviews
 insert into review (comment, rating, ride_id, user_id, driver_id) values
                                                                                     ('comment1', 4, 1, 2, 1),
-                                                                                    ('comment2', 3, 2, 2, 4),
-                                                                                    ('comment3', 5, 3, 3, 1);
+                                                                                    ('comment2', 3, 2, 2, 4);
+                        --                                                            ('comment3', 5, 3, 3, 1);
 
 -- Documents
 insert into document(name, document_image, driver_id) values
