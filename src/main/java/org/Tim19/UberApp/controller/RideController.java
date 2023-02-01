@@ -169,6 +169,9 @@ public class RideController {
             }
 
             this.simpMessagingTemplate.convertAndSend("/map-updates/declined-ride", new RideDTO(ride));
+            Driver driver = ride.getDriver();
+            driver.setHasRide(false);
+            userService.save(driver);
             ride.setStatus("CANCELED");
             rideService.save(ride);
 
@@ -336,6 +339,12 @@ public class RideController {
             ride.setStatus("REJECTED");
             rideService.save(ride);
 
+            Driver d = ride.getDriver();
+            d.setHasRide(false);
+            driverService.save(d);
+
+            this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", ride.getDriver());
+
             RideDTO rDTO = new RideDTO(ride);
             this.simpMessagingTemplate.convertAndSend("/map-updates/declined-ride",rDTO);
 
@@ -357,7 +366,7 @@ public class RideController {
         return new ResponseEntity<>(rides, HttpStatus.OK);
     }
 
-    @Scheduled(initialDelay = 1000, fixedRate = 5000)
+//    @Scheduled(initialDelay = 1000, fixedRate = 5000)
     public void simulate() throws JsonProcessingException {
         updateActiveRideVehiclePosition(this.rideService.getAllActiveRides());
         updateAcceptedRideVehiclePosition(this.rideService.getAllAcceptedRides());

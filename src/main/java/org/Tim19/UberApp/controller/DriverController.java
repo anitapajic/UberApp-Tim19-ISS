@@ -51,6 +51,7 @@ public class DriverController {
         driver.setUsername(driverDTO.getUsername());
         driver.setName(driverDTO.getName());
         driver.setSurname(driverDTO.getSurname());
+        driver.setHasRide(false);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
         driver.setPassword(passwordEncoder.encode(driverDTO.getPassword()));
