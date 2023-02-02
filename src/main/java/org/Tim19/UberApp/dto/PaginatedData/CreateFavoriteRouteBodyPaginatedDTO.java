@@ -1,7 +1,6 @@
 package org.Tim19.UberApp.dto.PaginatedData;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.Tim19.UberApp.model.Passenger;
 import org.Tim19.UberApp.model.Path;
@@ -10,7 +9,6 @@ import org.Tim19.UberApp.model.VehicleType;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateFavoriteRouteBodyPaginatedDTO {
@@ -21,6 +19,62 @@ public class CreateFavoriteRouteBodyPaginatedDTO {
     private VehicleType vehicleType;
     private Boolean babyTransport;
     private Boolean petTransport;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getFavoriteName() {
+        return favoriteName;
+    }
+
+    public void setFavoriteName(String favoriteName) {
+        this.favoriteName = favoriteName;
+    }
+
+    public Set<Path> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(Set<Path> locations) {
+        this.locations = locations;
+    }
+
+    public Set<Passenger> getPassengers() {
+        return passengers;
+    }
+
+    public void setPassengers(Set<Passenger> passengers) {
+        this.passengers = passengers;
+    }
+
+    public VehicleType getVehicleType() {
+        return vehicleType;
+    }
+
+    public void setVehicleType(VehicleType vehicleType) {
+        this.vehicleType = vehicleType;
+    }
+
+    public Boolean getBabyTransport() {
+        return babyTransport;
+    }
+
+    public void setBabyTransport(Boolean babyTransport) {
+        this.babyTransport = babyTransport;
+    }
+
+    public Boolean getPetTransport() {
+        return petTransport;
+    }
+
+    public void setPetTransport(Boolean petTransport) {
+        this.petTransport = petTransport;
+    }
 
     @Override
     public String toString() {

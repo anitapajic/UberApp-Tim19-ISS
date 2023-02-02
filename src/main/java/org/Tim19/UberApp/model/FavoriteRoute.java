@@ -18,7 +18,7 @@ public class FavoriteRoute {
     @Column(name="favoriteName", nullable = false)
     private String favoriteName;
 
-    @Column(name="scheduledTime", nullable = true)
+    @Column(name="scheduledTime")
     private LocalDateTime  scheduledTime;
 
     @OneToMany(cascade ={CascadeType.ALL},
@@ -37,13 +37,13 @@ public class FavoriteRoute {
     )
     private Set<Passenger> passengers = new HashSet<>();
 
-    @Column(name="vehicleType", nullable = false)
+    @Column(name="vehicleType")
     private VehicleType vehicleType;
 
-    @Column(name="babyTransport", nullable = false)
+    @Column(name="babyTransport")
     private Boolean babyTransport;
 
-    @Column(name="petTransport", nullable = false)
+    @Column(name="petTransport")
     private Boolean petTransport;
 
     public FavoriteRoute(Integer id, String favoriteName, LocalDateTime scheduledTime, Set<Path> locations, Set<Passenger> passengers, VehicleType vehicleType, Boolean babyTransport, Boolean petTransport) {

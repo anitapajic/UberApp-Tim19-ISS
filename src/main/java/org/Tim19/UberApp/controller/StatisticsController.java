@@ -45,7 +45,7 @@ public class StatisticsController {
         return new ResponseEntity<>(income, HttpStatus.OK);
     }
     //TOTAL RIDES FROM DATES api/statistics/date/rides
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DRIVER', 'PASSENGER')")
     @PostMapping(value = "/date/rides")
     public ResponseEntity<HashMap<String,Integer>> getRidesFromDates(@RequestBody FilterRidesFromDatesDTO filter) {
 
