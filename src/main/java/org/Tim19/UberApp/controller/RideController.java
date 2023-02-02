@@ -143,7 +143,7 @@ public class RideController {
     @PostMapping(value = "/all")
     public ResponseEntity getAllRides(@RequestBody RideHistoryFilterDTO filterDTO) {
         try{
-            List<RideDTO> allRides = rideService.findAllFilter(filterDTO);
+            List<Ride> allRides = rideService.findAllFilter(filterDTO);
             Map<String, Object> response = new HashMap<>();
             response.put("totalCount", allRides.size());
             response.put("results", allRides);
@@ -366,7 +366,7 @@ public class RideController {
         return new ResponseEntity<>(rides, HttpStatus.OK);
     }
 
-//    @Scheduled(initialDelay = 1000, fixedRate = 5000)
+    @Scheduled(initialDelay = 1000, fixedRate = 5000)
     public void simulate() throws JsonProcessingException {
         updateActiveRideVehiclePosition(this.rideService.getAllActiveRides());
         updateAcceptedRideVehiclePosition(this.rideService.getAllAcceptedRides());
