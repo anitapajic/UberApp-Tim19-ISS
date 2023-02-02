@@ -241,7 +241,7 @@ public class ReportService {
             Float long2 = coordinates.get(1);
             Float lat1 = coordinates.get(2);
             Float lat2 = coordinates.get(3);
-            //km += rideService.calculateKilometres(long1, long2, lat1, lat2);
+            km += rideService.calculateKilometres(long1, long2, lat1, lat2);
         }
         return km;
     }

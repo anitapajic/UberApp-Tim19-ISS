@@ -5,7 +5,6 @@ import org.Tim19.UberApp.dto.DriverDTO;
 import org.Tim19.UberApp.model.Driver;
 import org.Tim19.UberApp.model.UpdateDriver;
 import org.Tim19.UberApp.service.DriverService;
-import org.Tim19.UberApp.service.RideService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +25,7 @@ public class DriverChangesController {
 
     //UPDATE EXISTING DRIVER  /api/driver/{id}
     //DONE
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DRIVER')")
     @PutMapping(value= "/{id}" ,consumes = "application/json")
     public ResponseEntity updateDriver(@PathVariable Integer id, @RequestBody UpdateDriver updateDriver) {
 

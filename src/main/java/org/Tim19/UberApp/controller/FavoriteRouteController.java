@@ -37,7 +37,7 @@ public class FavoriteRouteController {
     public ResponseEntity createFavoriteRoute(@RequestBody CreateFavoriteRouteBodyPaginatedDTO favRouteDTO) {
 
         System.out.println(favRouteDTO);
-        if(favRouteDTO.getBabyTransport()==null){
+        if(favRouteDTO.getFavoriteName()==null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         FavoriteRoute favoriteRoute = new FavoriteRoute();
@@ -66,7 +66,7 @@ public class FavoriteRouteController {
         return new ResponseEntity<>(new FavoriteRouteDTO(favoriteRoute), HttpStatus.CREATED);
     }
 
-    //FAVORITE LOCATIONS  /api/ride/favorites{passengerId}
+    //FAVORITE LOCATIONS  /api/ride/favorites/{passengerId}
     @GetMapping(value="/favorites/{passengerId}")
     @PreAuthorize("hasAnyAuthority('PASSENGER', 'ADMIN')")
     public ResponseEntity getFavoriteRoutes(@PathVariable Integer passengerId) {
