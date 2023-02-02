@@ -37,7 +37,7 @@ public class Vehicle {
     @Column(name = "passengerSeats", nullable = false)
     private Integer passengerSeats;
 
-    @ManyToOne(cascade ={CascadeType.ALL})
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH}, fetch = FetchType.EAGER)
     private Location location;
 
     @Column(name = "babyTransport", nullable = false)

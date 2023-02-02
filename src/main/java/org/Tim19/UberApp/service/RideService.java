@@ -43,7 +43,7 @@ public class RideService {
         return rideRepository.findOneRideById(id);
     }
 
-    public List<RideDTO> findAllFilter(RideHistoryFilterDTO filter){
+    public List<Ride> findAllFilter(RideHistoryFilterDTO filter){
         List<Ride> rides;
         if( filter.getStartDate() != null && filter.getEndDate() != null){
             rides = rideRepository.findAllInDateRange(filter.getStartDate(), filter.getEndDate());
@@ -59,14 +59,7 @@ public class RideService {
             rides.removeIf(ride -> !ride.toString().contains(filter.getKeyword()));
         }
 
-        List<RideDTO> rideDTOS = new ArrayList<>();
-        for(Ride r : rides){
-            RideDTO rDTO = new RideDTO(r);
-            rideDTOS.add(rDTO);
-        }
-
-
-        return rideDTOS;
+        return rides;
     }
 
     public Page<Ride> findAll(Pageable page){return rideRepository.findAll(page);}

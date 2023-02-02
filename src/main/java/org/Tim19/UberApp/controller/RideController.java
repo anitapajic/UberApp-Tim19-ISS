@@ -143,7 +143,7 @@ public class RideController {
     @PostMapping(value = "/all")
     public ResponseEntity getAllRides(@RequestBody RideHistoryFilterDTO filterDTO) {
         try{
-            List<RideDTO> allRides = rideService.findAllFilter(filterDTO);
+            List<Ride> allRides = rideService.findAllFilter(filterDTO);
             Map<String, Object> response = new HashMap<>();
             response.put("totalCount", allRides.size());
             response.put("results", allRides);
@@ -169,6 +169,9 @@ public class RideController {
             }
 
             this.simpMessagingTemplate.convertAndSend("/map-updates/declined-ride", new RideDTO(ride));
+            Driver driver = ride.getDriver();
+            driver.setHasRide(false);
+            userService.save(driver);
             ride.setStatus("CANCELED");
             rideService.save(ride);
 
@@ -335,6 +338,12 @@ public class RideController {
             ride.addRejection(rejection);
             ride.setStatus("REJECTED");
             rideService.save(ride);
+
+            Driver d = ride.getDriver();
+            d.setHasRide(false);
+            driverService.save(d);
+
+            this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", ride.getDriver());
 
             RideDTO rDTO = new RideDTO(ride);
             this.simpMessagingTemplate.convertAndSend("/map-updates/declined-ride",rDTO);
