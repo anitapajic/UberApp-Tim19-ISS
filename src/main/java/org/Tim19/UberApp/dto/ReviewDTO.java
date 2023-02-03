@@ -10,14 +10,14 @@ import org.Tim19.UberApp.model.Review;
 @NoArgsConstructor
 public class ReviewDTO {
     private Integer id;
-    private Integer rating;
+    private double rating;
     private String comment;
     private UserPaginatedDTO passenger;
     private Integer driver;
     private Integer vehicle;
     private Integer ride;
 
-    public ReviewDTO(Integer id, Integer rating, String comment, UserPaginatedDTO passenger, Integer driver, Integer ride, Integer vehicle) {
+    public ReviewDTO(Integer id, double rating, String comment, UserPaginatedDTO passenger, Integer driver, Integer ride, Integer vehicle) {
         this.id = id;
         this.rating = rating;
         this.comment = comment;
@@ -44,11 +44,11 @@ public class ReviewDTO {
         this.id = id;
     }
 
-    public Integer getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(double rating) {
         this.rating = rating;
     }
 

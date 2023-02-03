@@ -23,7 +23,7 @@ public class Review {
 
     private String comment;
 
-    private Integer rating;
+    private double rating;
 
     @JsonIgnore
     @ManyToOne(cascade ={CascadeType.MERGE, CascadeType.REMOVE,
@@ -44,7 +44,7 @@ public class Review {
 
 
 
-    public Review(Integer id, User user, String comment, Integer rating, Ride ride, Driver driver) {
+    public Review(Integer id, User user, String comment, double rating, Ride ride, Driver driver) {
         this.id = id;
         this.user = user;
         this.comment = comment;
@@ -78,11 +78,11 @@ public class Review {
         this.comment = comment;
     }
 
-    public Integer getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(double rating) {
         this.rating = rating;
     }
 
