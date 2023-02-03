@@ -191,7 +191,7 @@ public class PassengerController {
     @GetMapping(value = "/{id}/ride")
     public ResponseEntity getAllRides(@PathVariable Integer id,
                                                            @RequestParam(defaultValue = "0") Integer page,
-                                                           @RequestParam(defaultValue = "4") Integer size,
+                                                           @RequestParam(defaultValue = "100") Integer size,
                                                            @RequestParam(required = false) String sort,
                                                            @RequestParam(required = false) String  startDate,
                                                            @RequestParam(required = false) String  endDate){

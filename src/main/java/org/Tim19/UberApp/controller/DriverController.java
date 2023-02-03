@@ -70,7 +70,7 @@ public class DriverController {
    // @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllDrivers(@RequestParam(defaultValue = "0") Integer page,
-                                                             @RequestParam(defaultValue = "4") Integer size) {
+                                                             @RequestParam(defaultValue = "100") Integer size) {
 
         Pageable paging = PageRequest.of(page, size);
         Page<Driver> pagedResult = driverService.findAll(paging);

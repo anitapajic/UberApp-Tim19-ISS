@@ -71,7 +71,7 @@ public class ReviewController {
     @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PostMapping(value ="/{rideId}" )
     public ResponseEntity postDriverReview(@PathVariable Integer rideId, @RequestBody ReviewDTO reviewDTO){
-
+        System.out.println(reviewDTO.getRating() + "RATINGGG");
         Ride ride = rideService.findOneById(rideId);
         if(ride == null){
             return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
@@ -79,6 +79,7 @@ public class ReviewController {
         reviewDTO.setDriver(ride.getDriver().getId());
         reviewDTO.setRide(rideId);
         reviewDTO = reviewService.saveDriver(reviewDTO);
+        System.out.println(reviewDTO.getRating() + "RATINGGG22");
 
         this.simpMessagingTemplate.convertAndSend("/map-updates/review", reviewDTO);
         return new ResponseEntity<>(reviewDTO, HttpStatus.OK);

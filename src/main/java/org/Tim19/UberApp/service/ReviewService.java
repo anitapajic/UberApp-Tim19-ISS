@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -27,16 +28,23 @@ public class ReviewService {
     public Set<Review> findByRideId(Integer id){return reviewRepository.findAllByRideId(id);}
 
     public ReviewDTO saveDriver(ReviewDTO reviewDTO){
-        Driver driver = (Driver) userRepository.findOneById(reviewDTO.getDriver());
-        Ride ride = rideRepository.findOneById(reviewDTO.getRide());
-        List<Passenger> passengers = ride.getPassengers().stream().toList();
-        User user = userRepository.findOneById(passengers.get(0).getId());
+        Review review;
+        Optional<Review> r = reviewRepository.findOneByRideId(reviewDTO.getRide());
 
-        Review review = new Review();
-        review.setDriver(driver);
-        review.setRide(ride);
-        review.setUser(user);
-        review.setComment(reviewDTO.getComment());
+        if(r.isEmpty()){
+            review = new Review();
+            Driver driver = (Driver) userRepository.findOneById(reviewDTO.getDriver());
+            Ride ride = rideRepository.findOneById(reviewDTO.getRide());
+            List<Passenger> passengers = ride.getPassengers().stream().toList();
+            User user = userRepository.findOneById(passengers.get(0).getId());
+            review.setDriver(driver);
+            review.setRide(ride);
+            review.setUser(user);
+            review.setComment(reviewDTO.getComment());
+        }
+        else {
+            review = r.get();
+        }
         review.setRating(reviewDTO.getRating());
         review = reviewRepository.save(review);
 
