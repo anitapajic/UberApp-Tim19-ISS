@@ -70,9 +70,23 @@ public class RideService {
         ride.setStep(ride.getStep()+1);
         save(ride);
     }
-    public RideDTO create(RideDTO rideDTO){
+
+    public String findJSON(Ride ride){
+        String url = "http://router.project-osrm.org/route/v1/driving/" + ride.getDeparture().getLongitude() + "," + ride.getDeparture().getLatitude() + ";" + ride.getDestination().getLongitude() + "," + ride.getDestination().getLatitude() + "?geometries=geojson&overview=false&alternatives=true&steps=true";
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return response.getBody();
+        }
+        return "";
+    }
+
+    public RideDTO create(RideDTO rideDTO) {
         Ride ride = new Ride(rideDTO);
         ride.setStep(0);
+
+        if(ride.getRouteJSON() == ""){
+            ride.setRouteJSON(findJSON(ride));
+        }
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         SecurityUser user = (SecurityUser) auth.getPrincipal();
