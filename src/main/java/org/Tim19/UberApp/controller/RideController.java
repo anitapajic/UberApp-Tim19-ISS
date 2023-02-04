@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -56,8 +55,10 @@ public class RideController {
     @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PostMapping(consumes = "application/json")
     public ResponseEntity createRide(@RequestBody RideDTO rideDTO) throws InterruptedException {
+        System.out.println("NEW RIDE" + rideDTO);
         rideDTO = rideService.create(rideDTO);
         this.simpMessagingTemplate.convertAndSend("/map-updates/ask-driver", rideDTO);
+        System.out.println("NEW RIDE" + rideDTO);
 
 
         return new ResponseEntity<>(rideDTO,HttpStatus.OK);
@@ -366,7 +367,7 @@ public class RideController {
         return new ResponseEntity<>(rides, HttpStatus.OK);
     }
 
-    @Scheduled(initialDelay = 1000, fixedRate = 5000)
+//    @Scheduled(initialDelay = 1000, fixedRate = 5000)
     public void simulate() throws JsonProcessingException {
         updateActiveRideVehiclePosition(this.rideService.getAllActiveRides());
         updateAcceptedRideVehiclePosition(this.rideService.getAllAcceptedRides());
