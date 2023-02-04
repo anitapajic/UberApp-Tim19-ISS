@@ -1,6 +1,5 @@
 package org.Tim19.UberApp.dto;
 
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.Tim19.UberApp.model.*;
 
@@ -23,7 +22,7 @@ public class RideDTO {
     private Integer estimatedTimeInMinutes;
 
 
-    private Set<Message> reviews;
+    private Set<Review> reviews;
     private Vehicle vehicle;
 
     private Boolean panic;
@@ -39,7 +38,7 @@ public class RideDTO {
 
     private Integer step;
 
-    public RideDTO(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengersDTO, Integer estimatedTimeInMinutes, Vehicle vehicle, Boolean panic, boolean babyTransport, boolean petTransport, String status, Set<Path> paths, Set<Rejection> rejections, String routeJSON, Integer step) {
+    public RideDTO(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Driver driver, Set<Passenger> passengersDTO, Integer estimatedTimeInMinutes, Set<Review> reviews, Vehicle vehicle, Boolean panic, boolean babyTransport, boolean petTransport, String status, Set<Path> paths, Set<Rejection> rejections, String routeJSON, Integer step) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -47,6 +46,7 @@ public class RideDTO {
         this.driver = driver;
         this.passengers = passengersDTO;
         this.estimatedTimeInMinutes = estimatedTimeInMinutes;
+        this.reviews = reviews;
         this.vehicle = vehicle;
         this.panic = panic;
         this.babyTransport = babyTransport;
@@ -60,7 +60,7 @@ public class RideDTO {
 
 
     public RideDTO(Ride ride) {
-        this(ride.getId(), ride.getStartTime(), ride.getEndTime(), ride.getTotalCost(), ride.getDriver(), ride.getPassengers(), ride.getEstimatedTimeInMinutes(), ride.getDriver().getVehicle(), ride.isPanic(), ride.isBabyTransport(), ride.isPetTransport(), ride.getStatus(), ride.getLocations(), ride.getRejection(), ride.getRouteJSON(), ride.getStep());
+        this(ride.getId(), ride.getStartTime(), ride.getEndTime(), ride.getTotalCost(), ride.getDriver(), ride.getPassengers(), ride.getEstimatedTimeInMinutes(), ride.getReviews(),ride.getDriver().getVehicle(), ride.isPanic(), ride.isBabyTransport(), ride.isPetTransport(), ride.getStatus(), ride.getLocations(), ride.getRejection(), ride.getRouteJSON(), ride.getStep());
     }
 
 
@@ -122,11 +122,11 @@ public class RideDTO {
         this.estimatedTimeInMinutes = estimatedTimeInMinutes;
     }
 
-    public Set<Message> getReviews() {
+    public Set<Review> getReviews() {
         return reviews;
     }
 
-    public void setReviews(Set<Message> reviews) {
+    public void setReviews(Set<Review> reviews) {
         this.reviews = reviews;
     }
 

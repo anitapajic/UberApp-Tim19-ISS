@@ -27,7 +27,7 @@ public class StatisticsController {
             Double income = reportService.getTotalIncome();
             return new ResponseEntity<>(income, HttpStatus.OK);
     }
-    //TOTAL TODAYS INCOME  api/statistics/todaysIncome
+    //TOTAL TODAY'S INCOME  api/statistics/todaysIncome
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping(value = "/todaysIncome")
     public ResponseEntity<Double> getTodaysIncome() {
