@@ -100,7 +100,7 @@ public class RideController {
         }
     }
 
-    
+
     //ACTIVE RIDE   /api/ride/active
     @GetMapping(
             produces = "application/json",

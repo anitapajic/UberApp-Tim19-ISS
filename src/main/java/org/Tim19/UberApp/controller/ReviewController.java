@@ -38,7 +38,7 @@ public class ReviewController {
     @PostMapping(value = "/{rideId}/vehicle")
     public ResponseEntity postVehicleReview(@PathVariable Integer rideId, @RequestBody ReviewDTO reviewDTO){
 
-        Ride ride = rideService.findOneById(rideId);
+        Ride ride = rideService.findOneRideById(rideId);
         if(ride == null){
             return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
         }
@@ -72,7 +72,7 @@ public class ReviewController {
     @PostMapping(value ="/{rideId}" )
     public ResponseEntity postDriverReview(@PathVariable Integer rideId, @RequestBody ReviewDTO reviewDTO){
         System.out.println(reviewDTO.getRating() + "RATINGGG");
-        Ride ride = rideService.findOneById(rideId);
+        Ride ride = rideService.findOneRideById(rideId);
         if(ride == null){
             return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
         }
@@ -107,7 +107,7 @@ public class ReviewController {
     @GetMapping(value = "{rideId}")
     public ResponseEntity getRideReviews(@PathVariable Integer rideId){
 
-        Ride ride = rideService.findOneById(rideId);
+        Ride ride = rideService.findOneRideById(rideId);
         if(ride == null){
             return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
         }
