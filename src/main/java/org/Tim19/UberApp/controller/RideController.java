@@ -52,7 +52,7 @@ public class RideController {
 
 
 
-        //CREATING A RIDE  /api/ride
+    //CREATING A RIDE  /api/ride
     @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PostMapping(consumes = "application/json")
     public ResponseEntity createRide(@RequestBody RideDTO rideDTO) throws InterruptedException {
@@ -61,6 +61,55 @@ public class RideController {
 
 
         return new ResponseEntity<>(rideDTO,HttpStatus.OK);
+    }
+
+    //RIDE DETAILS  api/ride/{id}
+    @PreAuthorize("hasAnyAuthority('PASSENGER', 'ADMIN', 'DRIVER')")
+    @GetMapping(value = "/{id}")
+    public ResponseEntity getRide(@PathVariable Integer id) {
+
+        try{
+
+            if(id>9999 || id<0){
+                return new ResponseEntity<>("Invalid data. Bad Id format.", HttpStatus.BAD_REQUEST);
+            }
+
+            Ride ride = rideService.findOneRideById(id);
+
+            return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
+        }
+        catch (NullPointerException ex){
+            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    //ALL RIDES DETAILS  api/ride/all
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PostMapping(value = "/all")
+    public ResponseEntity getAllRides(@RequestBody RideHistoryFilterDTO filterDTO) {
+        try{
+            List<Ride> allRides = rideService.findAllFilter(filterDTO);
+            Map<String, Object> response = new HashMap<>();
+            response.put("totalCount", allRides.size());
+            response.put("results", allRides);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (NullPointerException ex){
+            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    
+    //ACTIVE RIDE   /api/ride/active
+    @GetMapping(
+            produces = "application/json",
+            value = "/active"
+    )
+    public ResponseEntity getAllActiveRides() {
+        List<RideDTO> rides = this.rideService.findAllActiveRides();
+
+        return new ResponseEntity<>(rides, HttpStatus.OK);
     }
 
     //ACTIVE RIDE FOR DRIVER  /api/ride/driver/{driverId}/active
@@ -119,18 +168,33 @@ public class RideController {
         }
     }
 
-    //RIDE DETAILS  api/ride/{id}
-    @PreAuthorize("hasAnyAuthority('PASSENGER', 'ADMIN', 'DRIVER')")
-    @GetMapping(value = "/{id}")
-    public ResponseEntity getRide(@PathVariable Integer id) {
+
+    //ACCEPT RIDE  /api/ride/{id}/accept
+    @PreAuthorize("hasAnyAuthority('DRIVER')")
+    @PutMapping(value="/{id}/accept")
+    public ResponseEntity acceptRide(@PathVariable Integer id) {
 
         try{
+            Ride ride = rideService.findOneRideById(id);
 
-            if(id>9999 || id<0){
-                return new ResponseEntity<>("Invalid data. Bad Id format.", HttpStatus.BAD_REQUEST);
+            if(!(ride.getStatus().equals("PENDING"))){
+                return new ResponseEntity<>("Cannot accept a ride that is not in status PENDING!", HttpStatus.BAD_REQUEST);
             }
 
-            Ride ride = rideService.findOneRideById(id);
+            ride.setStatus("ACCEPTED");
+            rideService.save(ride);
+            HashMap<String, Object> rideTime = new HashMap<>();
+            rideTime.put("ride", new RideDTO(ride));
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime start = ride.getStartTime();
+
+            rideTime.put("time",Math.toIntExact(ChronoUnit.MINUTES.between(now, start)));
+            this.simpMessagingTemplate.convertAndSend("/map-updates/inform", rideTime);
+            Driver d = ride.getDriver();
+            d.setHasRide(true);
+            driverService.save(d);
+
+            this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", ride.getDriver());
 
             return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
         }
@@ -138,23 +202,6 @@ public class RideController {
             return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
         }
     }
-
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    @PostMapping(value = "/all")
-    public ResponseEntity getAllRides(@RequestBody RideHistoryFilterDTO filterDTO) {
-        try{
-            List<Ride> allRides = rideService.findAllFilter(filterDTO);
-            Map<String, Object> response = new HashMap<>();
-            response.put("totalCount", allRides.size());
-            response.put("results", allRides);
-
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-        catch (NullPointerException ex){
-            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
-        }
-    }
-
     //CANCEL EXISTING RIDE  /api/ride/{id}/withdraw
     @PreAuthorize("hasAnyAuthority('PASSENGER', 'DRIVER')")
     @PutMapping(value="/{id}/withdraw")
@@ -181,12 +228,99 @@ public class RideController {
             return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
         }
     }
+    //CANCEL RIDE WITH AN EXPLANATION  /api/ride/{id}/cancel
+    @PreAuthorize("hasAnyAuthority('PASSENGER', 'DRIVER')")
+    @PutMapping(value="/{id}/cancel", consumes = "application/json")
+    public ResponseEntity cancelRideWithExpl(@PathVariable Integer id, @RequestBody Rejection rejection) {
 
+        try
+        {
+            Ride ride = rideService.findOneRideById(id);
+
+            if(!(ride.getStatus().equals("ACCEPTED") || ride.getStatus().equals("PENDING"))){
+                return new ResponseEntity<>("Cannot cancel a ride that is not in status PENDING or ACCEPTED!",
+                        HttpStatus.BAD_REQUEST);
+            }
+
+            rejection.setTimeOfRejection(LocalDateTime.now());
+            rejection.setRide(ride);
+            rejection.setUser(ride.getDriver());
+            ride.addRejection(rejection);
+            ride.setStatus("REJECTED");
+            rideService.save(ride);
+
+            Driver d = ride.getDriver();
+            d.setHasRide(false);
+            driverService.save(d);
+
+            this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", ride.getDriver());
+
+            RideDTO rDTO = new RideDTO(ride);
+            this.simpMessagingTemplate.convertAndSend("/map-updates/declined-ride",rDTO);
+
+            return new ResponseEntity<>(rDTO, HttpStatus.OK);
+        }
+        catch (NullPointerException ex){
+            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
+        }
+    }
+    //START RIDE  /api/ride/{id}/start
+    @PreAuthorize("hasAnyAuthority('DRIVER')")
+    @PutMapping(value="/{id}/start")
+    public ResponseEntity startRide(@PathVariable Integer id) {
+
+        try{
+            Ride ride = rideService.findOneRideById(id);
+
+            if(!(ride.getStatus().equals("ACCEPTED"))){
+                return new ResponseEntity<>("Cannot start a ride that is not in status ACCEPTED!", HttpStatus.BAD_REQUEST);
+            }
+
+            ride.setStatus("STARTED");
+            ride.setStartTime(LocalDateTime.now());
+            rideService.save(ride);
+
+            this.simpMessagingTemplate.convertAndSend("/map-updates/new-ride", new RideDTO(ride));
+            return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
+        }
+        catch (NullPointerException ex){
+            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
+        }
+    }
+    //END THE RIDE  /api/ride/{id}/end
+    @PreAuthorize("hasAnyAuthority('DRIVER')")
+    @PutMapping(value="/{id}/end")
+    public ResponseEntity endRide(@PathVariable Integer id) {
+
+        try{
+            Ride ride = rideService.findOneRideById(id);
+
+            if(!(ride.getStatus().equals("STARTED"))){
+                return new ResponseEntity<>("Cannot end a ride that is not in status STARTED!", HttpStatus.BAD_REQUEST);
+            }
+
+            ride.setStatus("FINISHED");
+            ride.setEndTime(ride.getStartTime().plusMinutes(ride.getEstimatedTimeInMinutes()));
+            rideService.save(ride);
+            this.simpMessagingTemplate.convertAndSend("/map-updates/end-ride", new RideDTO(ride));
+
+            Driver d = ride.getDriver();
+            d.setHasRide(false);
+            driverService.save(d);
+
+            this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", ride.getDriver());
+
+
+            return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
+        }
+        catch (NullPointerException ex){
+            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
+        }
+    }
     //PANIC PROCEDURE FOR THE RIDE  /api/ride/{id}/panic
     @PreAuthorize("hasAnyAuthority('PASSENGER', 'DRIVER')")
     @PutMapping(value="/{id}/panic", consumes = "application/json")
-    public ResponseEntity panicRide(@RequestBody PanicPaginatedDTO panic,
-                                                       @PathVariable Integer id) {
+    public ResponseEntity panicRide(@RequestBody PanicPaginatedDTO panic, @PathVariable Integer id) {
 
         try{
             Ride ride = rideService.findOneRideById(id);
@@ -227,149 +361,13 @@ public class RideController {
         }
     }
 
-    //START RIDE  /api/ride/{id}/start
-    @PreAuthorize("hasAnyAuthority('DRIVER')")
-    @PutMapping(value="/{id}/start")
-    public ResponseEntity startRide(@PathVariable Integer id) {
-
-        try{
-            Ride ride = rideService.findOneRideById(id);
-
-            if(!(ride.getStatus().equals("ACCEPTED"))){
-                return new ResponseEntity<>("Cannot start a ride that is not in status ACCEPTED!", HttpStatus.BAD_REQUEST);
-            }
-
-            ride.setStatus("STARTED");
-            ride.setStartTime(LocalDateTime.now());
-            rideService.save(ride);
-
-            this.simpMessagingTemplate.convertAndSend("/map-updates/new-ride", new RideDTO(ride));
-            return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
-        }
-        catch (NullPointerException ex){
-            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
-        }
-    }
 
 
-    //ACCEPT RIDE  /api/ride/{id}/accept
-    @PreAuthorize("hasAnyAuthority('DRIVER')")
-    @PutMapping(value="/{id}/accept")
-    public ResponseEntity acceptRide(@PathVariable Integer id) {
 
-        try{
-            Ride ride = rideService.findOneRideById(id);
-
-            if(!(ride.getStatus().equals("PENDING"))){
-                return new ResponseEntity<>("Cannot accept a ride that is not in status PENDING!", HttpStatus.BAD_REQUEST);
-            }
-
-            ride.setStatus("ACCEPTED");
-            rideService.save(ride);
-            HashMap<String, Object> rideTime = new HashMap<>();
-            rideTime.put("ride", new RideDTO(ride));
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime start = ride.getStartTime();
-
-            rideTime.put("time",Math.toIntExact(ChronoUnit.MINUTES.between(now, start)));
-            this.simpMessagingTemplate.convertAndSend("/map-updates/inform", rideTime);
-            Driver d = ride.getDriver();
-            d.setHasRide(true);
-            driverService.save(d);
-
-            this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", ride.getDriver());
-
-            return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
-        }
-        catch (NullPointerException ex){
-            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
-        }
-    }
-
-    //END THE RIDE  /api/ride/{id}/end
-    @PreAuthorize("hasAnyAuthority('DRIVER')")
-    @PutMapping(value="/{id}/end")
-    public ResponseEntity endRide(@PathVariable Integer id) {
-
-        try{
-            Ride ride = rideService.findOneRideById(id);
-
-            if(!(ride.getStatus().equals("STARTED"))){
-                return new ResponseEntity<>("Cannot end a ride that is not in status STARTED!", HttpStatus.BAD_REQUEST);
-            }
-
-            ride.setStatus("FINISHED");
-            ride.setEndTime(ride.getStartTime().plusMinutes(ride.getEstimatedTimeInMinutes()));
-            rideService.save(ride);
-            this.simpMessagingTemplate.convertAndSend("/map-updates/end-ride", new RideDTO(ride));
-
-            Driver d = ride.getDriver();
-            d.setHasRide(false);
-            driverService.save(d);
-
-            this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", ride.getDriver());
-
-
-            return new ResponseEntity<>(new RideDTO(ride), HttpStatus.OK);
-        }
-        catch (NullPointerException ex){
-            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
-        }
-    }
-
-    //CANCEL RIDE WITH AN EXPLANATION  /api/ride/{id}/cancel
-    @PreAuthorize("hasAnyAuthority('PASSENGER', 'DRIVER')")
-    @PutMapping(value="/{id}/cancel", consumes = "application/json")
-    public ResponseEntity cancelRideWithExpl(@PathVariable Integer id,
-                                                               @RequestBody Rejection rejection) {
-
-        try
-        {
-            Ride ride = rideService.findOneRideById(id);
-
-            if(!(ride.getStatus().equals("ACCEPTED") || ride.getStatus().equals("PENDING"))){
-                return new ResponseEntity<>("Cannot cancel a ride that is not in status PENDING or ACCEPTED!",
-                        HttpStatus.BAD_REQUEST);
-            }
-
-            rejection.setTimeOfRejection(LocalDateTime.now());
-            rejection.setRide(ride);
-            rejection.setUser(ride.getDriver());
-            ride.addRejection(rejection);
-            ride.setStatus("REJECTED");
-            rideService.save(ride);
-
-            Driver d = ride.getDriver();
-            d.setHasRide(false);
-            driverService.save(d);
-
-            this.simpMessagingTemplate.convertAndSend("/map-updates/update-activity", ride.getDriver());
-
-            RideDTO rDTO = new RideDTO(ride);
-            this.simpMessagingTemplate.convertAndSend("/map-updates/declined-ride",rDTO);
-
-            return new ResponseEntity<>(rDTO, HttpStatus.OK);
-        }
-        catch (NullPointerException ex){
-            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
-        }
-    }
-
-
-    @GetMapping(
-            produces = "application/json",
-            value = "/active"
-    )
-    public ResponseEntity getAllActiveRides() {
-        List<RideDTO> rides = this.rideService.getAllActiveRides();
-
-        return new ResponseEntity<>(rides, HttpStatus.OK);
-    }
-
-    @Scheduled(initialDelay = 1000, fixedRate = 5000)
+//    @Scheduled(initialDelay = 1000, fixedRate = 5000)
     public void simulate() throws JsonProcessingException {
-        updateActiveRideVehiclePosition(this.rideService.getAllActiveRides());
-        updateAcceptedRideVehiclePosition(this.rideService.getAllAcceptedRides());
+        updateActiveRideVehiclePosition(this.rideService.findAllActiveRides());
+        updateAcceptedRideVehiclePosition(this.rideService.findAllAcceptedRides());
         notifyPassenger();
     }
 

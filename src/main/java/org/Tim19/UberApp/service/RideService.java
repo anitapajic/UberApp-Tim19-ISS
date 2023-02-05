@@ -37,11 +37,13 @@ public class RideService {
     private RestTemplate restTemplate;
 
 
-    public Ride findOneById(Integer id){return rideRepository.findById(id).orElse(null);}
+    //public Ride findOneById(Integer id){return rideRepository.findById(id).orElse(null);}
 
     public Ride findOneRideById(Integer id){
-        return rideRepository.findOneRideById(id);
+        return rideRepository.findById(id).orElse(null);
     }
+
+    public Page<Ride> findAll(Pageable page){return rideRepository.findAll(page);}
 
     public List<Ride> findAllFilter(RideHistoryFilterDTO filter){
         List<Ride> rides;
@@ -62,23 +64,75 @@ public class RideService {
         return rides;
     }
 
-    public Page<Ride> findAll(Pageable page){return rideRepository.findAll(page);}
-
-    public Ride save(Ride ride){return rideRepository.save(ride);}
-    public void saveStep(Integer rideId){
-        Ride ride = this.findOneById(rideId);
-        ride.setStep(ride.getStep()+1);
-        save(ride);
-    }
-
-    public String findJSON(Ride ride){
-        String url = "http://router.project-osrm.org/route/v1/driving/" + ride.getDeparture().getLongitude() + "," + ride.getDeparture().getLatitude() + ";" + ride.getDestination().getLongitude() + "," + ride.getDestination().getLatitude() + "?geometries=geojson&overview=false&alternatives=true&steps=true";
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        if (response.getStatusCode() == HttpStatus.OK) {
-            return response.getBody();
+    public List<RideDTO> findAllActiveRides() {
+        List<Ride> rs = this.rideRepository.findAllByStatus("STARTED");
+        List<RideDTO> rides = new ArrayList<>();
+        for(Ride r : rs){
+            RideDTO ride = new RideDTO(r);
+            rides.add(ride);
         }
-        return "";
+        return rides;
     }
+
+    public List<RideDTO> findAllAcceptedRides() {
+        List<Ride> rs = this.rideRepository.findAllByStatus("ACCEPTED");
+        List<RideDTO> rides = new ArrayList<>();
+        for(Ride r : rs){
+            RideDTO ride = new RideDTO(r);
+            rides.add(ride);
+        }
+        return rides;
+    }
+
+    public Page<Ride>findByUserId(Integer id, Pageable pageable){
+        Page<Ride> rides = rideRepository.findAllByDriverId(id, pageable);
+        if (rides.isEmpty()){
+            rides = rideRepository.findAllByPassengersId(id, pageable);
+        }
+
+        return rides;
+    }
+
+    public Page<Ride> findByPassengerId(Integer id, String from, String to, Pageable pageable){
+
+        Page<Ride> rides;
+        if(from != null && to != null)
+            rides = rideRepository.findAllByPassengersIdFilter(id, LocalDateTime.parse(from), LocalDateTime.parse(to), pageable);
+        else
+            rides = rideRepository.findAllByPassengersId(id, pageable);;
+
+        return rides;
+
+    }
+
+    public Set<Ride> findAllByPassengerId(Integer id){
+        Set<Ride> rides = rideRepository.findAllByPassengersId(id);
+
+        return rides;
+    }
+
+    public Page<Ride> findByDriverId(Integer id, String from, String to, Pageable pageable){
+        Page<Ride> rides;
+        if(from != null && to != null)
+            rides = rideRepository.findAllByDriverIdFilter(id, LocalDateTime.parse(from), LocalDateTime.parse(to), pageable);
+        else
+            rides = rideRepository.findAllByDriverId(id, pageable);
+
+        return rides;
+    }
+
+    public Ride findActiveRideByDriverId(Integer id){
+        return this.rideRepository.findOneByDriverIdAndStatus(id, "STARTED");
+    }
+
+//    public Integer checkAllByUserId(Integer id){
+//        Set<Ride> rides = rideRepository.findAllByDriverId(id);
+//        if (rides.isEmpty()){
+//            rides = rideRepository.findAllByPassengersId(id);
+//        }
+//        return rides.size();
+//    }
+
 
     public RideDTO create(RideDTO rideDTO) {
         Ride ride = new Ride(rideDTO);
@@ -102,7 +156,7 @@ public class RideService {
 
         Integer min = (Integer) driverTime.get("time");
         ride.setStartTime(LocalDateTime.now().plusMinutes(min));
-
+        System.out.println("START TIME " + ride.getStartTime());
         ride.setStatus("PENDING");
         ride.setPanic(false);
 
@@ -118,63 +172,24 @@ public class RideService {
         return new RideDTO(ride);
     }
 
-    public Location findNextLocation(Location departure, Location destination) throws JsonProcessingException {
-        String url = "http://router.project-osrm.org/route/v1/driving/" + departure.getLongitude() + "," + departure.getLatitude() + ";" + destination.getLongitude() + "," + destination.getLatitude() + "?geometries=geojson&overview=false&alternatives=true&steps=true";
+    public Ride save(Ride ride){return rideRepository.save(ride);}
 
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        if (response.getStatusCode() == HttpStatus.OK) {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(response.getBody());
-            JsonNode step = root.path("routes").get(0).path("legs").get(0).path("steps").get(1);
-            if(step == null){
-                return null;
-            }
-            Float nextStepLon = step.path("maneuver").path("location").get(0).floatValue();
-            Float nextStepLat = step.path("maneuver").path("location").get(1).floatValue();
-            Location nextLocation = new Location();
-            nextLocation.setLatitude(nextStepLat);
-            nextLocation.setLongitude(nextStepLon);
-            return nextLocation;
-        }
-        System.out.println("neka greska");
-        return null;
+    public void saveStep(Integer rideId){
+        Ride ride = this.findOneRideById(rideId);
+        ride.setStep(ride.getStep()+1);
+        save(ride);
     }
 
     public void remove(Integer id){rideRepository.deleteById(id);}
 
-    public Page<Ride>findByUserId(Integer id, Pageable pageable){
-        Page<Ride> rides = rideRepository.findAllByDriverId(id, pageable);
-        if (rides.isEmpty()){
-            rides = rideRepository.findAllByPassengersId(id, pageable);
+
+    public String findJSON(Ride ride){
+        String url = "http://router.project-osrm.org/route/v1/driving/" + ride.getDeparture().getLongitude() + "," + ride.getDeparture().getLatitude() + ";" + ride.getDestination().getLongitude() + "," + ride.getDestination().getLatitude() + "?geometries=geojson&overview=false&alternatives=true&steps=true";
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return response.getBody();
         }
-
-        return rides;
-    }
-
-    public Page<Ride> findByPassengerId(Integer id, String from, String to, Pageable pageable){
-
-        Page<Ride> rides;
-        if(from != null && to != null)
-            rides = rideRepository.findAllByPassengersIdFilter(id, LocalDateTime.parse(from), LocalDateTime.parse(to), pageable);
-        else
-            rides = rideRepository.findAllByPassengersId(id, pageable);;
-
-        return rides;
-
-    }
-    public Set<Ride> findAllByPassengerId(Integer id){
-        Set<Ride> rides = rideRepository.findAllByPassengersId(id);
-
-        return rides;
-    }
-    public Page<Ride> findByDriverId(Integer id, String from, String to, Pageable pageable){
-        Page<Ride> rides;
-        if(from != null && to != null)
-            rides = rideRepository.findAllByDriverIdFilter(id, LocalDateTime.parse(from), LocalDateTime.parse(to), pageable);
-        else
-            rides = rideRepository.findAllByDriverId(id, pageable);
-
-        return rides;
+        return "";
     }
 
     public HashMap<String, Object> findAvailableDriver(Ride ride){
@@ -198,6 +213,7 @@ public class RideService {
         response.put("time", minTime);
         return response;
     }
+
     private boolean isWorking(Driver driver){
         return driver.getActive();
     }
@@ -225,65 +241,32 @@ public class RideService {
             startLocation = currentRide.getDestination();
         }
 
-        Location endLocation = nextRideDeparture;
+        Double distance = calculateDistanceKm(startLocation, nextRideDeparture);
 
-        Double distance = calculateDistanceKm(startLocation, endLocation);
         return travelTimeInMinutes(distance);
     }
 
-    public Double calculateDistanceKm(Location startLocation, Location endLocation){
-        Float startLat = startLocation.getLatitude();
-        Float startLng = startLocation.getLongitude();
-        Float endLat = endLocation.getLatitude();
-        Float endLng = endLocation.getLongitude();
 
+    public Location findNextLocation(Location departure, Location destination) throws JsonProcessingException {
+        String url = "http://router.project-osrm.org/route/v1/driving/" + departure.getLongitude() + "," + departure.getLatitude() + ";" + destination.getLongitude() + "," + destination.getLatitude() + "?geometries=geojson&overview=false&alternatives=true&steps=true";
 
-        final int R = 6371;
-        double latDistance = Math.toRadians(endLat - startLat);
-        double lonDistance = Math.toRadians(endLng - startLng);
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(startLng)) * Math.cos(Math.toRadians(endLng))
-                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
-    }
-
-    public Integer travelTimeInMinutes(Double distance){
-        Double averageSpeed = 40.0;
-        return (int) (distance/averageSpeed*60) + 4;
-    }
-
-    public Driver findFreeDriver(){
-        List<Driver> freeDrivers = new ArrayList<>();
-        for (Driver driver: driverService.findAll()) {
-            Set<Ride> rides = driver.getRides();
-            List<String> statuses = new ArrayList<>();
-            for (Ride ride : rides){
-                statuses.add(ride.getStatus());
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(response.getBody());
+            JsonNode step = root.path("routes").get(0).path("legs").get(0).path("steps").get(1);
+            if(step == null){
+                return null;
             }
-            if (statuses.contains("STARTED")){
-                continue;
-            }
-            else{
-                freeDrivers.add(driver);
-            }
-
+            Float nextStepLon = step.path("maneuver").path("location").get(0).floatValue();
+            Float nextStepLat = step.path("maneuver").path("location").get(1).floatValue();
+            Location nextLocation = new Location();
+            nextLocation.setLatitude(nextStepLat);
+            nextLocation.setLongitude(nextStepLon);
+            return nextLocation;
         }
-        Random random = new Random();
-        int index = random.nextInt(freeDrivers.size());
-        Driver freeDriver = freeDrivers.get(index);
-        return freeDriver;
-    }
-
-
-    public Double calculateKilometres(Float long1, Float long2, Float lat1, Float lat2){
-        Double distance = Math.sqrt(Math.pow((lat1 - lat2), 2) + Math.pow((long1 - long2), 2));
-        return distance * 150;
-    }
-
-    public Integer calculateTravelTime(Double distance){
-        Integer time = (int) ((distance)*4);
-        return time;
+        System.out.println("neka greska");
+        return null;
     }
 
     public List<Float> getCoordinates(Set<Path> locations){
@@ -302,6 +285,39 @@ public class RideService {
     }
 
 
+    public Double calculateDistanceKm(Location startLocation, Location endLocation){
+        Float startLat = startLocation.getLatitude();
+        Float startLng = startLocation.getLongitude();
+        Float endLat = endLocation.getLatitude();
+        Float endLng = endLocation.getLongitude();
+
+
+        final int R = 6371;
+        double latDistance = Math.toRadians(endLat - startLat);
+        double lonDistance = Math.toRadians(endLng - startLng);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(startLng)) * Math.cos(Math.toRadians(endLng))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+    public Double calculateKilometres(Float long1, Float long2, Float lat1, Float lat2){
+        Double distance = Math.sqrt(Math.pow((lat1 - lat2), 2) + Math.pow((long1 - long2), 2));
+        return distance * 150;
+    }
+
+
+    public Integer travelTimeInMinutes(Double distance){
+        Double averageSpeed = 40.0;
+        return (int) (distance/averageSpeed*60) + 4;
+    }
+
+    public Integer calculateTravelTime(Double distance){
+        Integer time = (int) ((distance)*4);
+        return time;
+    }
+
+
     public Double calculatePrice(VehicleType vehicleType, Double kilometres){
 
         Double price = 120 * kilometres;
@@ -317,47 +333,5 @@ public class RideService {
 
         return price;
     }
-
-
-    public List<RideDTO> getAllActiveRides() {
-        List<Ride> rs = this.rideRepository.findAllByStatus("STARTED");
-        List<RideDTO> rides = new ArrayList<>();
-        for(Ride r : rs){
-            RideDTO ride = new RideDTO(r);
-            rides.add(ride);
-        }
-        return rides;
-    }
-
-    public List<RideDTO> getAllAcceptedRides() {
-        List<Ride> rs = this.rideRepository.findAllByStatus("ACCEPTED");
-        List<RideDTO> rides = new ArrayList<>();
-        for(Ride r : rs){
-            RideDTO ride = new RideDTO(r);
-            rides.add(ride);
-        }
-        return rides;
-    }
-
-    public Ride findActiveRideByDriverId(Integer id){
-        return this.rideRepository.findOneByDriverIdAndStatus(id, "STARTED");
-    }
-
-//    private void findRideReviewsAndRejections(Set<Ride> rides){
-//        for (Ride r: rides) {
-//            Set<Review> reviews = reviewRepository.findAllByRideId(r.getId());
-//            Set<Rejection> rejections = rejectionRepository.findAllByRideId(r.getId());
-//            r.addReviews(reviews);
-//            r.addRejections(rejections);
-//        }
-//
-//    }
-        public Integer checkAllByUserId(Integer id){
-            Set<Ride> rides = rideRepository.findAllByDriverId(id);
-            if (rides.isEmpty()){
-                rides = rideRepository.findAllByPassengersId(id);
-            }
-            return rides.size();
-}
 
 }

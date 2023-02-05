@@ -177,14 +177,14 @@ public class UserController {
         Pageable paging = PageRequest.of(page, size);
         Map<String, Object> response = new HashMap<>();
 
-        Integer hasRides = rideService.checkAllByUserId(id);
-        if (hasRides == 0){
-            return new ResponseEntity<>("User does not exist!",HttpStatus.NOT_FOUND);
-        }
-        if(hasRides/size < page){
-            response.put("results", false);
-            return new ResponseEntity<>(response,HttpStatus.OK);
-        }
+//        Integer hasRides = rideService.checkAllByUserId(id);
+//        if (hasRides == 0){
+//            return new ResponseEntity<>("User does not exist!",HttpStatus.NOT_FOUND);
+//        }
+//        if(hasRides/size < page){
+//            response.put("results", false);
+//            return new ResponseEntity<>(response,HttpStatus.OK);
+//        }
 
         Page<Ride> allRides = rideService.findByUserId(id, paging);
 
