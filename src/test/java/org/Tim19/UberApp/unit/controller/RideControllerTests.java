@@ -3,10 +3,12 @@ package org.Tim19.UberApp.unit.controller;
 import org.Tim19.UberApp.controller.RideController;
 import org.Tim19.UberApp.dto.LoginDTO;
 import org.Tim19.UberApp.dto.RideDTO;
+import org.Tim19.UberApp.dto.RideHistoryFilterDTO;
 import org.Tim19.UberApp.dto.TokenDTO;
 import org.Tim19.UberApp.model.Location;
 import org.Tim19.UberApp.model.Passenger;
 import org.Tim19.UberApp.model.Path;
+import org.Tim19.UberApp.model.Ride;
 import org.Tim19.UberApp.service.RideService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +17,12 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -98,9 +101,9 @@ public class RideControllerTests {
 
 
         Set<Path> locations = new HashSet<>();
-        Location departure = new Location(1, "Strumicka 6", (float) 20.45862, (float) 47.2589);
-        Location destination = new Location(2, "Strumicka 6", (float) 20.45862, (float) 47.2589);
-        Path path = new Path(1, departure, destination);
+        Location departure = new Location(null, "Strumicka 6", (float) 20.45862, (float) 47.2589);
+        Location destination = new Location(null, "Strumicka 6", (float) 20.45862, (float) 47.2589);
+        Path path = new Path(null, departure, destination);
         locations.add(path);
 
 
@@ -121,13 +124,30 @@ public class RideControllerTests {
     }
 
     @Test
+    public void createRide_BadRequest(){
+        RideDTO rideDTO = new RideDTO();
+
+
+        rideDTO.setBabyTransport(false);
+        rideDTO.setPetTransport(false);
+        rideDTO.setLocations(new HashSet<Path>());
+
+
+        ResponseEntity<RideDTO> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride",
+                HttpMethod.POST,
+                new HttpEntity<>(rideDTO, passengerEntity.getHeaders()),
+                RideDTO.class);
+
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        RideDTO returnedRide = responseEntity.getBody();
+        assertNull(returnedRide);
+    }
+
+    @Test
     public void createRide_Forbidden(){
         RideDTO rideDTO = new RideDTO();
         Set<Path> locations = new HashSet<>();
-        Location departure = new Location(1, "Strumicka 6", (float) 20.45862, (float) 47.2589);
-        Location destination = new Location(2, "Strumicka 6", (float) 20.45862, (float) 47.2589);
-        Path path = new Path(1, departure, destination);
-        locations.add(path);
 
 
         rideDTO.setBabyTransport(false);
@@ -143,6 +163,7 @@ public class RideControllerTests {
         assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
     }
 
+    ///TODO : unauthorized ne radi
     @Test
     public void createRide_Unauthorized() {
         RideDTO rideDTO = new RideDTO();
@@ -165,9 +186,6 @@ public class RideControllerTests {
 
         assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
     }
-
-
-
 
 
 // ==============================================
@@ -204,6 +222,82 @@ public class RideControllerTests {
                 new ParameterizedTypeReference<String>() {
                 });
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+
+
+// ===============================================
+// GET ALL RIDES
+// ===============================================
+
+
+    @Test
+    public void getAllRides_Success() {
+
+        RideHistoryFilterDTO filterDTO = new RideHistoryFilterDTO();
+        // set values for the filterDTO
+
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("all"),
+                HttpMethod.POST,
+                new HttpEntity<>(filterDTO, adminEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void getAllRides_Forbidden(){
+        RideHistoryFilterDTO filterDTO = new RideHistoryFilterDTO();
+        // set values for the filterDTO
+
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("all"),
+                HttpMethod.POST,
+                new HttpEntity<>(filterDTO, passengerEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void getAllRides_BadRequest(){
+        RideHistoryFilterDTO filterDTO = new RideHistoryFilterDTO();
+
+
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("all"),
+                HttpMethod.POST,
+                new HttpEntity<>(adminEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+
+    ///TODO : unauthorized ne radi
+    @Test
+    public void getAllRides_Unauthorized(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("all"),
+                HttpMethod.POST,
+                new HttpEntity<>(adminEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+    }
+
+// =======================================================
+// ALL ACTIVE RIDES
+// =======================================================
+
+    @Test
+    public void getAllActiveRides_Success(){
+        List<Ride> rides = new ArrayList<>();
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("active"),
+                HttpMethod.GET,
+                new HttpEntity<>(adminEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
 }

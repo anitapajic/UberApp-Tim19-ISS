@@ -2,13 +2,10 @@ package org.Tim19.UberApp.model;
 
 import lombok.NoArgsConstructor;
 import org.Tim19.UberApp.dto.RideDTO;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -25,7 +22,7 @@ public class Ride {
     @Column(name="endTime")
     private LocalDateTime endTime;
 
-    @Column(name="totalCost", nullable = false)
+    @Column(name="totalCost", nullable = true)
     private Double totalCost;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
@@ -47,7 +44,7 @@ public class Ride {
             inverseJoinColumns = @JoinColumn(name = "paths_id", referencedColumnName = "id"))
     private Set<Path> locations = new HashSet<>();
 
-    @Column(name="estimatedTimeInMinutes", nullable = false)
+    @Column(name="estimatedTimeInMinutes", nullable = true)
     private Integer estimatedTimeInMinutes;
 
 
@@ -57,10 +54,10 @@ public class Ride {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "ride")
     private Set<Rejection> rejection = new HashSet<>();
 
-    @Column(name="status", nullable = false)
+    @Column(name="status", nullable = true)
     private String status;
 
-    @Column(name="panic", nullable = false)
+    @Column(name="panic", nullable = true)
     private boolean panic;
     @Column(name="babyTransport", nullable = false)
     private boolean babyTransport;

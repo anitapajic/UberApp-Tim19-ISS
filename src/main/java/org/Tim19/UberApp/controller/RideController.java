@@ -100,7 +100,7 @@ public class RideController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         catch (NullPointerException ex){
-            return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("There are no rides", HttpStatus.NOT_FOUND);
         }
     }
 

@@ -133,7 +133,8 @@ public class RideService {
 
     public RideDTO create(RideDTO rideDTO) {
         Ride ride = new Ride(rideDTO);
-        if(ride.getLocations() == null){
+
+        if(ride.getLocations().size()==0){
             return null;
         }
         ride.setStep(0);
