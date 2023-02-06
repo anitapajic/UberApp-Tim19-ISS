@@ -300,5 +300,94 @@ public class RideControllerTests {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
+// ==========================================================
+// ACTIVE RIDE FOR DRIVER
+// ==========================================================
+
+    @Test
+    public void activeRideForDriver_Success(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("driver/1/active"),
+                HttpMethod.GET,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+    @Test
+    public void activeRideForDriver_ActiveRideNotFound(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("driver/4/active"),
+                HttpMethod.GET,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void activeRideForDriver_BadRequest(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("driver/10/active"),
+                HttpMethod.GET,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void activeRideForDriver_Forbidden(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("driver/1/active"),
+                HttpMethod.GET,
+                new HttpEntity<>(passengerEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+    }
+
+    ///TODO : Unauthorized
+
+
+// ==========================================================
+// ACTIVE RIDE FOR PASSENGER
+// ==========================================================
+
+    @Test
+    public void activeRideForPassenger_Success(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("passenger/3/active"),
+                HttpMethod.GET,
+                new HttpEntity<>(passengerEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+    @Test
+    public void activeRideForPassenger_ActiveRideNotFound(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("passenger/2/active"),
+                HttpMethod.GET,
+                new HttpEntity<>(passengerEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void activeRideForPassenger_BadRequest(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("passenger/10/active"),
+                HttpMethod.GET,
+                new HttpEntity<>(passengerEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void activeRideForPassenger_Forbidden(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("passenger/2/active"),
+                HttpMethod.GET,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+    }
+
 
 }
