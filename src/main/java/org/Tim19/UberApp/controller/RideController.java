@@ -368,7 +368,7 @@ public class RideController {
 
 
 
-    @Scheduled(initialDelay = 1000, fixedRate = 5000)
+//    @Scheduled(initialDelay = 1000, fixedRate = 5000)
     public void simulate() throws JsonProcessingException {
         updateActiveRideVehiclePosition(this.rideService.findAllActiveRides());
         updateAcceptedRideVehiclePosition(this.rideService.findAllAcceptedRides());
