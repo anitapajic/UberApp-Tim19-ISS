@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.Tim19.UberApp.dto.RideDTO;
 import org.Tim19.UberApp.dto.RideHistoryFilterDTO;
 import org.Tim19.UberApp.model.*;
-import org.Tim19.UberApp.repository.RejectionRepository;
-import org.Tim19.UberApp.repository.ReviewRepository;
 import org.Tim19.UberApp.repository.RideRepository;
 import org.Tim19.UberApp.security.SecurityUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -136,6 +133,9 @@ public class RideService {
 
     public RideDTO create(RideDTO rideDTO) {
         Ride ride = new Ride(rideDTO);
+        if(ride.getLocations() == null){
+            return null;
+        }
         ride.setStep(0);
 
         if(ride.getRouteJSON() == ""){

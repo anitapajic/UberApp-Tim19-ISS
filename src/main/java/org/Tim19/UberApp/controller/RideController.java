@@ -55,8 +55,12 @@ public class RideController {
     //CREATING A RIDE  /api/ride
     @PreAuthorize("hasAnyAuthority('PASSENGER')")
     @PostMapping(consumes = "application/json")
-    public ResponseEntity createRide(@RequestBody RideDTO rideDTO) throws InterruptedException {
+    public  ResponseEntity createRide(@RequestBody RideDTO rideDTO) throws InterruptedException {
         rideDTO = rideService.create(rideDTO);
+
+        if(rideDTO == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         this.simpMessagingTemplate.convertAndSend("/map-updates/ask-driver", rideDTO);
 
 
@@ -364,7 +368,7 @@ public class RideController {
 
 
 
-//    @Scheduled(initialDelay = 1000, fixedRate = 5000)
+    @Scheduled(initialDelay = 1000, fixedRate = 5000)
     public void simulate() throws JsonProcessingException {
         updateActiveRideVehiclePosition(this.rideService.findAllActiveRides());
         updateAcceptedRideVehiclePosition(this.rideService.findAllAcceptedRides());
