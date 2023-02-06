@@ -412,6 +412,121 @@ public class RideControllerTests {
                 });
         assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
     }
+
+    // ==============================================
+// ACCEPT RIDE
+// ==============================================
+    @Test
+    public void acceptRide_Forbidden(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/3/accept",
+                HttpMethod.PUT,
+                new HttpEntity<>(passengerEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void acceptRide_Unathorised(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/3/accept",
+                HttpMethod.PUT,
+                new HttpEntity<>(null),
+                new ParameterizedTypeReference<String>() {
+                });
+
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void acceptRide_Success(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/4/accept",
+                HttpMethod.PUT,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+    @Test
+    public void acceptRide_BadRequest(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/3/accept",
+                HttpMethod.PUT,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void acceptRide_NotFound(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/12/accept",
+                HttpMethod.PUT,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    // ==============================================
+// CANCEL RIDE
+// ==============================================
+    @Test
+    public void cancelRide_Forbidden(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/3/withdraw",
+                HttpMethod.PUT,
+                new HttpEntity<>(adminEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void cancelRide_Unathorised(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/3/withdraw",
+                HttpMethod.PUT,
+                new HttpEntity<>(null),
+                new ParameterizedTypeReference<String>() {
+                });
+
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void cancelRide_Success(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/5/withdraw",
+                HttpMethod.PUT,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+    @Test
+    public void cancelRide_BadRequest(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/3/withdraw",
+                HttpMethod.PUT,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void cancelRide_NotFound(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/12/withdraw",
+                HttpMethod.PUT,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
 // ==============================================
 // START RIDE
 // ==============================================
@@ -562,7 +677,7 @@ public class RideControllerTests {
         Rejection rejection = new Rejection();
         rejection.setReason("Reason of rejection");
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/5/cancel",
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/8/cancel",
                 HttpMethod.PUT,
                 new HttpEntity<>(rejection, driverEntity.getHeaders()),
                 new ParameterizedTypeReference<String>() {
