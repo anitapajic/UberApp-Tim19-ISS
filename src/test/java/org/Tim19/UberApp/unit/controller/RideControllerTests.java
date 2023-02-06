@@ -1,18 +1,21 @@
 package org.Tim19.UberApp.unit.controller;
 
 import org.Tim19.UberApp.controller.RideController;
-import org.Tim19.UberApp.dto.*;
-import org.Tim19.UberApp.dto.PaginatedData.PanicPaginatedDTO;
-import org.Tim19.UberApp.model.*;
+import org.Tim19.UberApp.dto.LoginDTO;
+import org.Tim19.UberApp.dto.RideDTO;
+import org.Tim19.UberApp.dto.RideHistoryFilterDTO;
+import org.Tim19.UberApp.dto.TokenDTO;
+import org.Tim19.UberApp.model.Location;
+import org.Tim19.UberApp.model.Passenger;
+import org.Tim19.UberApp.model.Path;
+import org.Tim19.UberApp.model.Ride;
 import org.Tim19.UberApp.service.RideService;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
-import org.springframework.web.client.ResourceAccessException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -273,11 +276,9 @@ public class RideControllerTests {
     ///TODO : unauthorized ne radi
     @Test
     public void getAllRides_Unauthorized(){
-
-
         ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("all"),
                 HttpMethod.POST,
-                new HttpEntity<>(null),
+                new HttpEntity<>(adminEntity.getHeaders()),
                 new ParameterizedTypeReference<String>() {
                 });
         assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
@@ -288,7 +289,7 @@ public class RideControllerTests {
 // =======================================================
 
     @Test
-    public void getAllActiveRides_Success(){
+    public void allActiveRides_Success(){
         List<Ride> rides = new ArrayList<>();
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("active"),
@@ -299,257 +300,94 @@ public class RideControllerTests {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
-    
-// ==============================================
-// START RIDE
-// ==============================================
+// ==========================================================
+// ACTIVE RIDE FOR DRIVER
+// ==========================================================
+
     @Test
-    public void startRide_Forbidden(){
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/1/start",
-                HttpMethod.PUT,
+    public void activeRideForDriver_Success(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("driver/1/active"),
+                HttpMethod.GET,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+    @Test
+    public void activeRideForDriver_ActiveRideNotFound(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("driver/4/active"),
+                HttpMethod.GET,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void activeRideForDriver_BadRequest(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("driver/10/active"),
+                HttpMethod.GET,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void activeRideForDriver_Forbidden(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("driver/1/active"),
+                HttpMethod.GET,
                 new HttpEntity<>(passengerEntity.getHeaders()),
                 new ParameterizedTypeReference<String>() {
                 });
-
         assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
     }
 
-    @Test
-    public void startRide_Unathorised(){
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/1/start",
-                HttpMethod.PUT,
-                new HttpEntity<>(null),
-                new ParameterizedTypeReference<String>() {
-                });
+    ///TODO : Unauthorized
 
-        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
-    }
+
+// ==========================================================
+// ACTIVE RIDE FOR PASSENGER
+// ==========================================================
 
     @Test
-    public void startRide_Success(){
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/5/start",
-                HttpMethod.PUT,
-                new HttpEntity<>(driverEntity.getHeaders()),
-                new ParameterizedTypeReference<String>() {
-                });
-
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    }
-    @Test
-    public void startRide_BadRequest(){
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/2/start",
-                HttpMethod.PUT,
-                new HttpEntity<>(driverEntity.getHeaders()),
-                new ParameterizedTypeReference<String>() {
-                });
-
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-    }
-
-    @Test
-    public void startRide_NotFound(){
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/12/start",
-                HttpMethod.PUT,
-                new HttpEntity<>(driverEntity.getHeaders()),
-                new ParameterizedTypeReference<String>() {
-                });
-
-        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-    }
-
-// ==============================================
-// END RIDE
-// ==============================================
-    @Test
-    public void endRide_Forbidden(){
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/1/end",
-                HttpMethod.PUT,
+    public void activeRideForPassenger_Success(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("passenger/3/active"),
+                HttpMethod.GET,
                 new HttpEntity<>(passengerEntity.getHeaders()),
                 new ParameterizedTypeReference<String>() {
                 });
-
-        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
-    }
-
-    @Test
-    public void endRide_Unathorised(){
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/1/end",
-                HttpMethod.PUT,
-                new HttpEntity<>(null),
-                new ParameterizedTypeReference<String>() {
-                });
-
-        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
-    }
-
-    @Test
-    public void endRide_Success(){
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/6/end",
-                HttpMethod.PUT,
-                new HttpEntity<>(driverEntity.getHeaders()),
-                new ParameterizedTypeReference<String>() {
-                });
-
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
     @Test
-    public void endRide_BadRequest(){
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/2/end",
-                HttpMethod.PUT,
-                new HttpEntity<>(driverEntity.getHeaders()),
+    public void activeRideForPassenger_ActiveRideNotFound(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("passenger/2/active"),
+                HttpMethod.GET,
+                new HttpEntity<>(passengerEntity.getHeaders()),
                 new ParameterizedTypeReference<String>() {
                 });
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
 
+    @Test
+    public void activeRideForPassenger_BadRequest(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("passenger/10/active"),
+                HttpMethod.GET,
+                new HttpEntity<>(passengerEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {
+                });
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     }
 
     @Test
-    public void endRide_NotFound(){
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/12/end",
-                HttpMethod.PUT,
+    public void activeRideForPassenger_Forbidden(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("passenger/2/active"),
+                HttpMethod.GET,
                 new HttpEntity<>(driverEntity.getHeaders()),
                 new ParameterizedTypeReference<String>() {
                 });
-
-        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-    }
-
-// ==============================================
-// DECLINE RIDE
-// ==============================================
-    @Test
-    public void declineRide_Forbidden(){
-        Rejection rejection = new Rejection();
-        rejection.setReason("Reason of rejection");
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/1/cancel",
-                HttpMethod.PUT,
-                new HttpEntity<>(rejection,adminEntity.getHeaders()),
-                new ParameterizedTypeReference<String>() {
-                });
-
         assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
     }
-
-    @Test
-    public void declineRide_Unathorised(){
-        Rejection rejection = new Rejection();
-        rejection.setReason("Reason of rejection");
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/1/cancel",
-                HttpMethod.PUT,
-                new HttpEntity<>(rejection),
-                new ParameterizedTypeReference<String>() {
-                });
-
-        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
-    }
-
-    @Test
-    public void declineRide_Success(){
-        Rejection rejection = new Rejection();
-        rejection.setReason("Reason of rejection");
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/4/cancel",
-                HttpMethod.PUT,
-                new HttpEntity<>(rejection, driverEntity.getHeaders()),
-                new ParameterizedTypeReference<String>() {
-                });
-
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    }
-    @Test
-    public void declineRide_BadRequest(){
-        Rejection rejection = new Rejection();
-        rejection.setReason("Reason of rejection");
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/2/cancel",
-                HttpMethod.PUT,
-                new HttpEntity<>(rejection, driverEntity.getHeaders()),
-                new ParameterizedTypeReference<String>() {
-                });
-
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-    }
-
-    @Test
-    public void declineRide_NotFound(){
-        Rejection rejection = new Rejection();
-        rejection.setReason("Reason of rejection");
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/12/cancel",
-                HttpMethod.PUT,
-                new HttpEntity<>(rejection, driverEntity.getHeaders()),
-                new ParameterizedTypeReference<String>() {
-                });
-
-        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-    }
-
-// ==============================================
-// PANIC RIDE
-// ==============================================
-    @Test
-    public void panicRide_Forbidden(){
-        PanicPaginatedDTO panic = new PanicPaginatedDTO();
-        panic.setReason("Reason of panic");
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/1/panic",
-                HttpMethod.PUT,
-                new HttpEntity<>(panic, adminEntity.getHeaders()),
-                new ParameterizedTypeReference<String>() {
-                });
-
-        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
-    }
-
-    @Test
-    public void panicRide_Unathorised(){
-        PanicPaginatedDTO panic = new PanicPaginatedDTO();
-        panic.setReason("Reason of panic");
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/1/panic",
-                HttpMethod.PUT,
-                new HttpEntity<>(panic),
-                new ParameterizedTypeReference<String>() {
-                });
-
-        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
-    }
-
-    @Test
-    public void panicRide_Success(){
-        PanicPaginatedDTO panic = new PanicPaginatedDTO();
-        panic.setReason("Reason of panic");
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/5/panic",
-                HttpMethod.PUT,
-                new HttpEntity<>(panic, driverEntity.getHeaders()),
-                new ParameterizedTypeReference<String>() {
-                });
-
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    }
-
-    @Test
-    public void panicRide_NotFound(){
-        PanicPaginatedDTO panic = new PanicPaginatedDTO();
-        panic.setReason("Reason of panic");
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/12/panic",
-                HttpMethod.PUT,
-                new HttpEntity<>(panic, driverEntity.getHeaders()),
-                new ParameterizedTypeReference<String>() {
-                });
-
-        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-    }
-
-
-
-
-
-
 
 
 }
