@@ -124,7 +124,7 @@ public class RideController {
         Driver driver = driverService.findOne(driverId);
 
         if (driver == null) {
-            return new ResponseEntity<>("Active ride does not exist!", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Driver does not exist!", HttpStatus.BAD_REQUEST);
         }
 
         Set<Ride> ridesOfDriver = driver.getRides();
@@ -168,7 +168,7 @@ public class RideController {
             return new ResponseEntity<>(new RideDTO(activeRide),HttpStatus.OK);
         }
         catch (NullPointerException ex){
-            return new ResponseEntity<>("Active ride does not exist!", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Passenger does not exist!", HttpStatus.BAD_REQUEST);
         }
     }
 

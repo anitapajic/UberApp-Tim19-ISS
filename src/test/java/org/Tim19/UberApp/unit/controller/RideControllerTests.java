@@ -289,7 +289,7 @@ public class RideControllerTests {
 // =======================================================
 
     @Test
-    public void getAllActiveRides_Success(){
+    public void allActiveRides_Success(){
         List<Ride> rides = new ArrayList<>();
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("active"),
@@ -299,5 +299,6 @@ public class RideControllerTests {
                 });
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
+
 
 }
