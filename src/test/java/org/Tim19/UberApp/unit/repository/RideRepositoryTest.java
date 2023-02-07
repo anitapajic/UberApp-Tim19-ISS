@@ -8,6 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
@@ -49,5 +52,10 @@ class RideRepositoryTest {
 
     @Test
     void findAllByPassengersIdFilter() {
+        LocalDateTime december21 = LocalDateTime.parse("2022-12-21T00:00:00");
+        LocalDateTime december26 = LocalDateTime.parse("2022-12-26T00:00:00");
+        Pageable paging = PageRequest.of(0, 10);
+        Page<Ride> rides = rideRepository.findAllByPassengersIdFilter(2, december21, december26, paging);
+        assertTrue(rides.getContent().size() > 0);
     }
 }
