@@ -43,10 +43,12 @@ insert into path (departure_id, destination_id) values
                                                     (2,1),
                                                     (3,1),
                                                     (4,1),
+                                                    (4,1),
                                                     (1,3);
 
 insert into favorite_route(favorite_name, scheduled_time, vehicle_type, baby_transport, pet_transport) values ('Kuca-Posao', '2017-07-21T17:32:28Z', 0, false, false),
                                                                                                               ('Kuca-Faks', '2017-07-21T17:32:28Z', 0, false, false),
+                                                                                                              ('Kuca-Teretana', '2017-07-21T17:32:28Z', 0, false, false),
                                                                                                               ('Kuca-Teretana', '2017-07-21T17:32:28Z', 0, false, false),
                                                                                                               ('Kuca-Teretana', '2017-07-21T17:32:28Z', 0, false, false),
                                                                                                               ('Kuca-Teretana', '2017-07-21T17:32:28Z', 0, false, false),
@@ -69,7 +71,8 @@ insert into favorites_paths(favorite_id, paths_id) values (1,1),
                                                           (9,9),
                                                           (10,10),
                                                           (11,11),
-                                                          (12,12);
+                                                          (12,12),
+                                                          (13,13);
 
 -- Passenger favourite paths
 
@@ -85,7 +88,8 @@ insert into passenger_favorites (favorite_id, passenger_id) values
                                                                 (9, 2),
                                                                 (10, 2),
                                                                 (11, 2),
-                                                                (12, 2);
+                                                                (12, 2),
+                                                                (13, 2);
 
 
 -- Rides

@@ -56,6 +56,9 @@ public class FavoriteRouteController {
         }
 
         Set<FavoriteRoute> allRoutes = favoriteRouteService.findAllByPassengerUsername(currentPassenger.getUsername());
+        for(FavoriteRoute f : allRoutes){
+            System.out.println(f.getId());
+        }
         if(allRoutes.size()>10){
             return new ResponseEntity<>(
                     "Number of favorite rides cannot exceed 10!", HttpStatus.BAD_REQUEST);
