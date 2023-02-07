@@ -952,4 +952,50 @@ public class RideControllerTests {
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 
+// ==================================================
+// DELETE FAVORITE ROUTE
+// ==================================================
+
+    @Test
+    public void deleteFavoriteRoute_Success(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/favorites/5",
+                HttpMethod.DELETE,
+                new HttpEntity<>(passengerEntity.getHeaders()),
+                String.class);
+
+
+        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
+    }
+    @Test
+    public void deleteFavoriteRoute_Forbidden(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/favorites/6",
+                HttpMethod.DELETE,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                String.class);
+
+
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void deleteFavoriteRoute_Unauthorized(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/favorites/6",
+                HttpMethod.DELETE,
+                new HttpEntity<>(null),
+                String.class);
+
+
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void deleteFavoriteRoute_BadRequest(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/favorites/20",
+                HttpMethod.DELETE,
+                new HttpEntity<>(passengerEntity.getHeaders()),
+                String.class);
+
+
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
 }
