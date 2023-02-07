@@ -877,7 +877,7 @@ public class RideControllerTests {
     }
 
     @Test
-    public void createFavoriteRoute_NumberBIggerThan10(){
+    public void createFavoriteRoute_NumberBiggerThan10(){
         CreateFavoriteRouteBodyPaginatedDTO favoriteRouteDTO = new CreateFavoriteRouteBodyPaginatedDTO();
         favoriteRouteDTO.setFavoriteName("Kuca-Poso");
         favoriteRouteDTO.setBabyTransport(false);
@@ -907,10 +907,52 @@ public class RideControllerTests {
     }
 
 
+// ====================================================
+// GET FAVORITE ROUTES
+// ====================================================
+
+    @Test
+    public void getFavoriteRoutes_Forbidden(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/favorites/2",
+                HttpMethod.GET,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                new ParameterizedTypeReference<String>() {});
 
 
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void getFavoriteRoutes_Unauthorised(){
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/favorites/2",
+                HttpMethod.GET,
+                new HttpEntity<>(null),
+                new ParameterizedTypeReference<String>() {});
 
 
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+    }
+    @Test
+    public void getFavoriteRoutes_Successful(){
+        ResponseEntity<Set<FavoriteRouteDTO>> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/favorites/3",
+                HttpMethod.GET,
+                new HttpEntity<>(passengerEntity.getHeaders()),
+                new ParameterizedTypeReference<Set<FavoriteRouteDTO>>() {});
 
+        assertTrue(responseEntity.getBody().size() > 0);
+        assertTrue(responseEntity.getBody().size() <= 10);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void getFavoriteRoutes_NotFound(){
+        ResponseEntity<Set<FavoriteRouteDTO>> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/favorites/12",
+                HttpMethod.GET,
+                new HttpEntity<>(passengerEntity.getHeaders()),
+                new ParameterizedTypeReference<Set<FavoriteRouteDTO>>() {});
+
+
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
 
 }
