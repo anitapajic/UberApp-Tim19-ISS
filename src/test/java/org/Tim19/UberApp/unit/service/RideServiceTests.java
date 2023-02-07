@@ -19,6 +19,10 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
@@ -444,5 +448,189 @@ public class RideServiceTests {
 
         verify(rideRepository, times(1)).findAllByStatus("ACCEPTED");
     }
+
+    // =========================================================
+// FIND RIDES BY USER ID
+// =========================================================
+
+    @Test
+    public void testFindByUserId_OnlyPassengerId() {
+        // Test data
+        Integer userId = 2;
+
+        List<Ride> driverRides = new ArrayList<Ride>();
+        List<Ride> passengerRides = new ArrayList<Ride>();
+        driverRides.add(ride);
+        passengerRides.add(ride);
+
+        Pageable pageable = PageRequest.of(0, 10);
+        // Mock the ride repository
+        Page<Ride> driverRidesPage = new PageImpl<>(driverRides);
+        Page<Ride> passengerRidesPage = new PageImpl<>(passengerRides);
+        when(rideRepository.findAllByDriverId(userId, pageable))
+                .thenReturn(driverRidesPage);
+        when(rideRepository.findAllByPassengersId(userId, pageable))
+                .thenReturn(passengerRidesPage);
+
+        // Test the findByUserId method
+
+        Page<Ride> rides = rideService.findByUserId(userId, pageable);
+        assertEquals(1, rides.getTotalElements());
+    }
+
+    @Test
+    public void testFindByUserId_OnlyDriverId(){
+
+        Integer driverId = 4;
+
+        List<Ride> driverRides = new ArrayList<Ride>();
+        List<Ride> passengerRides = new ArrayList<Ride>();
+        driverRides.add(ride);
+        passengerRides.add(ride);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        // Test case 1: user is only a driver
+        Page<Ride> driverRidesPage = new PageImpl<>(driverRides);
+        when(rideRepository.findAllByDriverId(driverId, pageable))
+                .thenReturn(driverRidesPage);
+        when(rideRepository.findAllByPassengersId(driverId, pageable))
+                .thenReturn(new PageImpl<>(Collections.emptyList()));
+
+        Page<Ride> rides = rideService.findByUserId(driverId, pageable);
+        assertEquals(1, rides.getTotalElements());
+        assertEquals(driverRides, rides.getContent());
+    }
+
+
+// =========================================================
+// FIND RIDES BY PASSENGER ID
+// =========================================================
+
+
+    @Test
+    public void testFindByPassengerId_WithFromAndTo() {
+        Integer id = 2;
+
+        LocalDateTime startDate = LocalDateTime.of(2022,1,1,15,20);
+        LocalDateTime endTime = LocalDateTime.of(2023,12,12,15,20);
+
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Ride> ridesPassenger = new ArrayList<>();
+        ridesPassenger.add(ride);
+        Page<Ride> expectedRides = new PageImpl<>(ridesPassenger);
+
+        when(rideRepository.findAllByPassengersIdFilter(id, startDate, endTime, pageable))
+                .thenReturn(expectedRides);
+
+        Page<Ride> rides = rideService.findByPassengerId(id, String.valueOf(startDate), String.valueOf(endTime), pageable);
+
+        assertEquals(expectedRides, rides);
+    }
+
+    @Test
+    public void testFindByPassengerId_WithoutFromAndTo() {
+        Integer id = 2;
+        Pageable pageable = PageRequest.of(0, 10);
+
+        List<Ride> ridesPassenger = new ArrayList<>();
+        ridesPassenger.add(ride);
+        Page<Ride> expectedRides = new PageImpl<>(ridesPassenger);
+
+        when(rideRepository.findAllByPassengersId(id, pageable))
+                .thenReturn(expectedRides);
+
+        Page<Ride> rides = rideService.findByPassengerId(id, null, null, pageable);
+
+        assertNotNull(rides);
+        assertEquals(expectedRides, rides);
+    }
+
+// =========================================================
+// FIND ALL RIDES BY PASSENGER ID
+// =========================================================
+
+    @Test
+    public void testFindAllByPassengerId_Success() {
+        Integer id = 2;
+        Set<Ride> expectedRides = new HashSet<>(Arrays.asList(ride, ride2));
+
+        when(rideRepository.findAllByPassengersId(2))
+                .thenReturn(expectedRides);
+
+        Set<Ride> rides = rideService.findAllByPassengerId(id);
+
+        assertNotNull(rides);
+        assertEquals(rides, expectedRides);
+    }
+
+
+    @Test
+    public void testFindAllByPassengerId_NoRidesFound() {
+        when(rideRepository.findAllByPassengersId(1)).thenReturn(new HashSet<>());
+
+        Set<Ride> rides = rideService.findAllByPassengerId(1);
+        assertTrue(rides.isEmpty());
+    }
+
+
+    @Test
+    public void testFindAllByPassengerId_DuplicateRides() {
+        Set<Ride> expectedRides = new HashSet<>(Arrays.asList(ride, ride, ride2));
+        when(rideRepository.findAllByPassengersId(2)).thenReturn(expectedRides);
+
+        Set<Ride> rides = rideService.findAllByPassengerId(2);
+        assertEquals(2, rides.size());
+    }
+
+    @Test
+    public void testFindAllByPassengerId_CorrectOrder() {
+        List<Ride> expectedRides = Arrays.asList(ride, ride2);
+        when(rideRepository.findAllByPassengersId(2)).thenReturn(new HashSet<>(expectedRides));
+
+        Set<Ride> rides = rideService.findAllByPassengerId(2);
+        assertEquals(rides, new HashSet<>(expectedRides));
+    }
+
+//==========================================================
+// FIND RIDES BY DRIVER ID
+//==========================================================
+
+    @Test
+    public void testFindByDriverId_WithFromAndTo() {
+        Integer id = 1;
+
+        LocalDateTime startDate = LocalDateTime.of(2022,1,1,15,20);
+        LocalDateTime endTime = LocalDateTime.of(2023,12,12,15,20);
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Ride> ridesDriver = new ArrayList<>();
+        ridesDriver.add(ride);
+
+        Page<Ride> expectedRides = new PageImpl<>(ridesDriver);
+
+
+        when(rideRepository.findAllByDriverIdFilter(id, startDate, endTime, pageable))
+                .thenReturn(expectedRides);
+
+        Page<Ride> rides = rideService.findByDriverId(id, String.valueOf(startDate), String.valueOf(endTime), pageable);
+
+        assertEquals(rides, expectedRides);
+    }
+
+    @Test
+    public void testFindByDriverId_WithoutFromAndTo() {
+        Integer id = 1;
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Ride> expectedRides = new PageImpl<>(Collections.emptyList());
+
+        when(rideRepository.findAllByDriverId(id, pageable))
+                .thenReturn(expectedRides);
+
+        Page<Ride> rides = rideService.findByDriverId(id, null, null, pageable);
+
+        assertNotNull(rides);
+        assertEquals(rides, expectedRides);
+    }
+
 
 }
