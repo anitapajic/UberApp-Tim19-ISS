@@ -8,9 +8,11 @@ import org.Tim19.UberApp.service.DriverService;
 import org.Tim19.UberApp.service.PassengerService;
 import org.Tim19.UberApp.service.RideService;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,7 +38,7 @@ public class RideServiceTests {
     @Autowired
     private RideService rideService;
 
-    @MockBean
+    @Mock
     private RideRepository rideRepository;
 
     @MockBean
@@ -92,21 +94,24 @@ public class RideServiceTests {
         passengers.add(passenger);
         locations.add(path);
 
-        RideDTO rideDTO = new RideDTO(123, LocalDateTime.now(), null, 350.0, driver, passengers,
+        RideDTO rideDTO = new RideDTO(null, LocalDateTime.now(), null, 350.0, driver, passengers,
                 7, null, vehicle, false, false, false, "PENDING", locations,
                 null, "", 0);
-        ride = new Ride(rideDTO);
+        ride = new Ride(rideDTO, true);
     }
 
-//    @Test
-//    @DisplayName("Test Should Save New Ride")
-//    public void shouldSaveRide(){
-//
-//        when(rideRepository.findById(123)).thenReturn(Optional.ofNullable(ride));
-//        Ride savedRide = rideService.save(ride);
-//        assertEquals(ride, savedRide);
-//
-//    }
+// ============================================================
+// SAVE
+// ============================================================
+
+    @Test
+    @DisplayName("Test Should Save New Ride")
+    public void shouldSaveRide(){
+
+        Ride savedRide = rideService.save(ride);
+        assertEquals(ride, savedRide);
+
+    }
 
 // ============================================================
 // CALCULATE PRICE

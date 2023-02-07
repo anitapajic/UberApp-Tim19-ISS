@@ -101,6 +101,18 @@ public class Ride {
         this.routeJSON = rideDTO.getRouteJSON();
         this.step = rideDTO.getStep();
     }
+    public Ride(RideDTO rideDTO, boolean flag){
+        this.id = rideDTO.getId();
+        this.startTime = rideDTO.getStartTime();
+        this.endTime =  rideDTO.getStartTime();
+        this.totalCost =  rideDTO.getTotalCost();
+        this.locations =  rideDTO.getLocations();
+        this.estimatedTimeInMinutes =  rideDTO.getEstimatedTimeInMinutes();
+        this.status =  rideDTO.getStatus();
+        this.panic =  rideDTO.getPanic();
+        this.babyTransport =  rideDTO.isBabyTransport();
+        this.petTransport =  rideDTO.isPetTransport();
+    }
 
     public Integer getId() {
         return id;
