@@ -34,13 +34,10 @@ public class RideService {
     private RestTemplate restTemplate;
 
 
-    //public Ride findOneById(Integer id){return rideRepository.findById(id).orElse(null);}
-
     public Ride findOneRideById(Integer id){
         return rideRepository.findById(id).orElse(null);
     }
 
-    public Page<Ride> findAll(Pageable page){return rideRepository.findAll(page);}
 
     public List<Ride> findAllFilter(RideHistoryFilterDTO filter){
         List<Ride> rides;
@@ -118,17 +115,6 @@ public class RideService {
         return rides;
     }
 
-    public Ride findActiveRideByDriverId(Integer id){
-        return this.rideRepository.findOneByDriverIdAndStatus(id, "STARTED");
-    }
-
-//    public Integer checkAllByUserId(Integer id){
-//        Set<Ride> rides = rideRepository.findAllByDriverId(id);
-//        if (rides.isEmpty()){
-//            rides = rideRepository.findAllByPassengersId(id);
-//        }
-//        return rides.size();
-//    }
 
 
     public RideDTO create(RideDTO rideDTO) {
@@ -181,10 +167,109 @@ public class RideService {
         save(ride);
     }
 
-    public void remove(Integer id){rideRepository.deleteById(id);}
+
+    public Location findNextLocation(Location departure, Location destination) throws JsonProcessingException {
+        if(departure.getLatitude()==null || destination.getLatitude()==null){
+            return null;
+        }
+        String url = "http://router.project-osrm.org/route/v1/driving/" + departure.getLongitude() + "," + departure.getLatitude() + ";" + destination.getLongitude() + "," + destination.getLatitude() + "?geometries=geojson&overview=false&alternatives=true&steps=true";
+
+        System.out.println(departure + " " +  destination);
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(response.getBody());
+            JsonNode step = root.path("routes").get(0).path("legs").get(0).path("steps").get(1);
+            if(step == null){
+                return null;
+            }
+            Float nextStepLon = step.path("maneuver").path("location").get(0).floatValue();
+            Float nextStepLat = step.path("maneuver").path("location").get(1).floatValue();
+            Location nextLocation = new Location();
+            nextLocation.setLatitude(nextStepLat);
+            nextLocation.setLongitude(nextStepLon);
+            return nextLocation;
+        }
+        else if(response.getStatusCode() == HttpStatus.BAD_REQUEST){
+            return null;
+        }
+        return null;
+    }
+
+    public List<Float> getCoordinates(Set<Path> locations){
+        List<Float> coordinates = new ArrayList<>();
+        for (Path p: locations){
+            Float latitude1 = p.getDeparture().getLatitude();
+            Float longitude1 = p.getDeparture().getLongitude();
+            Float longitude2 = p.getDestination().getLongitude();
+            Float latitude2 = p.getDestination().getLatitude();
+            coordinates.add(longitude1);
+            coordinates.add(longitude2);
+            coordinates.add(latitude1);
+            coordinates.add(latitude2);
+        }
+        return coordinates;
+    }
+
+    public Double calculateKilometres(Float long1, Float long2, Float lat1, Float lat2){
+        Double distance = Math.sqrt(Math.pow((lat1 - lat2), 2) + Math.pow((long1 - long2), 2));
+        return distance * 150;
+    }
+
+    public Integer calculateTravelTime(Double distance){
+        Integer time = (int) ((distance)*4);
+        return time;
+    }
 
 
-    public String findJSON(Ride ride){
+    public Double calculatePrice(VehicleType vehicleType, Double kilometres){
+
+        Double price = 120 * kilometres;
+        if(vehicleType.equals(VehicleType.STANDARDNO)){
+            price += 70;
+        }
+        else if(vehicleType.equals(VehicleType.KOMBI)){
+            price += 50;
+        }
+        else if(vehicleType.equals(VehicleType.LUKSUZNO)){
+            price +=100;
+        }
+
+        return price;
+    }
+
+
+// ===========================================================================
+//                       PRIVATE METHODS:
+// ===========================================================================
+
+    private Integer travelTimeInMinutes(Double distance){
+        Double averageSpeed = 40.0;
+        return (int) (distance/averageSpeed*60) + 4;
+    }
+
+    private Double calculateDistanceKm(Location startLocation, Location endLocation){
+        Float startLat = startLocation.getLatitude();
+        Float startLng = startLocation.getLongitude();
+        Float endLat = endLocation.getLatitude();
+        Float endLng = endLocation.getLongitude();
+
+
+        final int R = 6371;
+        double latDistance = Math.toRadians(endLat - startLat);
+        double lonDistance = Math.toRadians(endLng - startLng);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(startLng)) * Math.cos(Math.toRadians(endLng))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    private Ride findActiveRideByDriverId(Integer id){
+        return this.rideRepository.findOneByDriverIdAndStatus(id, "STARTED");
+    }
+
+    private String findJSON(Ride ride){
         String url = "http://router.project-osrm.org/route/v1/driving/" + ride.getDeparture().getLongitude() + "," + ride.getDeparture().getLatitude() + ";" + ride.getDestination().getLongitude() + "," + ride.getDestination().getLatitude() + "?geometries=geojson&overview=false&alternatives=true&steps=true";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         if (response.getStatusCode() == HttpStatus.OK) {
@@ -193,27 +278,6 @@ public class RideService {
         return "";
     }
 
-    public HashMap<String, Object> findAvailableDriver(Ride ride){
-
-        Driver choosenDriver = new Driver();
-        Integer minTime = Integer.MAX_VALUE;
-        //TODO : findAllWithVehicleType
-        List<Driver> drivers = driverService.findAll();
-        for(Driver d : drivers){
-            if(isWorking(d) && !isWorkingToMuch(d)){
-                Integer whenIsAvailable = whenIsAvailable(d);
-                Integer timeToArive = timeToArrive(d, ride.getDeparture());
-                if((whenIsAvailable + timeToArive) < minTime){
-                    minTime = whenIsAvailable + timeToArive;
-                    choosenDriver = d;
-                }
-            }
-        }
-        HashMap<String, Object> response = new HashMap<>();
-        response.put("driver", choosenDriver);
-        response.put("time", minTime);
-        return response;
-    }
 
     private boolean isWorking(Driver driver){
         return driver.getActive();
@@ -248,91 +312,26 @@ public class RideService {
     }
 
 
-    public Location findNextLocation(Location departure, Location destination) throws JsonProcessingException {
-        String url = "http://router.project-osrm.org/route/v1/driving/" + departure.getLongitude() + "," + departure.getLatitude() + ";" + destination.getLongitude() + "," + destination.getLatitude() + "?geometries=geojson&overview=false&alternatives=true&steps=true";
+    private HashMap<String, Object> findAvailableDriver(Ride ride){
 
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        if (response.getStatusCode() == HttpStatus.OK) {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(response.getBody());
-            JsonNode step = root.path("routes").get(0).path("legs").get(0).path("steps").get(1);
-            if(step == null){
-                return null;
+        Driver choosenDriver = new Driver();
+        Integer minTime = Integer.MAX_VALUE;
+        //TODO : findAllWithVehicleType
+        List<Driver> drivers = driverService.findAll();
+        for(Driver d : drivers){
+            if(isWorking(d) && !isWorkingToMuch(d)){
+                Integer whenIsAvailable = whenIsAvailable(d);
+                Integer timeToArive = timeToArrive(d, ride.getDeparture());
+                if((whenIsAvailable + timeToArive) < minTime){
+                    minTime = whenIsAvailable + timeToArive;
+                    choosenDriver = d;
+                }
             }
-            Float nextStepLon = step.path("maneuver").path("location").get(0).floatValue();
-            Float nextStepLat = step.path("maneuver").path("location").get(1).floatValue();
-            Location nextLocation = new Location();
-            nextLocation.setLatitude(nextStepLat);
-            nextLocation.setLongitude(nextStepLon);
-            return nextLocation;
         }
-        System.out.println("neka greska");
-        return null;
-    }
-
-    public List<Float> getCoordinates(Set<Path> locations){
-        List<Float> coordinates = new ArrayList<>();
-        for (Path p: locations){
-            Float latitude1 = p.getDeparture().getLatitude();
-            Float longitude1 = p.getDeparture().getLongitude();
-            Float longitude2 = p.getDestination().getLongitude();
-            Float latitude2 = p.getDestination().getLatitude();
-            coordinates.add(longitude1);
-            coordinates.add(longitude2);
-            coordinates.add(latitude1);
-            coordinates.add(latitude2);
-        }
-        return coordinates;
-    }
-
-
-    public Double calculateDistanceKm(Location startLocation, Location endLocation){
-        Float startLat = startLocation.getLatitude();
-        Float startLng = startLocation.getLongitude();
-        Float endLat = endLocation.getLatitude();
-        Float endLng = endLocation.getLongitude();
-
-
-        final int R = 6371;
-        double latDistance = Math.toRadians(endLat - startLat);
-        double lonDistance = Math.toRadians(endLng - startLng);
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(startLng)) * Math.cos(Math.toRadians(endLng))
-                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
-    }
-    public Double calculateKilometres(Float long1, Float long2, Float lat1, Float lat2){
-        Double distance = Math.sqrt(Math.pow((lat1 - lat2), 2) + Math.pow((long1 - long2), 2));
-        return distance * 150;
-    }
-
-
-    public Integer travelTimeInMinutes(Double distance){
-        Double averageSpeed = 40.0;
-        return (int) (distance/averageSpeed*60) + 4;
-    }
-
-    public Integer calculateTravelTime(Double distance){
-        Integer time = (int) ((distance)*4);
-        return time;
-    }
-
-
-    public Double calculatePrice(VehicleType vehicleType, Double kilometres){
-
-        Double price = 120 * kilometres;
-        if(vehicleType.equals(VehicleType.STANDARDNO)){
-            price += 70;
-        }
-        else if(vehicleType.equals(VehicleType.KOMBI)){
-            price += 50;
-        }
-        else if(vehicleType.equals(VehicleType.LUKSUZNO)){
-            price +=100;
-        }
-
-        return price;
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("driver", choosenDriver);
+        response.put("time", minTime);
+        return response;
     }
 
 }

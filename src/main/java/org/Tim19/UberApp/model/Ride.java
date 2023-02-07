@@ -297,7 +297,7 @@ public class Ride {
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", totalCost=" + totalCost +
-                ", driver=" + driver.getName() + " " + driver.getSurname() +
+//                ", driver=" + driver.getName() + " " + driver.getSurname() +
                 ", locations=" + locations +
                 ", estimatedTimeInMinutes=" + estimatedTimeInMinutes +
                 ", reviews=" + reviews +
