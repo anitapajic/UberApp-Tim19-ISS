@@ -39,22 +39,54 @@ insert into path (departure_id, destination_id) values
                                                     (2,4),
                                                     (1,4),
                                                     (3,4),
-                                                    (4,1);
+                                                    (1,2),
+                                                    (2,1),
+                                                    (3,1),
+                                                    (4,1),
+                                                    (1,3);
 
 insert into favorite_route(favorite_name, scheduled_time, vehicle_type, baby_transport, pet_transport) values ('Kuca-Posao', '2017-07-21T17:32:28Z', 0, false, false),
-                                                                                                        ('Kuca-Faks', '2017-07-21T17:32:28Z', 0, false, false),
-                                                                                                         ('Kuca-Teretana', '2017-07-21T17:32:28Z', 0, false, false);
+                                                                                                              ('Kuca-Faks', '2017-07-21T17:32:28Z', 0, false, false),
+                                                                                                              ('Kuca-Teretana', '2017-07-21T17:32:28Z', 0, false, false),
+                                                                                                              ('Kuca-Teretana', '2017-07-21T17:32:28Z', 0, false, false),
+                                                                                                              ('Kuca-Teretana', '2017-07-21T17:32:28Z', 0, false, false),
+                                                                                                              ('Kuca-Teretana', '2017-07-21T17:32:28Z', 0, false, false),
+                                                                                                              ('Kuca-Teretana', '2017-07-21T17:32:28Z', 0, false, false),
+                                                                                                              ('Kuca-Teretana', '2017-07-21T17:32:28Z', 0, false, false),
+                                                                                                              ('Kuca-Teretana', '2017-07-21T17:32:28Z', 0, false, false),
+                                                                                                              ('Kuca-Teretana', '2017-07-21T17:32:28Z', 0, false, false),
+                                                                                                              ('Kuca-Teretana', '2017-07-21T17:32:28Z', 0, false, false),
+                                                                                                              ('Kuca-Teretana', '2017-07-21T17:32:28Z', 0, false, false);
 
 insert into favorites_paths(favorite_id, paths_id) values (1,1),
                                                           (2,2),
-                                                          (3,3);
+                                                          (3,3),
+                                                          (4,4),
+                                                          (5,5),
+                                                          (6,6),
+                                                          (7,7),
+                                                          (8,8),
+                                                          (9,9),
+                                                          (10,10),
+                                                          (11,11),
+                                                          (12,12);
 
 -- Passenger favourite paths
 
 insert into passenger_favorites (favorite_id, passenger_id) values
                                                                 (1, 2),
                                                                 (2, 2),
-                                                                (3, 3);
+                                                                (3, 3),
+                                                                (4, 2),
+                                                                (5, 2),
+                                                                (6, 2),
+                                                                (7, 2),
+                                                                (8, 2),
+                                                                (9, 2),
+                                                                (10, 2),
+                                                                (11, 2),
+                                                                (12, 2);
+
 
 -- Rides
 insert into ride (start_time, end_time, total_cost, driver_id, estimated_time_in_minutes, status, panic, baby_transport, pet_transport, vehicle_type, json, step) values

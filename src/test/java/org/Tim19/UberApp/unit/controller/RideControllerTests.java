@@ -1,11 +1,9 @@
 package org.Tim19.UberApp.unit.controller;
 
 import org.Tim19.UberApp.controller.RideController;
-import org.Tim19.UberApp.dto.LoginDTO;
+import org.Tim19.UberApp.dto.*;
+import org.Tim19.UberApp.dto.PaginatedData.CreateFavoriteRouteBodyPaginatedDTO;
 import org.Tim19.UberApp.dto.PaginatedData.PanicPaginatedDTO;
-import org.Tim19.UberApp.dto.RideDTO;
-import org.Tim19.UberApp.dto.RideHistoryFilterDTO;
-import org.Tim19.UberApp.dto.TokenDTO;
 import org.Tim19.UberApp.model.*;
 import org.Tim19.UberApp.service.RideService;
 import org.junit.jupiter.api.*;
@@ -773,6 +771,140 @@ public class RideControllerTests {
     }
 
 
+// ====================================================
+// CREATE FAVORITE ROUTE
+// ====================================================
+
+    @Test
+    public void createFavoriteRoute_Success(){
+        CreateFavoriteRouteBodyPaginatedDTO favoriteRouteDTO = new CreateFavoriteRouteBodyPaginatedDTO();
+        favoriteRouteDTO.setFavoriteName("Kuca-Poso");
+        favoriteRouteDTO.setBabyTransport(false);
+        favoriteRouteDTO.setVehicleType(VehicleType.STANDARDNO);
+        favoriteRouteDTO.setPetTransport(false);
+        Set<Passenger> passengers = new HashSet<>();
+        Passenger passenger = new Passenger();
+        passenger.setId(3);
+        passenger.setUsername("aleksandra@gmail.com");
+        passengers.add(passenger);
+        favoriteRouteDTO.setPassengers(passengers);
+        Set<Path> locations = new HashSet<>();
+        Location departure = new Location(null, "Strumicka 6", (float) 20.45862, (float) 47.2589);
+        Location destination = new Location(null, "Strumicka 6", (float) 20.45862, (float) 47.2589);
+        Path path = new Path(null, departure, destination);
+        locations.add(path);
+        favoriteRouteDTO.setLocations(locations);
+
+        ResponseEntity<FavoriteRouteDTO> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/favorites",
+                HttpMethod.POST,
+                new HttpEntity<>(favoriteRouteDTO, passengerEntity.getHeaders()),
+                FavoriteRouteDTO.class);
+
+
+        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+        FavoriteRouteDTO returnedFavRide = responseEntity.getBody();
+        assertNotNull(returnedFavRide);
+
+    }
+
+    @Test
+    public void createFavoriteRoute_Forbidden(){
+        CreateFavoriteRouteBodyPaginatedDTO favoriteRouteDTO = new CreateFavoriteRouteBodyPaginatedDTO();
+        favoriteRouteDTO.setFavoriteName("Kuca-Poso");
+        favoriteRouteDTO.setBabyTransport(false);
+        favoriteRouteDTO.setVehicleType(VehicleType.STANDARDNO);
+        favoriteRouteDTO.setPetTransport(false);
+        Set<Passenger> passengers = new HashSet<>();
+        Passenger passenger = new Passenger();
+        passenger.setId(3);
+        passenger.setUsername("aleksandra@gmail.com");
+        passengers.add(passenger);
+        favoriteRouteDTO.setPassengers(passengers);
+        Set<Path> locations = new HashSet<>();
+        Location departure = new Location(null, "Strumicka 6", (float) 20.45862, (float) 47.2589);
+        Location destination = new Location(null, "Strumicka 6", (float) 20.45862, (float) 47.2589);
+        Path path = new Path(null, departure, destination);
+        locations.add(path);
+        favoriteRouteDTO.setLocations(locations);
+
+        ResponseEntity<FavoriteRouteDTO> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/favorites",
+                HttpMethod.POST,
+                new HttpEntity<>(favoriteRouteDTO, driverEntity.getHeaders()),
+                FavoriteRouteDTO.class);
+
+
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void createFavoriteRoute_Unauthorized(){
+
+        ResponseEntity<FavoriteRouteDTO> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/favorites",
+                HttpMethod.POST,
+                new HttpEntity<>(null),
+                FavoriteRouteDTO.class);
+
+
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+        FavoriteRouteDTO returnedFavRide = responseEntity.getBody();
+        assertNotNull(returnedFavRide);
+    }
+
+    @Test
+    public void createFavoriteRoute_BadRequest(){
+
+        CreateFavoriteRouteBodyPaginatedDTO favoriteRouteDTO = new CreateFavoriteRouteBodyPaginatedDTO();
+        favoriteRouteDTO.setFavoriteName(null);
+        favoriteRouteDTO.setBabyTransport(false);
+        favoriteRouteDTO.setVehicleType(VehicleType.STANDARDNO);
+        favoriteRouteDTO.setPetTransport(false);
+        Set<Passenger> passengers = new HashSet<>();
+        Passenger passenger = new Passenger();
+        passenger.setId(3);
+        passenger.setUsername("aleksandra@gmail.com");
+        passengers.add(passenger);
+        favoriteRouteDTO.setPassengers(passengers);
+        Set<Path> locations = new HashSet<>();
+        favoriteRouteDTO.setLocations(locations);
+
+        ResponseEntity<FavoriteRouteDTO> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/favorites",
+                HttpMethod.POST,
+                new HttpEntity<>(favoriteRouteDTO, passengerEntity.getHeaders()),
+                FavoriteRouteDTO.class);
+
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void createFavoriteRoute_NumberBIggerThan10(){
+        CreateFavoriteRouteBodyPaginatedDTO favoriteRouteDTO = new CreateFavoriteRouteBodyPaginatedDTO();
+        favoriteRouteDTO.setFavoriteName("Kuca-Poso");
+        favoriteRouteDTO.setBabyTransport(false);
+        favoriteRouteDTO.setVehicleType(VehicleType.STANDARDNO);
+        favoriteRouteDTO.setPetTransport(false);
+        Set<Passenger> passengers = new HashSet<>();
+        Passenger passenger = new Passenger();
+        passenger.setId(2);
+        passenger.setUsername("anita@gmail.com");
+        passengers.add(passenger);
+        favoriteRouteDTO.setPassengers(passengers);
+        Set<Path> locations = new HashSet<>();
+        Location departure = new Location(null, "Strumicka 6", (float) 20.45862, (float) 47.2589);
+        Location destination = new Location(null, "Strumicka 6", (float) 20.45862, (float) 47.2589);
+        Path path = new Path(null, departure, destination);
+        locations.add(path);
+        favoriteRouteDTO.setLocations(locations);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:8085/api/ride/favorites",
+                HttpMethod.POST,
+                new HttpEntity<>(favoriteRouteDTO, passengerEntity.getHeaders()),
+                String.class);
+
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+
+    }
 
 
 

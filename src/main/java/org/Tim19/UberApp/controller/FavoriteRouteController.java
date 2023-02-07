@@ -37,7 +37,7 @@ public class FavoriteRouteController {
     public ResponseEntity createFavoriteRoute(@RequestBody CreateFavoriteRouteBodyPaginatedDTO favRouteDTO) {
 
         System.out.println(favRouteDTO);
-        if(favRouteDTO.getFavoriteName()==null){
+        if(favRouteDTO.getLocations().size()==0){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         FavoriteRoute favoriteRoute = new FavoriteRoute();
