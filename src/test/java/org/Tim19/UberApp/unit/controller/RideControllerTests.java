@@ -13,10 +13,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -242,10 +239,10 @@ public class RideControllerTests {
         // set values for the filterDTO
 
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(getUrl("all"),
+        ResponseEntity<Map<String, Object>> responseEntity = restTemplate.exchange(getUrl("all"),
                 HttpMethod.POST,
                 new HttpEntity<>(filterDTO, adminEntity.getHeaders()),
-                new ParameterizedTypeReference<String>() {
+                new ParameterizedTypeReference<Map<String, Object>>() {
                 });
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
@@ -905,11 +902,6 @@ public class RideControllerTests {
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
 
     }
-
-
-
-
-
 
 
 
