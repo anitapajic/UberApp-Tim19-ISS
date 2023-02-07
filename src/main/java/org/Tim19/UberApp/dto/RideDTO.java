@@ -63,6 +63,27 @@ public class RideDTO {
         this(ride.getId(), ride.getStartTime(), ride.getEndTime(), ride.getTotalCost(), ride.getDriver(), ride.getPassengers(), ride.getEstimatedTimeInMinutes(), ride.getReviews(),ride.getDriver().getVehicle(), ride.isPanic(), ride.isBabyTransport(), ride.isPetTransport(), ride.getStatus(), ride.getLocations(), ride.getRejection(), ride.getRouteJSON(), ride.getStep());
     }
 
+    public RideDTO(Ride ride, boolean flag) {
+        this(ride.getId(), ride.getStartTime(), ride.getEndTime(), ride.getTotalCost(), ride.getPassengers(), ride.getEstimatedTimeInMinutes(), ride.getReviews(), ride.isPanic(), ride.isBabyTransport(), ride.isPetTransport(), ride.getStatus(), ride.getLocations(), ride.getRejection(), ride.getRouteJSON(), ride.getStep());
+    }
+
+    public RideDTO(Integer id, LocalDateTime startTime, LocalDateTime endTime, Double totalCost, Set<Passenger> passengers, Integer estimatedTimeInMinutes, Set<Review> reviews, boolean panic, boolean babyTransport, boolean petTransport, String status, Set<Path> locations, Set<Rejection> rejection, String routeJSON, Integer step) {
+        this.id = id;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.totalCost = totalCost;
+        this.passengers = passengers;
+        this.estimatedTimeInMinutes = estimatedTimeInMinutes;
+        this.reviews = reviews;
+        this.panic = panic;
+        this.babyTransport = babyTransport;
+        this.petTransport = petTransport;
+        this.status = status;
+        this.locations = locations;
+        this.rejections = rejection;
+        this.routeJSON = routeJSON;
+        this.step = step;
+    }
 
     public Integer getId() {
         return id;

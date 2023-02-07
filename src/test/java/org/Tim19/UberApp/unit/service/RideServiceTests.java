@@ -2,6 +2,7 @@ package org.Tim19.UberApp.unit.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.Tim19.UberApp.dto.RideDTO;
+import org.Tim19.UberApp.dto.RideHistoryFilterDTO;
 import org.Tim19.UberApp.model.*;
 import org.Tim19.UberApp.repository.RideRepository;
 import org.Tim19.UberApp.service.DriverService;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,13 +23,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -38,7 +40,7 @@ public class RideServiceTests {
     @Autowired
     private RideService rideService;
 
-    @Mock
+    @MockBean
     private RideRepository rideRepository;
 
     @MockBean
@@ -60,12 +62,15 @@ public class RideServiceTests {
     private List documents;
     private Passenger passenger;
 
+
     @BeforeAll
     public void setup(){
 
-        rideRepository = Mockito.mock(RideRepository.class);
-        passengerService = Mockito.mock(PassengerService.class);
-        driverService = Mockito.mock(DriverService.class);
+        rideRepository = mock(RideRepository.class);
+        passengerService = mock(PassengerService.class);
+        driverService = mock(DriverService.class);
+
+        rideService = new RideService(rideRepository);
 
 
 //        Set<Path> locations = new HashSet<>();
@@ -80,12 +85,12 @@ public class RideServiceTests {
 
 //        ride2 = new Ride(rideDTO);
         Set<Path> locations = new HashSet<>();
-        Location departure = new Location(null, "Strumicka 6", (float) 20.45862, (float) 47.2589);
-        Location destination = new Location(null, "Strumicka 6", (float) 20.45862, (float) 47.2589);
-        Path path = new Path(null, departure, destination);
-        vehicle = new Vehicle(null, "audi", VehicleType.STANDARDNO, "lo123td", 4, departure, true, true);
+        Location departure = new Location(5, "Strumicka 6", (float) 20.45862, (float) 47.2589);
+        Location destination = new Location(6, "Strumicka 6", (float) 20.45862, (float) 47.2589);
+        Path path = new Path(14, departure, destination);
+        vehicle = new Vehicle(1, "audi", VehicleType.STANDARDNO, "lo123td", 4, departure, true, true);
         Set<Ride> rides = new HashSet<>();
-        Driver driver = new Driver(null, "driver@gmail.com", "Driver", "Rider", "hcierhfi", "64584685689", "Adresa",
+        Driver driver = new Driver(1, "driver@gmail.com", "Driver", "Rider", "hcierhfi", "64584685689", "Adresa",
                 "sifra", true, false, rides, null, vehicle, "DRIVER", false);
         Passenger passenger = new Passenger();
         passenger.setId(2);
@@ -94,10 +99,23 @@ public class RideServiceTests {
         passengers.add(passenger);
         locations.add(path);
 
-        RideDTO rideDTO = new RideDTO(null, LocalDateTime.now(), null, 350.0, driver, passengers,
-                7, null, vehicle, false, false, false, "PENDING", locations,
+        RideDTO rideDTO = new RideDTO(1, LocalDateTime.now(), null, 350.0, driver, passengers,
+                7, null, driver.getVehicle(), false, false, false, "STARTED", locations,
                 null, "", 0);
         ride = new Ride(rideDTO, true);
+
+
+        //Ride2
+        Set<Path> locations2 = new HashSet<>();
+        Location departure2 = new Location(5, "Strumicka 6", (float) 20.45862, (float) 47.2589);
+        Location destination2 = new Location(6, "Strumicka 6", (float) 20.45862, (float) 47.2589);
+        Path path2 = new Path(null, departure2, destination2);
+        vehicle = new Vehicle(2, "audi", VehicleType.STANDARDNO, "lo123td", 4, departure, true, true);
+        locations.add(path2);
+        RideDTO rideDTO2 = new RideDTO(2, LocalDateTime.now(), null, 350.0, driver, passengers,
+                7, null, driver.getVehicle(), false, false, false, "ACCEPTED", locations2,
+                null, "", 0);
+        ride2 = new Ride(rideDTO2, true);
     }
 
 // ============================================================
@@ -107,7 +125,7 @@ public class RideServiceTests {
     @Test
     @DisplayName("Test Should Save New Ride")
     public void shouldSaveRide(){
-
+        when(rideRepository.save(ride)).thenReturn(ride);
         Ride savedRide = rideService.save(ride);
         assertEquals(ride, savedRide);
 
@@ -348,10 +366,83 @@ public class RideServiceTests {
         assertNull(nextLocation);
     }
 
+
 // ========================================================
-// SAVE STEP
+// FIND RIDE BY ID
+// ========================================================
+    @Test
+    public void findOneRideById_whenRideExists_returnsRide() {
+        when(rideRepository.findById(1)).thenReturn(Optional.of(ride));
+
+        Ride actualRide = rideService.findOneRideById(1);
+        System.out.println(actualRide);
+
+        assertEquals(ride, actualRide);
+    }
+
+    @Test
+    public void findOneRideById_whenRideDoesNotExist_returnsNull() {
+        when(rideRepository.findById(123)).thenReturn(Optional.empty());
+
+        Ride actualRide = rideService.findOneRideById(123);
+
+        assertEquals(null, actualRide);
+    }
+
+// ========================================================
+// FIND ALL ACTIVE RIDES
 // ========================================================
 
+    @Test
+    public void testFindAllActiveRides() {
+        List<Ride> rides = new ArrayList<>();
 
+        rides.add(ride);
+        when(rideRepository.findAllByStatus("STARTED")).thenReturn(rides);
+
+        List<RideDTO> filteredRides = rideService.findAllActiveRides();
+        assertEquals(1, filteredRides.size());
+        verify(rideRepository, times(1)).findAllByStatus("STARTED");
+    }
+
+    @Test
+    public void testFindAllActiveRides_NoActiveRides() {
+        List<Ride> rides = new ArrayList<>();
+        when(rideRepository.findAllByStatus("STARTED")).thenReturn(rides);
+
+        List<RideDTO> filteredRides = rideService.findAllActiveRides();
+        assertEquals(0, filteredRides.size());
+
+        verify(rideRepository, times(1)).findAllByStatus("STARTED");
+    }
+
+
+// ========================================================
+// FIND ALL ACCEPTED RIDES
+// ========================================================
+
+    @Test
+    public void testFindAllAcceptedRides() {
+        List<Ride> rides = new ArrayList<>();
+
+        rides.add(ride2);
+        when(rideRepository.findAllByStatus("ACCEPTED")).thenReturn(rides);
+
+        List<RideDTO> filteredRides = rideService.findAllAcceptedRides();
+        assertEquals(1, filteredRides.size());
+        verify(rideRepository, times(1)).findAllByStatus("ACCEPTED");
+    }
+
+
+    @Test
+    public void testFindAllAcceptedRides_NoAcceptedRides() {
+        List<Ride> rides = new ArrayList<>();
+        when(rideRepository.findAllByStatus("ACCEPTED")).thenReturn(rides);
+
+        List<RideDTO> filteredRides = rideService.findAllAcceptedRides();
+        assertEquals(0, filteredRides.size());
+
+        verify(rideRepository, times(1)).findAllByStatus("ACCEPTED");
+    }
 
 }

@@ -114,6 +114,14 @@ public class Ride {
         this.petTransport =  rideDTO.isPetTransport();
     }
 
+    public Ride(Integer id, LocalDateTime startTime, LocalDateTime endTime, Driver driver, String status) {
+        this.id = id;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.driver = driver;
+        this.status = status;
+    }
+
     public Integer getId() {
         return id;
     }

@@ -34,6 +34,10 @@ public class RideService {
     private RestTemplate restTemplate;
 
 
+    public RideService(RideRepository rideRepository) {
+        this.rideRepository = rideRepository;
+    }
+
     public Ride findOneRideById(Integer id){
         return rideRepository.findById(id).orElse(null);
     }
@@ -62,7 +66,7 @@ public class RideService {
         List<Ride> rs = this.rideRepository.findAllByStatus("STARTED");
         List<RideDTO> rides = new ArrayList<>();
         for(Ride r : rs){
-            RideDTO ride = new RideDTO(r);
+            RideDTO ride = new RideDTO(r,true);
             rides.add(ride);
         }
         return rides;
@@ -72,7 +76,7 @@ public class RideService {
         List<Ride> rs = this.rideRepository.findAllByStatus("ACCEPTED");
         List<RideDTO> rides = new ArrayList<>();
         for(Ride r : rs){
-            RideDTO ride = new RideDTO(r);
+            RideDTO ride = new RideDTO(r,true);
             rides.add(ride);
         }
         return rides;
