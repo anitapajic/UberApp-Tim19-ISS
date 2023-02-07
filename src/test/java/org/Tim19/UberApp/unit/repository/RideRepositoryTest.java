@@ -43,17 +43,21 @@ class RideRepositoryTest {
 
     }
 
-
-    @Test
-    void findAllByDriverIdFilter() {
-        Set<Ride> rides = rideRepository.findAllByDriverId(1);
-        assertTrue(rides.size() > 0);
-    }
     @Test
     void testFindAllByDriverId() {
         Pageable paging = PageRequest.of(0, 100);
         Page<Ride> rides = rideRepository.findAllByDriverId(1, paging);
         assertTrue(rides.getContent().size() > 0);
+    }
+
+    @Test
+    void findAllByDriverIdFilter() {
+        LocalDateTime december21 = LocalDateTime.parse("2022-12-21T00:00:00");
+        LocalDateTime december26 = LocalDateTime.parse("2022-12-26T00:00:00");
+        Pageable paging = PageRequest.of(0, 10);
+        Page<Ride> rides = rideRepository.findAllByDriverIdFilter(1, december21, december26, paging);
+        assertTrue(rides.getContent().size() > 0);
+
     }
 
     @Test
