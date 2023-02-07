@@ -49,6 +49,12 @@ class RideRepositoryTest {
         Set<Ride> rides = rideRepository.findAllByDriverId(1);
         assertTrue(rides.size() > 0);
     }
+    @Test
+    void testFindAllByDriverId() {
+        Pageable paging = PageRequest.of(0, 100);
+        Page<Ride> rides = rideRepository.findAllByDriverId(1, paging);
+        assertTrue(rides.getContent().size() > 0);
+    }
 
     @Test
     void findAllByPassengersIdFilter() {
