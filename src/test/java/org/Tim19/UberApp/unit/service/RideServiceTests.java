@@ -449,6 +449,7 @@ public class RideServiceTests {
         verify(rideRepository, times(1)).findAllByStatus("ACCEPTED");
     }
 
+
     // =========================================================
 // FIND RIDES BY USER ID
 // =========================================================
@@ -580,10 +581,27 @@ public class RideServiceTests {
         when(rideRepository.findAllByPassengersId(2)).thenReturn(expectedRides);
 
         Set<Ride> rides = rideService.findAllByPassengerId(2);
+    }
+// ========================================================
+// FIND ALL FILTER
+// ========================================================
+    @Test
+    public void testFindAllFilter() {
+        List<Ride> mockRides = Arrays.asList(ride,ride2);
+        when(rideRepository.findAll()).thenReturn(mockRides);
+
+        RideHistoryFilterDTO filter = new RideHistoryFilterDTO();
+        filter.setKeyword("");
+
+        List<Ride> rides = rideService.findAllFilter(filter);
+
+        assertNotNull(rides);
+
         assertEquals(2, rides.size());
     }
 
     @Test
+
     public void testFindAllByPassengerId_CorrectOrder() {
         List<Ride> expectedRides = Arrays.asList(ride, ride2);
         when(rideRepository.findAllByPassengersId(2)).thenReturn(new HashSet<>(expectedRides));
@@ -630,6 +648,22 @@ public class RideServiceTests {
 
         assertNotNull(rides);
         assertEquals(rides, expectedRides);
+    }
+
+
+
+    @Test
+    public void testFindAllFilter_withEmptyFilter() {
+
+        List<Ride> mockRides = Arrays.asList(ride,ride2);
+        when(rideRepository.findAll()).thenReturn(mockRides);
+
+        RideHistoryFilterDTO filter = new RideHistoryFilterDTO();
+
+        List<Ride> rides = rideService.findAllFilter(filter);
+
+        assertNotNull(rides);
+        assertEquals(2, rides.size());
     }
 
 
